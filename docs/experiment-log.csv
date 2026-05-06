@@ -1,0 +1,9 @@
+date_kst,count,strategy,device_serial,device_model,android,result,notes
+2026-05-05,1,"APK internal WebView login + Strategy A MID tap verification","172.30.1.68:35665","SM-G977N","12","success","Login, first search, second search, MID 82095489871 tap, detail page 2s swipe verified"
+2026-05-05,100,"Samsung Internet DevTools MID click Strategy A","172.30.1.68:35665","SM-G977N","12","success","Login session maintained; loops 1-100 completed; product thenaturefarmers/products/4550969819"
+2026-05-05,40,"Samsung Internet DevTools MID click Strategy A","172.30.1.68:35665","SM-G977N","12","partial_success","Rerun loops 1-40 completed; original script stopped at loop 41 when MID was temporarily missing"
+2026-05-05,60,"Samsung Internet DevTools MID click Strategy A resume","172.30.1.68:35665","SM-G977N","12","success","Resume loops 41-100 completed; script updated to retry missing MID and continue"
+2026-05-05,1,"Safe MID exposure check no-click","172.30.1.68:35665","SM-G977N","12","success","First keyword 양갈비; second keyword 최상급 어린양으로 만든 양꼬치 양갈비 양고기; MID 82095489871 found in search result"
+2026-05-05,1,"Safe MID exposure check no-click","ce12160c9966340705","SM-G930S","8.0.0","success","First keyword 전지가위; second keyword 켈슨 충전 전동 전지가위 추천; MID 87327803739 found in search result; login success not conclusively confirmed by script"
+2026-05-06,0,"Current work status record","172.30.1.68:35665","SM-G977N","12","pending","S10 target 양갈비 / MID 82095489871; allowed scope is no-click exposure and session checks"
+2026-05-06,0,"Current work status record","ce12160c9966340705","SM-G930S","8.0.0","pending","S7 target 켈슨 전동 전지가위 / MID 87327803739; allowed scope is no-click exposure and session checks"

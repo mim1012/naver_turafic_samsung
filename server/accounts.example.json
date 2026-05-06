@@ -1,0 +1,10 @@
+{
+  "accounts": [
+    {
+      "alias": "naver_a",
+      "loginId": "replace-with-id",
+      "password": "replace-with-password",
+      "status": "available"
+    }
+  ]
+}

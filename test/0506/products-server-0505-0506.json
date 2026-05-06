@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "keyword": "양갈비",
+      "secondKeyword": "최상급 어린양으로 만든 양꼬치 양갈비 양고기",
+      "linkUrl": "https://msearch.shopping.naver.com/product/82095489871",
+      "mid": "82095489871",
+      "productTitle": "최상급 어린양으로 만든 양꼬치 양갈비 양고기",
+      "strategy": "A",
+      "status": "available"
+    },
+    {
+      "keyword": "전지가위",
+      "secondKeyword": "켈슨 충전 전동 전지가위 추천",
+      "linkUrl": "https://msearch.shopping.naver.com/product/87327803739",
+      "mid": "87327803739",
+      "productTitle": "켈슨 충전 전동 전지가위 베어툴 30MM 배터리X",
+      "strategy": "A",
+      "status": "available"
+    }
+  ]
+}

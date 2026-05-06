@@ -1,0 +1,44 @@
+.gradle/
+build/
+**/build/
+local.properties
+*.apk
+*.aab
+*.iml
+.idea/
+.omx/
+window.xml
+
+# Large local device/firmware artifacts
+firmware/
+tools/odin/
+tools/magisk/
+*.zip
+*.zip.enc4
+*.tar
+*.tar.md5
+*.exe
+*.dll
+
+# Local runtime data
+runtime/
+logs/
+*.log
+*.err.log
+test/**/*.log
+test/**/*.err.log
+test/**/*.logcat.txt
+test/**/*.install.txt
+test/**/*.flow.txt
+test/**/*.flow.json
+test/**/*.activity.txt
+test/**/*.summary.txt
+test/**/*.summary.csv
+test/ip-check/
+
+# Secrets
+.env
+*.keystore
+secrets.properties
+server/accounts.local.json
+server/products.local.json
