@@ -9,14 +9,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.ConcurrentHashMap
 
 class SupabaseApiClient(
     private val baseUrl: String,
     private val anonKey: String,
+    private val trafficTable: String = "sellermate_traffic_navershopping",
     private val slotTable: String = "sellermate_slot_naver",
 ) : StrategyTaskLeaseClient, CookieStorageClient, GroupControlClient {
 
     private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport()
+    // leaseId → link_url 캐시 (reportTask에서 history INSERT 시 사용)
+    private val leaseLinkUrls = ConcurrentHashMap<String, String>()
 
     private fun now(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
@@ -54,32 +58,45 @@ class SupabaseApiClient(
         strategy: String,
         appVersion: String,
     ): StrategyTaskLease? = withContext(Dispatchers.IO) {
-        val url = "${base()}/$slotTable" +
-            "?select=id,keyword,keyword_name,mid,link_url,success_count,fail_count,daily_target" +
-            "&status=eq.${enc("작동중")}" +
-            "&expiry_date=gt.${enc(now())}" +
-            "&order=id.asc&limit=20"
-
-        val raw = runCatching { transport.request("GET", url, null, headers) }.getOrNull()
+        // 1. 트래픽 큐에서 1건 가져오기 (id 오름차순)
+        val trafficUrl = "${base()}/$trafficTable" +
+            "?select=id,keyword,keyword_name,link_url,slot_id" +
+            "&order=id.asc&limit=1"
+        val trafficRaw = runCatching { transport.request("GET", trafficUrl, null, headers) }.getOrNull()
             ?: return@withContext null
 
-        val slot = parseJsonArray(raw).filter { row ->
-            val mid = readString(row, "mid")?.takeIf { it.isNotBlank() }
-            val keywordName = readString(row, "keyword_name")?.takeIf { it.isNotBlank() }
-            val done = readInt(row, "success_count", 0) + readInt(row, "fail_count", 0)
-            val target = readInt(row, "daily_target", 100)
-            mid != null && keywordName != null && done < target
-        }.randomOrNull() ?: return@withContext null
+        val trafficRow = parseJsonArray(trafficRaw).firstOrNull() ?: return@withContext null
+        val trafficId = readInt(trafficRow, "id", 0).takeIf { it > 0 } ?: return@withContext null
+        val slotId = readInt(trafficRow, "slot_id", 0).takeIf { it > 0 } ?: return@withContext null
+        val keyword = readString(trafficRow, "keyword").orEmpty()
+        val keywordName = readString(trafficRow, "keyword_name").orEmpty()
+        val linkUrl = readString(trafficRow, "link_url").orEmpty()
 
-        val slotId = readInt(slot, "id", 0).takeIf { it > 0 } ?: return@withContext null
-        val keyword = readString(slot, "keyword").orEmpty()
-        val keywordName = readString(slot, "keyword_name").orEmpty()
-        val mid = readString(slot, "mid").orEmpty()
-        val linkUrl = readString(slot, "link_url").orEmpty()
-        val leaseId = "sb_${slotId}_${System.currentTimeMillis()}"
+        // 2. 트래픽 행 DELETE (클레임)
+        runCatching {
+            transport.request("DELETE", "${base()}/$trafficTable?id=eq.$trafficId", null, minimalHeaders)
+        }
+
+        // 3. 슬롯에서 mid 조회
+        val slotRaw = runCatching {
+            transport.request("GET", "${base()}/$slotTable?select=mid&id=eq.$slotId&limit=1", null, headers)
+        }.getOrNull()
+        val mid = slotRaw?.let { parseJsonArray(it).firstOrNull() }
+            ?.let { readString(it, "mid") }.orEmpty()
+
+        val leaseId = "sb_${trafficId}_${slotId}"
+        if (linkUrl.isNotBlank()) leaseLinkUrls[leaseId] = linkUrl
 
         StrategyTaskLease(
             taskLeaseId = leaseId,
+            task = com.navertraffic.samsung.strategy.StrategyATask(
+                keyword = keyword,
+                secondKeyword = keywordName,
+                linkUrl = linkUrl,
+                mid = mid,
+                productTitle = keywordName.takeIf { it.isNotBlank() },
+                tailKeyword = keyword.split(" ").last(),
+            ),
             taskG = StrategyGTask(
                 keyword = keyword,
                 keywordName = keywordName,
@@ -93,14 +110,16 @@ class SupabaseApiClient(
     override suspend fun reportTask(report: StrategyTaskReport) = withContext(Dispatchers.IO) {
         val taskLeaseId = report.taskLeaseId ?: return@withContext
         if (!taskLeaseId.startsWith("sb_")) return@withContext
-        val slotId = taskLeaseId.removePrefix("sb_").substringBefore("_").toIntOrNull()
+        // leaseId 형식: sb_{trafficId}_{slotId}
+        val slotId = taskLeaseId.removePrefix("sb_").substringAfterLast("_").toIntOrNull()
             ?: return@withContext
         val success = report.result == StrategyTaskResult.SUCCESS
+        val cachedLinkUrl = leaseLinkUrls.remove(taskLeaseId)
 
         val slotRaw = runCatching {
             transport.request(
                 "GET",
-                "${base()}/$slotTable?select=success_count,fail_count,keyword,keyword_name,link_url&id=eq.$slotId&limit=1",
+                "${base()}/$slotTable?select=success_count,fail_count,keyword,keyword_name&id=eq.$slotId&limit=1",
                 null,
                 headers,
             )
@@ -118,18 +137,18 @@ class SupabaseApiClient(
             transport.request(
                 "POST",
                 "${base()}/slot_rank_naverapp_history",
-                buildHistoryJson(slotId, row),
+                buildHistoryJson(slotId, row, cachedLinkUrl),
                 minimalHeaders,
             )
         }
         Unit
     }
 
-    private fun buildHistoryJson(slotId: Int, row: String?): String {
+    private fun buildHistoryJson(slotId: Int, row: String?, linkUrl: String?): String {
         val keyword = row?.let { readString(it, "keyword") }
         val keywordName = row?.let { readString(it, "keyword_name") }
-        val linkUrl = row?.let { readString(it, "link_url") }
-        return """{"slot_status_id":$slotId,"source_table":${jsonStr(slotTable)},"source_row_id":$slotId,"customer_id":null,"keyword":${jsonStr(keyword)},"link_url":${jsonStr(linkUrl)},"keyword_name":${jsonStr(keywordName)},"created_at":${jsonStr(now())}}"""
+        val resolvedLinkUrl = linkUrl?.takeIf { it.isNotBlank() } ?: ""
+        return """{"slot_status_id":$slotId,"source_table":${jsonStr(slotTable)},"source_row_id":$slotId,"customer_id":null,"keyword":${jsonStr(keyword)},"link_url":${jsonStr(resolvedLinkUrl)},"keyword_name":${jsonStr(keywordName)},"created_at":${jsonStr(now())}}"""
     }
 
     // ── Cookies ──────────────────────────────────────────────────────────────

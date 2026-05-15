@@ -11,6 +11,7 @@ const DEFAULT_POLICY = {
   pauseOnRotationFail: true,
 };
 
+const DEFAULT_SUPABASE_TRAFFIC_TABLE = "sellermate_traffic_navershopping";
 const DEFAULT_SUPABASE_SLOT_TABLE = "sellermate_slot_naver";
 
 function createState(options = {}) {
@@ -20,6 +21,7 @@ function createState(options = {}) {
     zeroTrafficApiUrl: options.zeroTrafficApiUrl || process.env.ZERO_TRAFFIC_API_URL || "",
     supabaseRestUrl: options.supabaseRestUrl || process.env.SUPABASE_REST_URL || "",
     supabaseAnonKey: options.supabaseAnonKey || process.env.SUPABASE_ANON_KEY || "",
+    supabaseTrafficTable: options.supabaseTrafficTable || process.env.SUPABASE_TRAFFIC_TABLE || DEFAULT_SUPABASE_TRAFFIC_TABLE,
     supabaseSlotTable: options.supabaseSlotTable || process.env.SUPABASE_SLOT_TABLE || DEFAULT_SUPABASE_SLOT_TABLE,
     leases: new Map(),
     taskLeases: new Map(),
@@ -142,42 +144,46 @@ async function leaseTaskFromSupabase(state, body) {
   const strategy = String(body.strategy || "A");
   const deviceName = String(body.deviceName || "");
 
-  const claimedSlotIds = new Set(
-    Array.from(state.taskLeases.values())
-      .filter((l) => l.status === "active" && l.supabaseSlotId)
-      .map((l) => l.supabaseSlotId),
-  );
-
-  const now = new Date().toISOString();
-  const rows = await supabaseRequestJson(
+  // 1. 트래픽 큐에서 1건 가져오기 (id 오름차순)
+  const trafficRows = await supabaseRequestJson(
     state,
     "GET",
-    `/${state.supabaseSlotTable}?select=id,keyword,keyword_name,mid,link_url,success_count,fail_count,daily_target` +
-      `&status=eq.${encodeURIComponent("작동중")}` +
-      `&expiry_date=gt.${encodeURIComponent(now)}` +
-      `&order=id.asc&limit=20`,
+    `/${state.supabaseTrafficTable}?select=id,keyword,keyword_name,link_url,slot_id&order=id.asc&limit=1`,
   );
-  if (!Array.isArray(rows) || rows.length === 0) return null;
+  if (!Array.isArray(trafficRows) || trafficRows.length === 0) return null;
 
-  const slot = rows.find(
-    (row) =>
-      !claimedSlotIds.has(row.id) &&
-      row.mid &&
-      row.keyword_name &&
-      Number(row.success_count || 0) + Number(row.fail_count || 0) < Number(row.daily_target || 100),
-  );
-  if (!slot) return null;
+  const traffic = trafficRows[0];
+  const trafficId = traffic.id;
+  const slotId = traffic.slot_id;
+  if (!trafficId || !slotId) return null;
+
+  // 2. 트래픽 행 DELETE (클레임)
+  await supabaseRequestJson(
+    state,
+    "DELETE",
+    `/${state.supabaseTrafficTable}?id=eq.${encodeURIComponent(trafficId)}`,
+    null,
+    true,
+  ).catch(() => {});
+
+  // 3. 슬롯에서 mid 조회
+  const slotRows = await supabaseRequestJson(
+    state,
+    "GET",
+    `/${state.supabaseSlotTable}?select=mid&id=eq.${encodeURIComponent(slotId)}&limit=1`,
+  ).catch(() => []);
+  const mid = Array.isArray(slotRows) && slotRows[0] ? (slotRows[0].mid || "") : "";
 
   const lease = {
-    id: `sb_${slot.id}_${Date.now()}`,
-    supabaseSlotId: slot.id,
+    id: `sb_${trafficId}_${slotId}`,
+    supabaseSlotId: slotId,
     product: {
-      keyword: slot.keyword || "",
-      secondKeyword: strategy === "G" ? null : (slot.keyword_name || ""),
-      keywordName: strategy === "G" ? (slot.keyword_name || "") : null,
-      linkUrl: slot.link_url || "",
-      mid: slot.mid || "",
-      productTitle: slot.keyword_name || "",
+      keyword: traffic.keyword || "",
+      secondKeyword: strategy === "G" ? null : (traffic.keyword_name || ""),
+      keywordName: strategy === "G" ? (traffic.keyword_name || "") : null,
+      linkUrl: traffic.link_url || "",
+      mid,
+      productTitle: traffic.keyword_name || "",
     },
     deviceName,
     strategy,

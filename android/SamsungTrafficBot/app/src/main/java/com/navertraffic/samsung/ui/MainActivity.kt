@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.navertraffic.samsung.AppUpdateManager
 import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.R
 import com.navertraffic.samsung.boss.BossController
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             val hasSession = webViewManager.hasCookieSession()
             if (config.isConfigured() && (hasCredentials || hasSession)) {
                 appendLog("저장된 설정 확인 → 자동 시작")
-                etDeviceName.post { runBot() }
+                etDeviceName.post { checkUpdateAndRun() }
             } else if (hasCredentials || hasSession) {
                 appendLog("크레덴셜 준비됨 — 버튼을 눌러 시작")
             }
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         intent.getStringExtra(EXTRA_NAVER_PASSWORD)?.let { etNaverPassword.setText(it) }
         if (getBoolExtra(EXTRA_AUTO_RUN)) {
             appendLog("autoRun 수신")
-            etDeviceName.post { runBot() }
+            etDeviceName.post { checkUpdateAndRun() }
         }
     }
 
@@ -158,6 +159,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         webViewManager.resumeTimers()
+    }
+
+    private fun checkUpdateAndRun() {
+        lifecycleScope.launch {
+            val updated = AppUpdateManager(this@MainActivity, ::appendLog)
+                .checkAndUpdate(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_KEY)
+            if (!updated) runBot()
+        }
     }
 
     private fun runBot() {
@@ -378,18 +387,6 @@ class MainActivity : AppCompatActivity() {
         enterRunningMode("전략 G 실행 중")
 
         lifecycleScope.launch {
-            val taskLease = runCatching {
-                serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
-            }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
-            val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
-            if (task == null) {
-                appendLog("G전략 task 없음 (mid 필수): 종료")
-                exitRunningMode()
-                return@launch
-            }
-            if (taskLease == null) appendLog("상품 task 없음: 하드코딩 smoke 상품 사용")
-            else appendLog("상품 task lease 획득: ${task.productTitle ?: task.linkUrl}")
-
             val bossController = if (identity.isBoss) BossController(
                 identity = identity,
                 botStrategy = botStrategy,
@@ -418,8 +415,21 @@ class MainActivity : AppCompatActivity() {
 
             var successCount = 0
             var taskIndex = 0
+            var credentialsSaved = false
             while (taskIndex < loopCount) {
-                val index = taskIndex
+                // 반복마다 트래픽 큐에서 새 작업 가져오기
+                val taskLease = runCatching {
+                    serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
+                }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
+                val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
+
+                if (task == null) {
+                    appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
+                    kotlinx.coroutines.delay(30_000)
+                    continue
+                }
+                appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
+
                 if (!dryRun) {
                     val naverId = etNaverId.text.toString().trim()
                     val naverPw = etNaverPassword.text.toString()
@@ -427,10 +437,13 @@ class MainActivity : AppCompatActivity() {
                         exitRunningMode()
                         return@launch
                     }
-                    if (index == 0) webViewManager.saveCredentials(this@MainActivity, naverId, naverPw)
+                    if (!credentialsSaved) {
+                        webViewManager.saveCredentials(this@MainActivity, naverId, naverPw)
+                        credentialsSaved = true
+                    }
                 }
 
-                appendLog("G전략 반복 ${index + 1}/$loopCount")
+                appendLog("G전략 반복 ${taskIndex + 1}/$loopCount")
                 val result: StrategyAResult = bossController?.runOnce(task)
                     ?: soldierController?.runOnce(task)
                     ?: StrategyAResult(success = false, message = "no_controller")
@@ -438,7 +451,7 @@ class MainActivity : AppCompatActivity() {
                 if (result.message == "group_paused") {
                     appendLog("그룹 로테이션 대기 중 — 10초 후 재시도")
                     kotlinx.coroutines.delay(10_000)
-                    continue  // iteration 소진하지 않고 재시도
+                    continue
                 }
                 taskIndex++
 
