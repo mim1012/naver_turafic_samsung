@@ -1,53 +1,51 @@
-package com.navertraffic.samsung.strategy
+﻿package com.navertraffic.samsung.strategy
 
-import android.content.Context
-
-class SecondKeywordStore(context: Context) {
-    private val prefs = context.getSharedPreferences("second_keyword_exclusions", Context.MODE_PRIVATE)
-
-    fun nextKeyword(mid: String, source: String): String? {
-        val excluded = excludedKeywords(mid)
-        return generateCandidates(source).firstOrNull { it !in excluded }
-    }
-
-    fun exclude(mid: String, keyword: String) {
-        if (mid.isBlank() || keyword.isBlank()) return
-        val updated = excludedKeywords(mid).toMutableSet()
-        updated.add(keyword)
-        prefs.edit().putStringSet(key(mid), updated).apply()
-    }
-
-    fun excludedCount(mid: String): Int = excludedKeywords(mid).size
-
-    private fun excludedKeywords(mid: String): Set<String> {
-        return prefs.getStringSet(key(mid), emptySet()).orEmpty()
-    }
-
+class SecondKeywordStore {
     private fun key(mid: String): String = "mid:$mid"
 
     companion object {
-        fun generateCandidates(source: String): List<String> {
-            val words = source
-                .split(Regex("\\s+"))
+        val DEFAULT_TAIL_KEYWORDS = listOf("추천", "할인", "가격비교", "인기", "후기")
+
+        /**
+         * 상품명에서 (5 - requiredWords.size)개 랜덤 + requiredWord(1차 키워드 전체) 포함 = 5단어.
+         * 꼬리키워드 없음. requiredWord가 null이면 pool에서 5단어 전부 뽑음.
+         */
+        fun generateCombinations(
+            source: String,
+            requiredWord: String? = null,
+            tailKeywords: List<String> = DEFAULT_TAIL_KEYWORDS,
+            count: Int = 5,
+        ): List<String> {
+            val seen = LinkedHashSet<String>()
+            val result = mutableListOf<String>()
+
+            val requiredTokens = requiredWord
+                ?.split(Regex("\\s+"))?.map { it.trim() }?.filter { it.isNotEmpty() }
+                ?: emptyList()
+
+            val pool = source.split(Regex("\\s+"))
                 .map { it.trim() }
                 .filter { it.isNotEmpty() }
                 .distinct()
-                .take(5)
-            if (words.isEmpty()) return emptyList()
-            if (words.size < 5) return listOf(words.joinToString(" "))
+                .filter { it !in requiredTokens }
 
-            val out = mutableListOf<String>()
-            fun permute(prefix: List<String>, remaining: List<String>) {
-                if (remaining.isEmpty()) {
-                    out.add(prefix.joinToString(" "))
-                    return
-                }
-                remaining.forEachIndexed { index, word ->
-                    permute(prefix + word, remaining.filterIndexed { i, _ -> i != index })
-                }
+            val pickCount = (5 - requiredTokens.size).coerceAtLeast(1)
+
+            if (pool.size < pickCount) {
+                val base = (pool + requiredTokens).distinct()
+                val combo = base.joinToString(" ")
+                seen.add(combo); result.add(combo)
+                return List(count) { i -> result[i % result.size] }
             }
-            permute(emptyList(), words)
-            return out
+
+            var attempts = 0
+            while (result.size < count && attempts++ < count * 20) {
+                val picked = pool.shuffled().take(pickCount)
+                val words = picked + requiredTokens
+                val combo = words.joinToString(" ")
+                if (seen.add(combo)) result.add(combo)
+            }
+            return List(count) { i -> result[i % result.size] }
         }
     }
 }

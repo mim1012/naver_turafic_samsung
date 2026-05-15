@@ -14,6 +14,13 @@ tags:
 
 - [[2026-05-06 AI Reward Samsung MID 터치 검증]]
 - [[AI Reward 브라우저 기준 비교]]
+- [AI Reward runtime snapshot plan](../ai-reward-runtime-snapshot-plan.md)
+
+## 0509 실험 — Strategy A/B (S7)
+
+- [[2026-05-09 Strategy A 기준선 200회 실험]] — 미니캣타워, 200/200, IP rotation 40/40
+- [[2026-05-09 Strategy B Referer navigator 실험]] — 귀리, Referer+navigator 스푸핑, 182/200
+- [[2026-05-09 A-B 전략 비교 및 다음 계획]] — 비교 결론 및 다음 실험 계획
 
 ## 현재 결론
 
@@ -55,6 +62,7 @@ m.smartstore.naver.com/.../products/4550969819
 - UA, Client Hints, 브라우저 지문은 AI Reward와 동일하게 맞춘 상태가 아니다.
 - 현재 비교의 의미는 browser identity 복제가 아니라 mobile behavior/path parity 검증이다.
 - CDP 네트워크 이벤트 순서는 AI Reward history 캡처 순서와 1:1로 같다고 단정하지 않는다.
+- UA, Client Hints, viewport, WebGL/GPU 값은 비교 증거로만 수집한다. `test/0506` strict pass 기준은 shopping path endpoint와 최종 상품 도달이다.
 
 ## 실행 스크립트
 
@@ -67,6 +75,7 @@ m.smartstore.naver.com/.../products/4550969819
 ## 관련 원문
 
 - [docs/ai-reward-browser-comparison.md](../ai-reward-browser-comparison.md)
+- [docs/ai-reward-runtime-snapshot-plan.md](../ai-reward-runtime-snapshot-plan.md)
 - [test/0506/README.md](../../test/0506/README.md)
 - [test/0506/app-owned-devtools-mid-once-20260506-131205.flow.txt](../../test/0506/app-owned-devtools-mid-once-20260506-131205.flow.txt)
 - [S10 50회 summary](../../test/0506/app-owned-devtools-mid-50-20260506-154908.summary.txt)

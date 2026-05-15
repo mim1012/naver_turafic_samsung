@@ -28,4 +28,24 @@ class WebViewBrowserSession(
     override suspend fun resetSurface() {
         webViewManager.resetSurface()
     }
+
+    override suspend fun simulateAutocomplete(keyword: String) {
+        webViewManager.simulateAutocomplete(keyword)
+    }
+
+    override suspend fun tapSearchBar(): Boolean {
+        return webViewManager.tapSearchBar()
+    }
+
+    override suspend fun typeIntoSearchBar(keyword: String): Boolean {
+        return webViewManager.typeIntoSearchBar(keyword)
+    }
+
+    override suspend fun tapSearchSubmitAndWait(timeoutMs: Long): Boolean {
+        return webViewManager.tapSearchSubmitAndWait(timeoutMs)
+    }
+
+    override suspend fun scrollBy(dy: Int) {
+        webViewManager.scrollByJs(dy)
+    }
 }

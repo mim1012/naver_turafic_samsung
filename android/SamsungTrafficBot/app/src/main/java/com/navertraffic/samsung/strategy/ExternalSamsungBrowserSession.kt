@@ -61,4 +61,10 @@ class ExternalSamsungBrowserSession(
         lastUrl = null
         log("APK 백그라운드 유지: 다음 URL을 Samsung Internet 전면에 로드")
     }
+
+    override suspend fun scrollBy(dy: Int) {
+        if (!BrowserAccessibilityService.isReady()) return
+        if (dy > 0) BrowserAccessibilityService.swipeDetail(1_500)
+        // 위로 스크롤(dy < 0)은 Accessibility 모드에서 미지원 — 생략
+    }
 }

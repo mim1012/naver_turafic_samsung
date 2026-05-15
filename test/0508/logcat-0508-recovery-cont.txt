@@ -1,0 +1,1236 @@
+--------- beginning of main
+--------- beginning of system
+05-08 20:56:12.819 I/SamsungTrafficBot( 3286): ADB autoRun 요청 수신
+05-08 20:56:12.833 I/SamsungTrafficBot( 3286): 네이버 계정 자동 복원됨
+05-08 20:56:13.004 I/SamsungTrafficBot( 3286): 서버 URL 없음: 로컬 smoke 모드
+05-08 20:56:13.022 I/SamsungTrafficBot( 3286): 상품 task 없음: 하드코딩 smoke 상품 사용
+05-08 20:56:13.026 I/SamsungTrafficBot( 3286): 2차 검색어 5개 조합 생성 (꼬리: 캣타워)
+05-08 20:56:13.028 I/SamsungTrafficBot( 3286):   [1] 미니 소형 낮은 먼치킨 캣타워
+05-08 20:56:13.030 I/SamsungTrafficBot( 3286):   [2] 낮은 소형 미니 먼치킨 캣타워
+05-08 20:56:13.032 I/SamsungTrafficBot( 3286):   [3] 미니 오볼로 뚱냥이 소형 캣타워
+05-08 20:56:13.033 I/SamsungTrafficBot( 3286):   [4] 고양이 미니 오볼로 소형 캣타워
+05-08 20:56:13.035 I/SamsungTrafficBot( 3286):   [5] 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 20:56:13.048 I/SamsungTrafficBot( 3286): 네이버 쿠키 세션 유지됨 — 로그인 생략
+05-08 20:56:13.051 I/SamsungTrafficBot( 3286): A전략 반복 1/100 [1/5번 조합]
+05-08 20:56:13.053 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:56:13.057 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:56:13.059 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:56:14.416 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:56:15.181 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:56:15.935 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:56:15.952 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:19.334 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:20.990 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:21.025 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:23.544 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:56:26.996 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 20:56:27.008 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:30.279 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:30.333 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:31.508 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:33.978 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:56:37.364 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:56:37.503 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:56:38.534 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:56:42.601 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nksqoieKssTZNUjw-092849&NaPm=ct%3Dmowv0kwo%7Cci%3Db8d91177ec73d0ede60bd568a52ed6d3ce3ef524%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D50800ec9852a22688e63069dc9006e6eb77e3e9c
+05-08 20:56:44.822 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:56:45.134 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nksqoieKssTZNUjw-092849&NaPm=ct%3Dmowv0kwo%7Cci%3Db8d91177ec73d0ede60bd568a52ed6d3ce3ef524%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D50800ec9852a22688e63069dc9006e6eb77e3e9c
+05-08 20:56:45.329 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:56:45.350 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:56:45.970 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:56:47.983 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:56:51.805 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 1건
+05-08 20:56:51.834 I/SamsungTrafficBot( 3286): A전략 반복 2/100 [2/5번 조합]
+05-08 20:56:51.853 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:56:51.872 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:56:51.894 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:56:52.261 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:56:52.492 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:56:53.777 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:56:53.812 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:56.138 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:57.875 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:56:57.955 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:00.251 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:57:03.258 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 20:57:03.271 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:03.491 I/SamsungTrafficBot( 3286): 로드 오류: net::ERR_FAILED
+05-08 20:57:03.993 I/SamsungTrafficBot( 3286): 페이지 로드 실패 감지: 재시도 2/3
+05-08 20:57:05.571 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:05.821 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:06.771 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:08.138 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:09.379 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:57:13.086 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:57:13.214 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:57:13.363 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:14.292 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:57:16.089 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nClqoieKssTZNOz0-406490&NaPm=ct%3Dmowv1bww%7Cci%3D1ea75281f76568871af1d6936bcade1ff2360638%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D89a74a093f2ae83aea5db36a0c42c5578b577688
+05-08 20:57:18.492 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nClqoieKssTZNOz0-406490&NaPm=ct%3Dmowv1bww%7Cci%3D1ea75281f76568871af1d6936bcade1ff2360638%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D89a74a093f2ae83aea5db36a0c42c5578b577688
+05-08 20:57:20.289 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:57:20.533 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:57:20.814 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:57:21.509 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:57:23.105 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:57:26.722 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 2건
+05-08 20:57:26.774 I/SamsungTrafficBot( 3286): A전략 반복 3/100 [3/5번 조합]
+05-08 20:57:26.810 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:57:26.845 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:57:26.875 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:57:27.297 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:57:27.590 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:57:28.817 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:57:28.903 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:31.380 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:32.571 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:32.662 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:35.133 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:57:38.849 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 20:57:38.889 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:40.714 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:42.074 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:45.111 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:57:48.245 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:57:48.372 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:57:48.511 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:57:49.430 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:57:51.227 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nWsqoieKssTZNBnV-186102&NaPm=ct%3Dmowv22x4%7Cci%3Dd76716c833fd9f72bd8c6b06d20e5227cbade3c4%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dd56bfa79a2759d22d7d51b8987a4d7c8a47a0245
+05-08 20:57:53.858 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3nWsqoieKssTZNBnV-186102&NaPm=ct%3Dmowv22x4%7Cci%3Dd76716c833fd9f72bd8c6b06d20e5227cbade3c4%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dd56bfa79a2759d22d7d51b8987a4d7c8a47a0245
+05-08 20:57:55.536 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:57:55.657 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:57:56.069 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:57:56.754 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:57:58.201 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:58:01.866 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 3건
+05-08 20:58:01.916 I/SamsungTrafficBot( 3286): A전략 반복 4/100 [4/5번 조합]
+05-08 20:58:01.947 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:58:01.979 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:58:02.010 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:58:02.370 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:58:02.696 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:58:03.916 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:58:04.000 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:06.421 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:07.612 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:10.186 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:58:13.404 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 20:58:13.447 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:15.175 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:16.309 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:16.439 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:18.866 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:58:22.344 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:58:22.476 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:58:22.603 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:23.589 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:58:24.581 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3n1lqoieKssTZNoG4-288440&NaPm=ct%3Dmowv2txc%7Cci%3D2503da37952428adcf118405373edc8746ae9d54%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D2cbab3ed33311f35798223ec1669265cc4e5cb81
+05-08 20:58:28.156 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3n1lqoieKssTZNoG4-288440&NaPm=ct%3Dmowv2txc%7Cci%3D2503da37952428adcf118405373edc8746ae9d54%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D2cbab3ed33311f35798223ec1669265cc4e5cb81
+05-08 20:58:29.667 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:58:29.803 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:58:30.198 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:58:30.855 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:58:32.318 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:58:36.033 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 4건
+05-08 20:58:36.095 I/SamsungTrafficBot( 3286): A전략 반복 5/100 [5/5번 조합]
+05-08 20:58:36.131 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:58:36.165 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:58:36.195 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:58:36.638 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:58:36.892 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:58:38.181 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:58:38.268 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:40.798 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:42.084 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:42.188 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:44.642 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:58:47.921 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 20:58:47.942 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:49.868 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:51.555 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:51.632 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:51.673 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:51.710 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:51.743 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:53.598 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:58:57.017 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:58:57.140 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:58:57.355 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:58:58.214 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:59:00.184 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3n%2BdqoieKssTZNXhN-054972&NaPm=ct%3Dmowv3k5s%7Cci%3D047500966b7a6b2edb5ad416d339fd1aab8ee14f%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3De065264bbaa9d6451a450d0bcdfe970713c49917
+05-08 20:59:03.039 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3n%2BdqoieKssTZNXhN-054972&NaPm=ct%3Dmowv3k5s%7Cci%3D047500966b7a6b2edb5ad416d339fd1aab8ee14f%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3De065264bbaa9d6451a450d0bcdfe970713c49917
+05-08 20:59:04.440 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:59:04.678 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:59:04.976 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:59:05.673 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:59:07.108 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:59:10.778 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 5건
+05-08 20:59:10.827 I/SamsungTrafficBot( 3286): A전략 반복 6/100 [1/5번 조합]
+05-08 20:59:10.855 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:59:10.877 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:59:10.900 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:59:11.207 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:59:11.515 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:59:12.772 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:59:12.837 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:15.327 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:16.690 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:16.792 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:19.158 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:59:22.187 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 20:59:22.223 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:24.997 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:25.129 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:26.174 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:29.019 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 20:59:32.761 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 20:59:32.895 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 20:59:33.954 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 20:59:35.923 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dbwqoieKssTZNzll-496695&NaPm=ct%3Dmowv4bxs%7Cci%3D6b6fc3c5b51a3a15d6a203e60f84e646bdb4c5ff%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D1124ccd757f5b16618d27a5549d0440bf230279d
+05-08 20:59:38.811 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dbwqoieKssTZNzll-496695&NaPm=ct%3Dmowv4bxs%7Cci%3D6b6fc3c5b51a3a15d6a203e60f84e646bdb4c5ff%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D1124ccd757f5b16618d27a5549d0440bf230279d
+05-08 20:59:39.801 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 20:59:40.383 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 20:59:40.415 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 20:59:41.013 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 20:59:42.445 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 20:59:46.100 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 6건
+05-08 20:59:46.161 I/SamsungTrafficBot( 3286): A전략 반복 7/100 [2/5번 조합]
+05-08 20:59:46.192 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 20:59:46.221 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 20:59:46.247 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 20:59:46.646 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:59:46.937 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 20:59:48.157 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 20:59:48.196 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:50.954 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:52.375 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:52.480 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:54.837 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 20:59:58.248 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 20:59:58.291 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 20:59:59.970 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:01.907 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:02.038 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:03.727 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:00:07.247 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:00:07.368 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:00:07.735 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:08.438 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:00:10.677 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dnwqoieKssTZNHvd-108368&NaPm=ct%3Dmowv52y0%7Cci%3D28683bf74277ca02d995036c4b9334ccbfedc86b%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D697e97fcd066c721c58413deaf7a72443d0fab72
+05-08 21:00:13.853 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dnwqoieKssTZNHvd-108368&NaPm=ct%3Dmowv52y0%7Cci%3D28683bf74277ca02d995036c4b9334ccbfedc86b%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D697e97fcd066c721c58413deaf7a72443d0fab72
+05-08 21:00:14.801 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:00:15.324 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:00:15.351 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:00:15.977 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:00:17.450 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:00:21.092 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 7건
+05-08 21:00:21.138 I/SamsungTrafficBot( 3286): A전략 반복 8/100 [3/5번 조합]
+05-08 21:00:21.174 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:00:21.209 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:00:21.237 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:00:21.591 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:00:22.463 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:00:23.105 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:00:23.178 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:25.988 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:27.882 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:28.090 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:29.852 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:00:33.050 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:00:33.085 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:34.764 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:36.370 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:38.674 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:00:42.232 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:00:42.354 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:00:42.677 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:00:43.413 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:00:45.742 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dhlqoieKssTZN%2BXl-167853&NaPm=ct%3Dmowv5ty8%7Cci%3D41c02632db1520e874893b6639d1274e3c9f9a67%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dd9cad53c607f1b29b4e06d1225d68040e3697ef7
+05-08 21:00:49.196 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dhlqoieKssTZN%2BXl-167853&NaPm=ct%3Dmowv5ty8%7Cci%3D41c02632db1520e874893b6639d1274e3c9f9a67%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dd9cad53c607f1b29b4e06d1225d68040e3697ef7
+05-08 21:00:50.203 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:00:50.498 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:00:50.734 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:00:51.381 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:00:52.925 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:00:56.674 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 8건
+05-08 21:00:56.724 I/SamsungTrafficBot( 3286): A전략 반복 9/100 [4/5번 조합]
+05-08 21:00:56.759 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:00:56.792 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:00:56.821 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:00:57.197 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:00:57.506 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:00:58.735 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:00:58.821 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:01.535 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:02.968 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:03.083 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:05.351 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:01:08.368 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:01:08.404 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:10.183 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:12.259 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:13.940 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:01:17.142 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:01:17.242 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:01:17.467 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:18.337 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:01:20.205 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dmdqoieKssTZNZOo-288173&NaPm=ct%3Dmowv6k6o%7Cci%3Dfcfe04e2d1730c75d7dc46c017259e61fdb5c298%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Df562fb772d2d3980eff71c09e3a80ba40d58be2d
+05-08 21:01:23.207 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dmdqoieKssTZNZOo-288173&NaPm=ct%3Dmowv6k6o%7Cci%3Dfcfe04e2d1730c75d7dc46c017259e61fdb5c298%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Df562fb772d2d3980eff71c09e3a80ba40d58be2d
+05-08 21:01:24.572 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:01:24.764 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:01:25.100 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:01:25.755 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:01:27.219 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:01:30.950 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 9건
+05-08 21:01:31.011 I/SamsungTrafficBot( 3286): A전략 반복 10/100 [5/5번 조합]
+05-08 21:01:31.047 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:01:31.081 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:01:31.109 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:01:31.489 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:01:31.820 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:01:33.057 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:01:33.142 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:35.754 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:37.150 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:39.540 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:01:42.789 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:01:42.824 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:44.403 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:45.862 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:48.168 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:01:51.606 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:01:51.727 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:01:52.031 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:01:52.790 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:01:54.801 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dqsqoieKssTZN598-377184&NaPm=ct%3Dmowv7b6w%7Cci%3D4e9529778f6c1225fabb3a966d13f40dec1a76e3%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D4ea9f31b14c13a9e42672dabf5667d4d3e525107
+05-08 21:01:57.547 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dqsqoieKssTZN598-377184&NaPm=ct%3Dmowv7b6w%7Cci%3D4e9529778f6c1225fabb3a966d13f40dec1a76e3%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D4ea9f31b14c13a9e42672dabf5667d4d3e525107
+05-08 21:01:58.572 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:01:58.758 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:01:59.099 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:01:59.800 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:02:01.453 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:02:05.130 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 10건
+05-08 21:02:05.193 I/SamsungTrafficBot( 3286): A전략 반복 11/100 [1/5번 조합]
+05-08 21:02:05.228 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:02:05.259 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:02:05.287 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:02:05.681 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:02:05.970 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:02:07.202 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:02:07.282 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:09.857 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:11.143 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:11.242 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:13.618 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:02:16.964 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:02:17.005 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:18.763 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:20.010 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:20.076 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:20.193 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:22.633 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:02:26.407 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:02:26.531 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:02:26.842 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:27.594 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:02:29.653 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dylqoieKssTZNnW4-311166&NaPm=ct%3Dmowv8274%7Cci%3D5aa9297f1351935ee1a4b55f5e945291c25cfe20%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D017f6855eeb12687947dc6c32b731c23ec6af24d
+05-08 21:02:32.804 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dylqoieKssTZNnW4-311166&NaPm=ct%3Dmowv8274%7Cci%3D5aa9297f1351935ee1a4b55f5e945291c25cfe20%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D017f6855eeb12687947dc6c32b731c23ec6af24d
+05-08 21:02:33.679 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:02:34.088 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:02:34.207 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:02:34.884 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:02:36.381 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:02:39.995 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 11건
+05-08 21:02:40.059 I/SamsungTrafficBot( 3286): A전략 반복 12/100 [2/5번 조합]
+05-08 21:02:40.094 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:02:40.128 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:02:40.162 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:02:40.585 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:02:40.905 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:02:42.114 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:02:42.190 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:45.271 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:46.774 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:46.892 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:49.293 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:02:52.663 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:02:52.712 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:54.388 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:55.981 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:56.107 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:02:58.494 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:03:01.917 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:03:02.044 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:03:02.161 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:03.127 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:03:05.251 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dJlqoieKssTZNR90-202917&NaPm=ct%3Dmowv8t7c%7Cci%3Dc1602e72512aaf848146c570f2f13309c997dbb7%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D40f06a16321065b34e58cad29e86a14b552bc490
+05-08 21:03:08.443 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3dJlqoieKssTZNR90-202917&NaPm=ct%3Dmowv8t7c%7Cci%3Dc1602e72512aaf848146c570f2f13309c997dbb7%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D40f06a16321065b34e58cad29e86a14b552bc490
+05-08 21:03:09.324 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:03:09.585 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:03:09.855 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:03:10.503 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:03:12.123 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:03:15.860 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 12건
+05-08 21:03:15.925 I/SamsungTrafficBot( 3286): A전략 반복 13/100 [3/5번 조합]
+05-08 21:03:15.960 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:03:15.993 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:03:16.023 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:03:16.396 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:03:16.712 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:03:17.937 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:03:18.024 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:20.588 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:21.589 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:21.694 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:24.275 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:03:27.722 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:03:27.757 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:29.296 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:31.054 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:33.101 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:03:36.391 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:03:36.478 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:03:36.600 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:37.528 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:03:39.461 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eZdqoieKssTZNjeo-418797&NaPm=ct%3Dmowv9k7k%7Cci%3D327844dd72a967dba31df2ab551a0fcabe9b3154%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D5b0ce45916e3bed3a3f9db7527981be1caaee365
+05-08 21:03:42.475 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eZdqoieKssTZNjeo-418797&NaPm=ct%3Dmowv9k7k%7Cci%3D327844dd72a967dba31df2ab551a0fcabe9b3154%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D5b0ce45916e3bed3a3f9db7527981be1caaee365
+05-08 21:03:43.421 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:03:43.948 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:03:44.137 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:03:44.597 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:03:46.046 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:03:49.734 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 13건
+05-08 21:03:49.792 I/SamsungTrafficBot( 3286): A전략 반복 14/100 [4/5번 조합]
+05-08 21:03:49.827 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:03:49.860 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:03:49.897 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:03:50.215 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:03:50.536 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:03:51.740 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:03:51.826 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:54.611 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:56.117 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:56.233 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:03:58.577 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:04:01.747 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:04:01.784 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:03.475 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:04.894 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:05.014 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:07.428 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:04:10.735 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:04:10.826 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:04:10.948 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:11.874 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:04:14.025 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eKwqoieKssTZNQwo-130264&NaPm=ct%3Dmowvaag0%7Cci%3D48c11b17d41192a9500d4d9cae9ba6290d8bac30%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D8dc26ee547ecb93599b7b9ce82c7ef3a3bf42864
+05-08 21:04:17.117 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eKwqoieKssTZNQwo-130264&NaPm=ct%3Dmowvaag0%7Cci%3D48c11b17d41192a9500d4d9cae9ba6290d8bac30%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D8dc26ee547ecb93599b7b9ce82c7ef3a3bf42864
+05-08 21:04:17.868 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:04:18.179 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:04:18.396 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:04:19.087 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:04:20.554 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:04:24.256 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 14건
+05-08 21:04:24.309 I/SamsungTrafficBot( 3286): A전략 반복 15/100 [5/5번 조합]
+05-08 21:04:24.343 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:04:24.376 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:04:24.406 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:04:24.796 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:04:25.115 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:04:26.340 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:04:26.418 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:29.189 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:30.840 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:30.952 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:33.095 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:04:36.248 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:04:36.284 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:38.136 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:40.265 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:41.780 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:04:45.542 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:04:45.668 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:04:45.837 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:04:46.790 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:04:48.780 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eSdqoieKssTZNDdV-411954&NaPm=ct%3Dmowvb1g8%7Cci%3D48a00316918c39a10c8c4ac6f84c2cfa68b87c42%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D292ce0b6f8150e8c96fcd76d3c285087053d9f14
+05-08 21:04:51.876 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eSdqoieKssTZNDdV-411954&NaPm=ct%3Dmowvb1g8%7Cci%3D48a00316918c39a10c8c4ac6f84c2cfa68b87c42%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D292ce0b6f8150e8c96fcd76d3c285087053d9f14
+05-08 21:04:53.092 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:04:53.310 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:04:53.632 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:04:54.330 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:04:55.756 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:04:59.393 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 15건
+05-08 21:04:59.453 I/SamsungTrafficBot( 3286): A전략 반복 16/100 [1/5번 조합]
+05-08 21:04:59.488 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:04:59.520 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:04:59.553 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:04:59.990 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:05:00.345 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:05:01.519 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:05:01.590 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:04.456 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:05.971 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:06.076 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:08.339 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:05:11.729 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:05:11.772 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:13.549 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:14.915 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:14.980 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:15.012 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:15.064 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:17.454 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:05:21.125 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:05:21.219 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:05:21.428 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:22.266 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:05:24.639 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3ePdqoieKssTZNqVV-115406&NaPm=ct%3Dmowvbsgg%7Cci%3D43a0c30eb117335803beaf03e9b81618805f0576%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dff8fd8f322fcf5ef31b4418794a2d795eb5ee48c
+05-08 21:05:27.774 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3ePdqoieKssTZNqVV-115406&NaPm=ct%3Dmowvbsgg%7Cci%3D43a0c30eb117335803beaf03e9b81618805f0576%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dff8fd8f322fcf5ef31b4418794a2d795eb5ee48c
+05-08 21:05:28.548 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:05:28.887 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:05:29.076 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:05:29.777 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:05:31.300 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:05:34.941 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 16건
+05-08 21:05:35.001 I/SamsungTrafficBot( 3286): A전략 반복 17/100 [2/5번 조합]
+05-08 21:05:35.045 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:05:35.082 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:05:35.112 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:05:35.495 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:05:35.779 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:05:37.005 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:05:37.082 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:39.846 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:41.369 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:41.479 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:43.766 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:05:47.294 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:05:47.336 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:48.957 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:50.656 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:53.011 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:05:56.391 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:05:56.494 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:05:56.626 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:05:57.538 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:05:59.753 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eFsqoieKssTZNwS0-512585&NaPm=ct%3Dmowvck8g%7Cci%3De3dc2e2ab7ea412b3a5e115e6a4312a811492860%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D95a4366004f257ded0da483352f8caf696daf0d2
+05-08 21:06:02.844 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eFsqoieKssTZNwS0-512585&NaPm=ct%3Dmowvck8g%7Cci%3De3dc2e2ab7ea412b3a5e115e6a4312a811492860%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D95a4366004f257ded0da483352f8caf696daf0d2
+05-08 21:06:03.843 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:06:04.113 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:06:04.373 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:06:05.021 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:06:06.551 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:06:10.194 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 17건
+05-08 21:06:10.252 I/SamsungTrafficBot( 3286): A전략 반복 18/100 [3/5번 조합]
+05-08 21:06:10.285 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:06:10.318 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:06:10.349 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:06:10.715 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:06:11.012 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:06:12.224 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:06:12.295 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:15.162 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:16.528 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:16.649 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:18.783 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:06:22.267 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:06:22.307 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:24.024 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:25.767 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:25.895 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:27.665 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:06:30.879 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:06:31.001 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:06:31.156 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:32.070 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:06:34.435 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eYwqoieKssTZjkvK-075485&NaPm=ct%3Dmowvdagw%7Cci%3D24416250043ff5d8545b589a86987edf42124c46%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Deeb38bb1a406f55e654d2afa0e3c35e858eacab2
+05-08 21:06:37.377 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eYwqoieKssTZjkvK-075485&NaPm=ct%3Dmowvdagw%7Cci%3D24416250043ff5d8545b589a86987edf42124c46%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Deeb38bb1a406f55e654d2afa0e3c35e858eacab2
+05-08 21:06:38.231 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:06:38.484 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:06:38.774 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:06:39.493 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:06:41.045 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:06:44.623 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 18건
+05-08 21:06:44.699 I/SamsungTrafficBot( 3286): A전략 반복 19/100 [4/5번 조합]
+05-08 21:06:44.732 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:06:44.763 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:06:44.791 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:06:45.126 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:06:45.424 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:06:46.636 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:06:46.710 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:49.476 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:51.030 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:51.146 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:53.531 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:06:57.025 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:06:57.064 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:06:58.872 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:00.100 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:00.179 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:00.207 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:00.233 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:02.610 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:07:06.522 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:07:06.648 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:07:06.776 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:07.714 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:07:10.108 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eGlqoieKssTZeblN-335213&NaPm=ct%3Dmowve28w%7Cci%3D2f55ef2d68aff9c5252fbc19b17df48ae335c30e%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D9404eebedc159e474e28a041ab0668a82f8b6f67
+05-08 21:07:13.485 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3eGlqoieKssTZeblN-335213&NaPm=ct%3Dmowve28w%7Cci%3D2f55ef2d68aff9c5252fbc19b17df48ae335c30e%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D9404eebedc159e474e28a041ab0668a82f8b6f67
+05-08 21:07:14.495 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:07:15.019 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:07:15.055 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:07:15.682 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:07:17.234 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:07:20.969 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 19건
+05-08 21:07:21.015 I/SamsungTrafficBot( 3286): A전략 반복 20/100 [5/5번 조합]
+05-08 21:07:21.050 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:07:21.079 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:07:21.108 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:07:21.556 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:07:21.877 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:07:23.063 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:07:23.149 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:25.919 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:27.620 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:27.723 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:30.025 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:07:33.271 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:07:33.314 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:34.994 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:36.254 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:36.379 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:38.657 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:07:42.288 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:07:42.415 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:07:42.746 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:07:43.479 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:07:45.826 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3ftlqoieKssTZNs4C-378038&NaPm=ct%3Dmowveu0w%7Cci%3D6fb126b2fe6aff94c719dbb29b515361be90b958%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D653c296568418569d0d70c8d406c64fa227d48fc
+05-08 21:07:48.954 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3ftlqoieKssTZNs4C-378038&NaPm=ct%3Dmowveu0w%7Cci%3D6fb126b2fe6aff94c719dbb29b515361be90b958%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D653c296568418569d0d70c8d406c64fa227d48fc
+05-08 21:07:49.811 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:07:50.108 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:07:50.339 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:07:50.990 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:07:52.519 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:07:56.201 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 20건
+05-08 21:07:56.261 I/SamsungTrafficBot( 3286): A전략 반복 21/100 [1/5번 조합]
+05-08 21:07:56.295 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:07:56.329 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:07:56.361 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:07:56.748 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:07:57.056 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:07:58.261 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:07:58.344 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:01.334 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:02.940 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:03.040 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:05.351 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:08:08.643 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:08:08.686 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:10.389 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:12.110 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:14.200 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:08:17.545 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:08:17.660 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:08:17.881 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:18.737 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:08:20.780 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3f6lqoieKssTZNax4-133365&NaPm=ct%3Dmowvfl14%7Cci%3Dd0e30f6c9766f6d5704ee27e7141f3832164024d%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D1e3a42d74cbc5bbb48059e01697debf11f2b6f65
+05-08 21:08:24.062 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3f6lqoieKssTZNax4-133365&NaPm=ct%3Dmowvfl14%7Cci%3Dd0e30f6c9766f6d5704ee27e7141f3832164024d%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D1e3a42d74cbc5bbb48059e01697debf11f2b6f65
+05-08 21:08:24.817 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:08:25.069 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:08:25.349 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:08:26.056 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:08:27.697 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:08:31.447 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 21건
+05-08 21:08:31.508 I/SamsungTrafficBot( 3286): A전략 반복 22/100 [2/5번 조합]
+05-08 21:08:31.542 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:08:31.575 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:08:31.608 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:08:32.058 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:08:32.394 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:08:33.614 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:08:33.669 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:36.535 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:38.288 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:40.619 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:08:43.910 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:08:43.949 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:45.679 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:47.609 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:47.757 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:49.367 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:08:52.511 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:08:52.595 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:08:52.823 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:08:53.646 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:08:56.088 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fgdqoieKssTZN7Oo-353043&NaPm=ct%3Dmowvgc1c%7Cci%3D3d8e38fe83f9b5d9c59538f0289f727174a7498a%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3De38a2be54d8d4f523e0712b6236f9b48188405ac
+05-08 21:08:59.512 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fgdqoieKssTZN7Oo-353043&NaPm=ct%3Dmowvgc1c%7Cci%3D3d8e38fe83f9b5d9c59538f0289f727174a7498a%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3De38a2be54d8d4f523e0712b6236f9b48188405ac
+05-08 21:09:00.230 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:09:00.551 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:09:00.757 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:09:01.412 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:09:02.996 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:09:06.739 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 22건
+05-08 21:09:06.803 I/SamsungTrafficBot( 3286): A전략 반복 23/100 [3/5번 조합]
+05-08 21:09:06.837 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:09:06.869 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:09:06.898 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:09:07.288 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:09:07.539 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:09:08.800 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:09:08.884 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:11.653 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:13.248 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:13.356 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:15.687 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:09:19.116 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:09:19.155 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:20.891 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:22.190 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:24.582 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:09:28.417 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:09:28.509 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:09:28.794 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:29.548 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:09:31.882 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fNsqoieKssTZNebh-199428&NaPm=ct%3Dmowvh3tc%7Cci%3Dbcf845dc49fb37851d90159bcc3cec8acc37b31e%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Da26660b65e16867a4bed3414fe7384f8d8c35aea
+05-08 21:09:34.995 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fNsqoieKssTZNebh-199428&NaPm=ct%3Dmowvh3tc%7Cci%3Dbcf845dc49fb37851d90159bcc3cec8acc37b31e%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Da26660b65e16867a4bed3414fe7384f8d8c35aea
+05-08 21:09:35.804 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:09:36.053 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:09:36.333 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:09:36.982 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:09:38.487 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:09:42.133 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 23건
+05-08 21:09:42.178 I/SamsungTrafficBot( 3286): A전략 반복 24/100 [4/5번 조합]
+05-08 21:09:42.209 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:09:42.235 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:09:42.261 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:09:42.645 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:09:42.876 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:09:44.165 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:09:44.244 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:46.999 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:49.399 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:50.816 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:09:54.281 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:09:54.328 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:56.199 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:57.542 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:57.673 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:09:59.983 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:10:03.265 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:10:03.373 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:10:03.524 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:04.449 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:10:06.603 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fCwqoieKssTZNTd0-362458&NaPm=ct%3Dmowvhu1s%7Cci%3D089ac4ab47c5fdf68992705d969c3f39d670f5a5%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D9e7a00420048eac70aa9827abe665e64cab257e5
+05-08 21:10:09.722 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fCwqoieKssTZNTd0-362458&NaPm=ct%3Dmowvhu1s%7Cci%3D089ac4ab47c5fdf68992705d969c3f39d670f5a5%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D9e7a00420048eac70aa9827abe665e64cab257e5
+05-08 21:10:10.462 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:10:10.641 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:10:10.994 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:10:11.652 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:10:13.240 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:10:16.890 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 24건
+05-08 21:10:16.949 I/SamsungTrafficBot( 3286): A전략 반복 25/100 [5/5번 조합]
+05-08 21:10:16.987 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:10:17.020 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:10:17.055 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:10:17.454 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:10:18.375 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:10:18.976 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:10:19.058 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:21.745 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:23.532 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:23.654 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:25.460 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:10:28.485 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:10:28.524 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:30.383 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:31.803 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:34.150 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:10:37.827 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:10:37.938 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:10:38.143 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:38.984 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:10:41.069 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fWdqoieKssTZNk0w-000417&NaPm=ct%3Dmowvil20%7Cci%3Dcdcf9d617b6f96b5fb264a116f2635e9385fd1da%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dccbcd3ada5981fe3135528cc4a6f019de77c2080
+05-08 21:10:44.524 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3fWdqoieKssTZNk0w-000417&NaPm=ct%3Dmowvil20%7Cci%3Dcdcf9d617b6f96b5fb264a116f2635e9385fd1da%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dccbcd3ada5981fe3135528cc4a6f019de77c2080
+05-08 21:10:45.391 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:10:45.636 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:10:45.925 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:10:46.569 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:10:48.174 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:10:51.844 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 25건
+05-08 21:10:51.902 I/SamsungTrafficBot( 3286): A전략 반복 26/100 [1/5번 조합]
+05-08 21:10:51.939 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:10:51.970 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:10:51.998 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:10:52.334 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:10:52.643 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:10:53.853 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:10:53.941 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:56.891 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:59.290 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:10:59.402 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:00.975 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:11:04.660 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:11:04.703 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:06.640 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:08.249 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:10.491 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:11:13.603 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:11:13.723 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:11:13.995 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:14.789 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:11:17.312 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3f2lqoieKssTZNmmV-144013&NaPm=ct%3Dmowvjcu0%7Cci%3D19f6a51f350bfaa8ef0013774cf2629806eb94cb%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Db6b1d256c7027911e79d8c0ce543fc60dcba094d
+05-08 21:11:20.775 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:11:21.198 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:11:21.309 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:11:21.973 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:11:23.566 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:11:27.285 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 26건
+05-08 21:11:27.333 I/SamsungTrafficBot( 3286): A전략 반복 27/100 [2/5번 조합]
+05-08 21:11:27.368 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:11:27.401 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:11:27.428 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:11:28.083 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:11:28.151 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:11:29.604 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:11:29.689 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:32.934 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:34.817 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:34.940 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:36.514 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:11:39.768 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:11:39.798 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:41.859 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:43.566 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:45.709 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:11:48.921 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:11:48.998 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:11:49.202 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:11:50.038 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:11:52.670 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3f%2FdqoieKssTZNEJR-517486&NaPm=ct%3Dmowvk3u8%7Cci%3Dac1b2da8aa3c45a7d8f484489a1a68b488381e10%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D247e62a23c094a4d68fa06cecfc4a9f70c8c21e3
+05-08 21:11:56.239 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:11:56.762 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:11:56.818 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:11:57.454 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:11:59.179 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:12:02.931 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 27건
+05-08 21:12:02.986 I/SamsungTrafficBot( 3286): A전략 반복 28/100 [3/5번 조합]
+05-08 21:12:03.019 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:12:03.053 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:12:03.082 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:12:03.407 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:12:03.721 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:12:04.921 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:12:04.965 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:08.464 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:10.721 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:12.096 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:12:15.752 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:12:15.785 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:17.992 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:19.610 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:19.690 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:19.729 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:19.771 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:21.833 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:12:25.333 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:12:25.432 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:12:25.565 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:26.468 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:12:29.113 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3g4dqoieKssTZNV4C-291399&NaPm=ct%3Dmowvkvm8%7Cci%3Dfd605e917fc3f532c136da6c963c4337d0279eb1%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D33c5185787142849ca3feb13cb92d0ca61217ca9
+05-08 21:12:32.979 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:12:33.258 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:12:33.518 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:12:34.212 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:12:36.029 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:12:39.787 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 28건
+05-08 21:12:39.845 I/SamsungTrafficBot( 3286): A전략 반복 29/100 [4/5번 조합]
+05-08 21:12:39.878 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:12:39.910 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:12:39.940 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:12:40.339 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:12:40.638 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:12:41.853 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:12:41.932 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:45.529 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:48.193 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:48.329 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:49.664 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:12:52.654 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:12:52.684 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:54.816 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:56.691 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:12:58.556 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:13:01.933 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:13:02.021 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:13:02.181 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:03.078 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:13:06.058 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3gelqoieKssTZNxmV-022784&NaPm=ct%3Dmowvlo60%7Cci%3D6603fd4a4ed7be3d7836c735e691216502d1621c%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D121f4efe82858460929f8751a0344b19b1787eea
+05-08 21:13:09.805 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:13:10.316 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:13:10.366 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:13:10.998 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:13:12.727 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:13:16.485 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 29건
+05-08 21:13:16.542 I/SamsungTrafficBot( 3286): A전략 반복 30/100 [5/5번 조합]
+05-08 21:13:16.574 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:13:16.606 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:13:16.637 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:13:17.020 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:13:17.360 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:13:18.573 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:13:18.645 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:22.252 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:24.249 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:24.380 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:25.933 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:13:29.353 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:13:29.396 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:31.732 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:33.633 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:35.514 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:13:39.029 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:13:39.128 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:13:39.414 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:40.179 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:13:42.848 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3gjlqoieKssTZN2Ed-243442&NaPm=ct%3Dmowvmgps%7Cci%3Df95dac93e5c79dd855e4dac1ae1a2609d6ff1314%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D7efa524fc16e9b8ea59fe91fccc5dec598126fe7
+05-08 21:13:47.542 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:13:47.819 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:13:48.087 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:13:48.773 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:13:50.463 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:13:54.231 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 30건
+05-08 21:13:54.280 I/SamsungTrafficBot( 3286): A전략 반복 31/100 [1/5번 조합]
+05-08 21:13:54.313 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:13:54.344 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:13:54.374 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:13:54.816 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:13:55.104 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:13:56.326 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:13:56.398 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:13:59.936 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:01.970 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:02.100 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:03.568 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:14:06.763 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:14:06.799 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:09.133 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:10.818 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:10.971 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:12.782 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:14:16.326 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:14:16.444 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:14:16.727 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:17.514 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:14:20.116 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3gCsqoieKssTZN8PK-359562&NaPm=ct%3Dmowvna1c%7Cci%3Dff5816ff361c33c59e2a3976213194a38aa550b8%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D3fcd22deabb64e94f3684790ca972807af1b4fa0
+05-08 21:14:23.922 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:14:24.454 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:14:24.492 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:14:25.119 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:14:26.902 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:14:30.642 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 31건
+05-08 21:14:30.696 I/SamsungTrafficBot( 3286): A전략 반복 32/100 [2/5번 조합]
+05-08 21:14:30.729 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:14:30.760 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:14:30.789 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:14:31.232 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:14:31.506 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:14:32.740 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:14:32.818 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:36.008 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:37.953 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:38.079 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:39.609 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:14:42.735 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:14:42.763 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:44.953 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:46.516 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:46.657 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:48.930 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:14:52.683 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:14:52.811 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:14:52.967 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:14:53.877 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:14:56.452 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3gWsqoieKssTZNtwC-491426&NaPm=ct%3Dmowvo1tc%7Cci%3Dd7d1f199a9790acc0520baaae8b36b339e9ccbda%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Df8620c46163cedb85f61b4bad9a9c8bde7c6ec4d
+05-08 21:15:00.225 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:15:00.788 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:15:00.823 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:15:01.454 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:15:03.272 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:15:06.965 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 32건
+05-08 21:15:07.021 I/SamsungTrafficBot( 3286): A전략 반복 33/100 [3/5번 조합]
+05-08 21:15:07.056 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:15:07.087 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:15:07.118 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:15:07.487 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:15:07.791 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:15:08.993 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:15:09.061 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:12.601 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:15.020 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:15.147 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:16.169 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:15:19.555 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:15:19.590 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:21.858 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:23.682 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:25.889 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:15:29.470 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:15:29.593 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:15:29.710 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:30.679 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:15:33.418 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3g2sqoieKssTZNcfo-156473&NaPm=ct%3Dmowvoud4%7Cci%3D03eb731e0a3c7029b3d289b43fab8d13148ede05%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3De8279c32679a683555620953199e7dd492a1add8
+05-08 21:15:36.962 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:15:37.249 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:15:37.498 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:15:38.172 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:15:40.058 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:15:43.776 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 33건
+05-08 21:15:43.823 I/SamsungTrafficBot( 3286): A전략 반복 34/100 [4/5번 조합]
+05-08 21:15:43.855 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:15:43.886 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:15:43.914 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:15:44.315 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:15:44.618 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:15:45.834 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:15:45.911 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:49.826 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:51.971 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:53.482 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:15:57.087 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:15:57.119 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:15:59.197 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:01.220 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:01.360 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:03.499 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:16:06.776 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:16:06.895 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:16:07.034 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:07.965 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:16:10.530 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3g%2FlqoieKssTZRzX4-373376&NaPm=ct%3Dmowvpmww%7Cci%3D740f92b644697523bd3227d50a0896629f5a470a%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D3ec3e7ca394a77a26b6ac3487cc0ae35a2850069
+05-08 21:16:14.535 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:16:15.082 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:16:15.149 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:16:15.724 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:16:17.574 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:16:21.356 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 34건
+05-08 21:16:21.409 I/SamsungTrafficBot( 3286): A전략 반복 35/100 [5/5번 조합]
+05-08 21:16:21.441 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:16:21.473 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:16:21.504 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:16:21.899 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:16:22.199 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:16:23.421 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:16:23.493 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:26.994 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:28.688 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:28.818 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:31.130 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:16:34.346 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:16:34.382 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:36.565 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:38.558 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:40.099 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:16:43.688 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:16:43.811 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:16:44.036 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:16:44.880 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:16:48.230 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3R4wqoieKssTZNgu8-129146&NaPm=ct%3Dmowvqfgo%7Cci%3Dca0b8ec76b0307fed9df541beb454c2847c82748%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D02a9832f1c2ff4033343b472abf8d813b5a62494
+05-08 21:16:51.915 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:16:52.574 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:16:52.617 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:16:53.213 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:16:55.177 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:16:58.907 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 35건
+05-08 21:16:58.952 I/SamsungTrafficBot( 3286): A전략 반복 36/100 [1/5번 조합]
+05-08 21:16:58.984 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:16:59.015 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:16:59.043 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:16:59.393 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:16:59.742 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:17:00.949 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:17:01.040 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:04.489 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:06.358 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:08.683 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:17:11.903 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:17:11.941 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:13.839 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:15.611 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:17.886 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:17:21.368 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:17:21.511 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:17:21.714 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:22.577 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:17:24.825 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RfdqoieKssTZjVBN-443435&NaPm=ct%3Dmowvr8s8%7Cci%3D188d19f192ee15694203c34806638aaadc631c29%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D35bd91dbe98140e9733f048c7ef15f9b7f204759
+05-08 21:17:28.453 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RfdqoieKssTZjVBN-443435&NaPm=ct%3Dmowvr8s8%7Cci%3D188d19f192ee15694203c34806638aaadc631c29%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D35bd91dbe98140e9733f048c7ef15f9b7f204759
+05-08 21:17:29.268 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:17:29.513 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:17:29.801 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:17:30.436 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:17:32.264 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:17:35.983 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 36건
+05-08 21:17:36.033 I/SamsungTrafficBot( 3286): A전략 반복 37/100 [2/5번 조합]
+05-08 21:17:36.066 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:17:36.097 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:17:36.124 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:17:36.453 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:17:36.755 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:17:37.964 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:17:38.047 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:40.759 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:42.242 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:42.354 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:44.397 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:17:47.784 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:17:47.829 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:49.658 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:51.304 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:53.637 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:17:57.564 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:17:57.696 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:17:57.817 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:17:58.762 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:18:01.191 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RkdqoieKssTZNPqG-223450&NaPm=ct%3Dmowvs0k8%7Cci%3D9428d598719034e107cbefad5082148a58c5e086%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D0e36d0e1cb5134c5fadc6dc8e0d3f9ebe26754dc
+05-08 21:18:04.930 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:18:05.002 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RkdqoieKssTZNPqG-223450&NaPm=ct%3Dmowvs0k8%7Cci%3D9428d598719034e107cbefad5082148a58c5e086%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D0e36d0e1cb5134c5fadc6dc8e0d3f9ebe26754dc
+05-08 21:18:05.261 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:18:05.464 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:18:06.156 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:18:07.865 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:18:11.663 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 37건
+05-08 21:18:11.714 I/SamsungTrafficBot( 3286): A전략 반복 38/100 [3/5번 조합]
+05-08 21:18:11.748 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:18:11.781 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:18:11.809 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:18:12.242 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:18:12.512 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:18:13.750 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:18:13.842 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:16.953 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:18.749 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:18.875 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:20.720 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:18:23.990 I/SamsungTrafficBot( 3286): 2차 검색: 미니 오볼로 뚱냥이 소형 캣타워
+05-08 21:18:24.028 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:25.981 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:28.210 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:28.386 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:29.608 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:18:33.349 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:18:33.459 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:18:33.574 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:34.528 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:18:36.764 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RCdqoieKssTZNCho-372888&NaPm=ct%3Dmowvssc8%7Cci%3D093394af3143c365e5e7e75ed81389a72be14092%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Dbc2d3c24545f58697f67c32ea8300a3bdc57adc1
+05-08 21:18:41.024 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:18:41.240 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:18:41.571 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:18:42.277 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:18:44.019 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:18:47.727 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 38건
+05-08 21:18:47.786 I/SamsungTrafficBot( 3286): A전략 반복 39/100 [4/5번 조합]
+05-08 21:18:47.821 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:18:47.854 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:18:47.892 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:18:48.233 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:18:48.531 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:18:49.748 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:18:49.832 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:53.172 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:54.940 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:55.062 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:18:56.770 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:19:00.414 I/SamsungTrafficBot( 3286): 2차 검색: 고양이 미니 오볼로 소형 캣타워
+05-08 21:19:00.453 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:02.672 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:04.342 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:04.485 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:06.227 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:19:09.863 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:19:09.983 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:19:10.115 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:11.056 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:19:13.819 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EB%AF%B8%EB%8B%88+%EC%98%A4%EB%B3%BC%EB%A1%9C+%EC%86%8C%ED%98%95+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3RWdqoieKssTZNp%2B0-283503&NaPm=ct%3Dmowvtk48%7Cci%3D6623acf2ef530e82f9547d80c1d6be915605463d%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D055bc4850a2738d9539fb5f39949828a2daadf68
+05-08 21:19:17.694 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:19:18.233 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:19:18.303 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:19:18.869 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:19:20.622 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:19:24.397 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 39건
+05-08 21:19:24.443 I/SamsungTrafficBot( 3286): A전략 반복 40/100 [5/5번 조합]
+05-08 21:19:24.475 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:19:24.508 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:19:24.537 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:19:24.915 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:19:25.208 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:19:26.425 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:19:26.504 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:30.018 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:31.853 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:31.990 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:34.136 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:19:37.310 I/SamsungTrafficBot( 3286): 2차 검색: 먼치킨 소형 낮은 뚱냥이 캣타워
+05-08 21:19:37.350 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:39.546 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:41.368 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:41.517 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:43.135 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:19:46.892 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:19:47.004 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:19:47.225 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:19:48.059 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:19:50.759 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%9A%B1%EB%83%A5%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3R2lqoieKssTZjwKK-085036&NaPm=ct%3Dmowvuco0%7Cci%3D6cbbdff951120e4b716261920fc473e0064adba9%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3Df0ef450220079c5346082194fe6310c346932eb7
+05-08 21:19:54.706 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:19:55.251 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:19:55.320 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:19:55.915 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:19:57.785 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:20:01.562 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 40건
+05-08 21:20:01.612 I/SamsungTrafficBot( 3286): A전략 반복 41/100 [1/5번 조합]
+05-08 21:20:01.646 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:20:01.682 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:20:01.713 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:20:02.158 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:20:03.066 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:20:03.664 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:20:03.752 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:07.356 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:09.236 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:09.370 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:10.934 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:20:14.498 I/SamsungTrafficBot( 3286): 2차 검색: 미니 소형 낮은 먼치킨 캣타워
+05-08 21:20:14.529 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:16.940 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:18.900 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:20.565 I/SamsungTrafficBot( 3286): 2차 검색결과 스크롤
+05-08 21:20:23.813 I/SamsungTrafficBot( 3286): MID 상품 터치 진입: 88411024518
+05-08 21:20:23.971 I/SamsungTrafficBot( 3286): MID(88411024518) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-08 21:20:24.268 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:25.037 I/SamsungTrafficBot( 3286): 추적 리다이렉트 대기 중 → 상품 상세
+05-08 21:20:28.058 I/SamsungTrafficBot( 3286): 로드 완료: https://m.smartstore.naver.com/o-volo/products/10866518505?nl-query=%EB%AF%B8%EB%8B%88+%EC%86%8C%ED%98%95+%EB%82%AE%EC%9D%80+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C&nl-ts-pid=jQ3R%2FwqoieKssTZN2vG-042929&NaPm=ct%3Dmowvv57s%7Cci%3D66c0014d8c2a6a085f6b99760b423c57dd2c3c3a%7Ctr%3Dsls%7Csn%3D7220747%7Chk%3D1d7b16a6f1134adceeb80527a1ad229587eec34c
+05-08 21:20:31.776 I/SamsungTrafficBot( 3286): 브라우저 닫기 → 네이버 메인홈
+05-08 21:20:32.326 I/SamsungTrafficBot( 3286): 브라우저 화면 재시작: 쿠키 세션 유지
+05-08 21:20:32.381 I/SamsungTrafficBot( 3286): 로드 완료: about:blank
+05-08 21:20:32.962 I/SamsungTrafficBot( 3286): URL 로딩: https://m.naver.com/
+05-08 21:20:34.884 I/SamsungTrafficBot( 3286): 로드 완료: https://m.naver.com/
+05-08 21:20:38.656 I/SamsungTrafficBot( 3286): 쫄병봇 완료: 41건
+05-08 21:20:38.700 I/SamsungTrafficBot( 3286): A전략 반복 42/100 [2/5번 조합]
+05-08 21:20:38.733 I/SamsungTrafficBot( 3286): 쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행
+05-08 21:20:38.764 I/SamsungTrafficBot( 3286): 초기 랜딩: https://snsz.kr
+05-08 21:20:38.796 I/SamsungTrafficBot( 3286): URL 로딩: https://snsz.kr
+05-08 21:20:39.170 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:20:39.486 I/SamsungTrafficBot( 3286): 로드 완료: https://snsz.kr/
+05-08 21:20:40.713 I/SamsungTrafficBot( 3286): 1차 검색: 고양이 캣타워
+05-08 21:20:40.783 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:44.413 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:46.270 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:46.343 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:46.373 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:46.406 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:48.485 I/SamsungTrafficBot( 3286): 1차 검색결과 스크롤
+05-08 21:20:51.971 I/SamsungTrafficBot( 3286): 2차 검색: 낮은 소형 미니 먼치킨 캣타워
+05-08 21:20:52.010 I/SamsungTrafficBot( 3286): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:54.189 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:56.391 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:56.434 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:56.470 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+05-08 21:20:56.539 I/SamsungTrafficBot( 3286): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EA%B3%A0%EC%96%91%EC%9D%B4+%EC%BA%A3%ED%83%80%EC%9B%8C&query=%EB%82%AE%EC%9D%80+%EC%86%8C%ED%98%95+%EB%AF%B8%EB%8B%88+%EB%A8%BC%EC%B9%98%ED%82%A8+%EC%BA%A3%ED%83%80%EC%9B%8C
+--------- beginning of crash

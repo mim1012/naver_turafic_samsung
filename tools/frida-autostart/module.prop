@@ -1,0 +1,6 @@
+id=frida-autostart
+name=Frida Server Autostart
+version=v1
+versionCode=1
+author=local
+description=Starts frida-server on boot as root

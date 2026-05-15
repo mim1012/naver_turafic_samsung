@@ -15,4 +15,8 @@ class DryRunBrowserSession(
     override suspend fun visibleText(): String = ""
 
     override fun currentUrl(): String? = lastUrl
+
+    override suspend fun scrollBy(dy: Int) {
+        log("DRY_RUN scrollBy: dy=$dy")
+    }
 }

@@ -87,8 +87,36 @@ PC
 - 피해야 할 표현: “AI Reward와 브라우저 지문까지 동일하다.”
 - 피해야 할 표현: “AI Reward history 순서와 CDP network event 순서가 완전히 동일하다.”
 
+## 부수값 수집 기준
+
+UA, Client Hints, viewport, timezone, WebGL/GPU, profile state는 path parity의 pass/fail 기준이 아니다.
+
+이 값들이 필요할 때는 다음을 양쪽에서 같은 형식으로 수집한다.
+
+```text
+AI Reward: com.goodreward.cashmoa -> com.aibrowser.app
+Samsung: com.navertraffic.samsung -> com.sec.android.app.sbrowser
+```
+
+수집 대상:
+
+```text
+navigator.userAgent
+navigator.userAgentData
+request headers
+screen / viewport / DPR
+locale / timezone
+WebGL vendor / renderer
+browser package / version / profile path
+activity stack
+Naver shopping flow endpoints
+```
+
+맞출 수 있는 값은 UA, Accept-Language, 일부 Client Hints 정도로 제한된다. package name, launch ownership, Chromium profile path, WebGL/GPU, device fingerprint, history DB 순서는 동일화 목표에서 제외한다.
+
 ## 관련 문서
 
 - [[AI Reward Samsung 검증 인덱스]]
 - [[2026-05-06 AI Reward Samsung MID 터치 검증]]
 - [원문 비교 문서](../ai-reward-browser-comparison.md)
+- [runtime snapshot plan](../ai-reward-runtime-snapshot-plan.md)

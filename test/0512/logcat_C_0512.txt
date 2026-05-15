@@ -1,0 +1,773 @@
+--------- beginning of crash
+--------- beginning of main
+05-13 03:22:03.672 I/SamsungTrafficBot(29139): IP rotation 완료: after=175.223.27.247 | 변경=성공
+05-13 03:22:03.769 I/SamsungTrafficBot(29139): A전략 반복 193/200 [1/3번 조합]
+05-13 03:22:03.810 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:22:03.841 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:22:03.872 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:22:04.433 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:22:06.048 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:22:06.405 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:22:06.449 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:22:08.800 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:22:11.474 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:22:12.008 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:22:13.565 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:22:14.302 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:22:14.381 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:22:18.461 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:22:22.723 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:22:23.037 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:22:23.071 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:22:23.131 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:22:28.738 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:22:29.326 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:22:31.232 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("갤럭"→"갤럭시북4 프리미엄")
+05-13 03:22:31.837 I/SamsungTrafficBot(29139): 2차 검색: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:22:31.873 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:22:35.170 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:22:36.310 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:22:38.989 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:22:44.137 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:22:44.221 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:22:45.260 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:22:50.866 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLYHwqXKZCssRzUW9K-499372&NaPm=ct%3Dmp2ykhsw%7Cci%3D583e00d5e055ceedd41aa4af663178e256d6f44a%7Ctr%3Dsls%7Csn%3D450779%7Chk%3Daacc2c1ba31fa3256cc134e1f7f0ea8f4eca4923
+05-13 03:22:55.460 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLYHwqXKZCssRzUW9K-499372&NaPm=ct%3Dmp2ykhsw%7Cci%3D583e00d5e055ceedd41aa4af663178e256d6f44a%7Ctr%3Dsls%7Csn%3D450779%7Chk%3Daacc2c1ba31fa3256cc134e1f7f0ea8f4eca4923
+05-13 03:22:55.835 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:22:57.758 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:22:58.164 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:22:58.286 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:22:58.955 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:23:01.583 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:23:05.566 I/SamsungTrafficBot(29139): 대장봇 완료: 191건
+05-13 03:23:05.642 I/SamsungTrafficBot(29139): A전략 반복 194/200 [2/3번 조합]
+05-13 03:23:05.681 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:23:05.711 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:23:05.742 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:23:06.187 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:23:07.677 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:23:07.747 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:23:09.581 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:23:12.303 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:23:12.849 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:23:14.651 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:23:15.380 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:23:15.438 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:23:19.332 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:23:21.588 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:23:21.681 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:23:23.050 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:23:27.670 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:23:28.159 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:23:30.236 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("맥북"→"맥북 가죽 프리미엄")
+05-13 03:23:30.884 I/SamsungTrafficBot(29139): 2차 검색: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:23:30.952 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:23:33.211 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:23:34.970 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:23:35.077 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:23:36.330 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:23:39.567 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:23:39.672 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:23:39.793 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:23:40.724 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:23:46.305 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8&nl-ts-pid=jlLw4wqXKZCssRzUwrZ-201226&NaPm=ct%3Dmp2ylp0g%7Cci%3D5d33dab71eeac0cbc60223ca321432c4cfd79f0c%7Ctr%3Dsls%7Csn%3D450779%7Chk%3Db5b0f07139a87fdf81d1962b690ac553a4643e00
+05-13 03:23:50.334 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:23:50.856 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:23:50.891 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:23:51.556 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:23:53.567 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:23:56.903 I/SamsungTrafficBot(29139): 대장봇 완료: 192건
+05-13 03:23:56.991 I/SamsungTrafficBot(29139): A전략 반복 195/200 [3/3번 조합]
+05-13 03:23:57.047 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:23:57.078 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:23:57.109 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:23:57.587 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:23:58.347 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:23:59.051 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:23:59.121 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:24:00.928 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:24:03.695 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:24:04.272 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:24:06.069 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:24:06.722 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:24:06.784 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:24:10.528 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:24:12.905 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:24:13.024 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:24:14.743 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:24:20.968 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:24:21.594 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 갤럭시북4 태블릿 호환 파우치 후기
+05-13 03:24:23.238 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("갤럭"→"갤럭시북4 태블릿 ")
+05-13 03:24:23.951 I/SamsungTrafficBot(29139): 2차 검색: 갤럭시북4 태블릿 호환 파우치 후기
+05-13 03:24:24.022 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:24:27.219 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:24:28.206 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:24:31.668 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:24:37.744 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:24:37.855 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:24:38.909 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:24:42.375 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0&nl-ts-pid=jlLwTsqXKZCssRzUy9s-354320&NaPm=ct%3Dmp2ymxrk%7Cci%3D0705ba3160c475d0efdc83ebaf187fc07cc93f19%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D3f9e3367ae4f8cdf205cc62090fad1d5897c4fba
+05-13 03:24:47.126 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0&nl-ts-pid=jlLwTsqXKZCssRzUy9s-354320&NaPm=ct%3Dmp2ymxrk%7Cci%3D0705ba3160c475d0efdc83ebaf187fc07cc93f19%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D3f9e3367ae4f8cdf205cc62090fad1d5897c4fba
+05-13 03:24:48.625 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:24:48.966 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:24:49.158 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:24:49.731 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:24:51.575 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:24:56.257 I/SamsungTrafficBot(29139): 대장봇 완료: 193건
+05-13 03:24:56.325 I/SamsungTrafficBot(29139): A전략 반복 196/200 [1/3번 조합]
+05-13 03:24:56.358 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:24:56.389 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:24:56.420 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:24:56.858 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:24:57.332 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:24:58.828 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:24:58.904 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:25:00.752 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:25:03.839 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:25:04.524 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:25:05.752 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:25:06.375 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:25:06.415 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:25:10.151 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:25:12.210 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:25:12.327 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:25:15.241 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:25:21.916 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:25:22.630 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:25:24.275 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("갤럭"→"갤럭시북4 프리미엄")
+05-13 03:25:24.861 I/SamsungTrafficBot(29139): 2차 검색: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:25:24.930 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:25:27.335 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:25:29.189 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:25:29.305 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:25:30.656 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:25:34.313 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:25:34.410 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:25:34.756 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:25:35.456 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:25:38.893 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLwDdqXKZCssRzh1oh-085883&NaPm=ct%3Dmp2yo4z4%7Cci%3Db3b93d6c4921316b24b92f3cebbe123b13eda182%7Ctr%3Dsls%7Csn%3D450779%7Chk%3Da1f922c53a5a0db51465040b2014dcd5bfb74ca1
+05-13 03:25:43.239 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLwDdqXKZCssRzh1oh-085883&NaPm=ct%3Dmp2yo4z4%7Cci%3Db3b93d6c4921316b24b92f3cebbe123b13eda182%7Ctr%3Dsls%7Csn%3D450779%7Chk%3Da1f922c53a5a0db51465040b2014dcd5bfb74ca1
+05-13 03:25:43.839 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:25:50.007 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:25:50.544 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:25:50.670 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:25:51.349 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:25:53.652 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:25:57.150 I/SamsungTrafficBot(29139): 대장봇 완료: 194건
+05-13 03:25:57.237 I/SamsungTrafficBot(29139): A전략 반복 197/200 [2/3번 조합]
+05-13 03:25:57.275 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:25:57.308 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:25:57.340 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:25:57.750 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:25:58.165 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:25:59.588 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:25:59.630 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:26:01.258 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:26:04.222 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:26:04.902 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:26:06.531 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:26:07.072 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:26:07.132 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:26:11.561 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:26:14.591 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:26:14.714 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:26:16.319 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:26:20.683 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:26:21.454 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:26:22.994 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("맥북"→"맥북 가죽 프리미엄")
+05-13 03:26:23.559 I/SamsungTrafficBot(29139): 2차 검색: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:26:23.645 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:26.290 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:28.316 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:28.355 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:28.435 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:31.108 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:26:34.734 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:26:34.828 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:26:34.933 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:26:35.875 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:26:38.941 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8&nl-ts-pid=jlLwzwqoiOZssSNV9Os-252322&NaPm=ct%3Dmp2ypg1k%7Cci%3D2cc8fa875bceebe7f31ee2392d61a4bac7ca1004%7Ctr%3Dsls%7Csn%3D450779%7Chk%3De5af1dc1abf26b8dcf653f5373450957a91e3acb
+05-13 03:26:43.181 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8&nl-ts-pid=jlLwzwqoiOZssSNV9Os-252322&NaPm=ct%3Dmp2ypg1k%7Cci%3D2cc8fa875bceebe7f31ee2392d61a4bac7ca1004%7Ctr%3Dsls%7Csn%3D450779%7Chk%3De5af1dc1abf26b8dcf653f5373450957a91e3acb
+05-13 03:26:43.649 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:26:51.361 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:26:51.641 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:26:51.896 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:26:52.647 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:26:54.873 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:26:59.634 I/SamsungTrafficBot(29139): 대장봇 완료: 195건
+05-13 03:26:59.696 I/SamsungTrafficBot(29139): 대장봇 그룹 IP 로테이션 시작
+05-13 03:26:59.892 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:27:02.734 I/SamsungTrafficBot(29139): WebView 연결 정리 완료 (IP 로테이션 전)
+05-13 03:27:02.985 I/SamsungTrafficBot(29139): 삼성 인터넷 강제 종료 완료
+05-13 03:27:03.507 I/SamsungTrafficBot(29139): IP rotation 시작: before=175.223.27.247
+05-13 03:27:25.591 I/SamsungTrafficBot(29139): IP rotation 완료: after=175.223.35.76 | 변경=성공
+05-13 03:27:25.687 I/SamsungTrafficBot(29139): A전략 반복 198/200 [3/3번 조합]
+05-13 03:27:25.728 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:27:25.759 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:27:25.790 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:27:26.326 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:27:28.050 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:27:28.101 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:27:30.336 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:27:33.072 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:27:33.824 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:27:35.368 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_FAILED
+05-13 03:27:35.532 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:27:36.037 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:27:36.086 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:27:40.102 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:27:44.431 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:27:44.526 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:27:45.330 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:27:51.991 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:27:52.527 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 갤럭시북4 태블릿 호환 파우치 후기
+05-13 03:27:54.221 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("갤럭"→"갤럭시북4 태블릿 ")
+05-13 03:27:54.665 I/SamsungTrafficBot(29139): 2차 검색: 갤럭시북4 태블릿 호환 파우치 후기
+05-13 03:27:54.702 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:27:57.543 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:27:57.667 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:27:58.549 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0
+05-13 03:28:00.885 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:28:04.502 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:28:04.621 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:28:05.693 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:28:10.285 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0&nl-ts-pid=jlLx6lqXKcVssULkuZw-096956&NaPm=ct%3Dmp2yrdhk%7Cci%3Dc729bf2aa2fc2ec8def54e19ec9945d2657841b9%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D59a579a2a9c9b6a8a25b7734aed19a12567560ca
+05-13 03:28:14.914 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%83%9C%EB%B8%94%EB%A6%BF+%ED%98%B8%ED%99%98+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%9B%84%EA%B8%B0&nl-ts-pid=jlLx6lqXKcVssULkuZw-096956&NaPm=ct%3Dmp2yrdhk%7Cci%3Dc729bf2aa2fc2ec8def54e19ec9945d2657841b9%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D59a579a2a9c9b6a8a25b7734aed19a12567560ca
+05-13 03:28:15.513 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:28:18.824 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:28:19.004 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:28:19.351 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:28:19.839 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:28:22.423 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:28:26.221 I/SamsungTrafficBot(29139): 대장봇 완료: 196건
+05-13 03:28:26.283 I/SamsungTrafficBot(29139): A전략 반복 199/200 [1/3번 조합]
+05-13 03:28:26.314 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:28:26.344 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:28:26.375 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:28:26.865 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:28:27.649 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:28:28.560 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:28:28.645 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:28:30.209 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:28:33.264 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:28:33.847 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:28:35.019 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:28:35.740 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:28:35.798 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:28:39.522 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:28:43.976 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:28:44.008 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:28:44.081 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:28:45.649 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:28:52.300 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:28:52.915 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:28:54.785 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("갤럭"→"갤럭시북4 프리미엄")
+05-13 03:28:55.508 I/SamsungTrafficBot(29139): 2차 검색: 갤럭시북4 프리미엄 그램 파우치 추천
+05-13 03:28:55.576 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:28:58.065 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:28:59.865 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:28:59.912 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:28:59.986 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:29:03.303 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:29:08.513 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:29:08.635 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:29:08.753 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C
+05-13 03:29:09.704 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:29:15.186 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLxiwqXKcVssULkv%2Bw-304941&NaPm=ct%3Dmp2ysqvc%7Cci%3D9ad13a6e45baf761c84f78780c3f1c392f3a7067%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D99b9943ccbca5d77d6be8d7661db7ba02a547011
+05-13 03:29:19.213 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EA%B0%A4%EB%9F%AD%EC%8B%9C%EB%B6%814+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%EA%B7%B8%EB%9E%A8+%ED%8C%8C%EC%9A%B0%EC%B9%98+%EC%B6%94%EC%B2%9C&nl-ts-pid=jlLxiwqXKcVssULkv%2Bw-304941&NaPm=ct%3Dmp2ysqvc%7Cci%3D9ad13a6e45baf761c84f78780c3f1c392f3a7067%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D99b9943ccbca5d77d6be8d7661db7ba02a547011
+05-13 03:29:21.114 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:29:21.371 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:29:21.916 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:29:22.327 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:29:22.855 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:29:24.991 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:29:28.908 I/SamsungTrafficBot(29139): 대장봇 완료: 197건
+05-13 03:29:28.949 I/SamsungTrafficBot(29139): A전략 반복 200/200 [2/3번 조합]
+05-13 03:29:28.981 I/SamsungTrafficBot(29139): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:29:29.013 I/SamsungTrafficBot(29139): 초기 랜딩: https://snsz.kr
+05-13 03:29:29.050 I/SamsungTrafficBot(29139): URL 로딩: https://snsz.kr
+05-13 03:29:29.496 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:29:30.001 I/SamsungTrafficBot(29139): 로드 완료: https://snsz.kr/
+05-13 03:29:31.064 I/SamsungTrafficBot(29139): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:29:31.144 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:29:32.819 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:29:35.476 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:29:35.953 I/SamsungTrafficBot(29139): 1차 자동완성 시뮬레이션 [A]: 노트북 파우치
+05-13 03:29:37.223 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:29:37.764 I/SamsungTrafficBot(29139): 1차 검색: 노트북 파우치
+05-13 03:29:37.837 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:29:41.473 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:29:44.061 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:29:44.188 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98
+05-13 03:29:46.128 I/SamsungTrafficBot(29139): 1차 검색결과 스크롤
+05-13 03:29:52.078 I/SamsungTrafficBot(29139): 검색창 탭 완료
+05-13 03:29:52.797 I/SamsungTrafficBot(29139): 2차 자동완성 시뮬레이션 [A]: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:29:54.393 I/SamsungTrafficBot(29139): 자동완성 시뮬레이션: 5회 ("맥북"→"맥북 가죽 프리미엄")
+05-13 03:29:54.869 I/SamsungTrafficBot(29139): 2차 검색: 맥북 가죽 프리미엄 파우치 할인
+05-13 03:29:54.911 I/SamsungTrafficBot(29139): URL 로딩: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:29:57.195 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:29:59.019 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:29:59.140 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:30:00.875 I/SamsungTrafficBot(29139): 2차 검색결과 스크롤
+05-13 03:30:05.241 I/SamsungTrafficBot(29139): MID 상품 터치 진입: 82263426809
+05-13 03:30:05.354 I/SamsungTrafficBot(29139): MID(82263426809) 상품 발견: tracked-search-gate (캐러셀 1페이지)
+05-13 03:30:05.636 I/SamsungTrafficBot(29139): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8
+05-13 03:30:06.419 I/SamsungTrafficBot(29139): 추적 리다이렉트 대기 중 → 상품 상세
+05-13 03:30:10.052 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8&nl-ts-pid=jlLxowqXKcVssULkb6R-335231&NaPm=ct%3Dmp2yty2w%7Cci%3De22da7e0db3172cbf081f7985b4fe20ccb83a874%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D1ff347c5eb84ae11967ae8e45c9d7ae66f66cc77
+05-13 03:30:14.401 I/SamsungTrafficBot(29139): 로드 완료: https://m.smartstore.naver.com/speedstore/products/4718905726?nl-query=%EB%A7%A5%EB%B6%81+%EA%B0%80%EC%A3%BD+%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84+%ED%8C%8C%EC%9A%B0%EC%B9%98+%ED%95%A0%EC%9D%B8&nl-ts-pid=jlLxowqXKcVssULkb6R-335231&NaPm=ct%3Dmp2yty2w%7Cci%3De22da7e0db3172cbf081f7985b4fe20ccb83a874%7Ctr%3Dsls%7Csn%3D450779%7Chk%3D1ff347c5eb84ae11967ae8e45c9d7ae66f66cc77
+05-13 03:30:16.051 I/SamsungTrafficBot(29139): 브라우저 닫기 → 네이버 메인홈
+05-13 03:30:16.174 I/SamsungTrafficBot(29139): 로드 오류: net::ERR_BLOCKED_BY_ORB
+05-13 03:30:16.621 I/SamsungTrafficBot(29139): 브라우저 화면 재시작: 쿠키 세션 유지
+05-13 03:30:16.666 I/SamsungTrafficBot(29139): 로드 완료: about:blank
+05-13 03:30:17.155 I/SamsungTrafficBot(29139): URL 로딩: https://m.naver.com/
+05-13 03:30:19.117 I/SamsungTrafficBot(29139): 로드 완료: https://m.naver.com/
+05-13 03:30:22.234 I/SamsungTrafficBot(29139): 대장봇 완료: 198건
+05-13 03:30:22.311 I/SamsungTrafficBot(29139): A전략 반복 완료: 198/200 성공
+05-13 03:30:54.416 I/SamsungTrafficBot(27559): ADB autoRun 요청 수신
+05-13 03:30:54.430 I/SamsungTrafficBot(27559): 네이버 계정 빌드 기본값 적용됨
+05-13 03:30:54.563 I/SamsungTrafficBot(27559): 전략 변형: B
+05-13 03:30:54.566 I/SamsungTrafficBot(27559): 서버 URL 없음: 로컬 smoke 모드
+05-13 03:30:54.582 I/SamsungTrafficBot(27559): 상품 task 없음: 하드코딩 smoke 상품 사용
+05-13 03:30:54.587 I/SamsungTrafficBot(27559): 2차 검색어 5개 조합 생성 (필수: 파우치, 꼬리: 추천/할인/가격비교/인기/후기)
+05-13 03:30:54.588 I/SamsungTrafficBot(27559):   [1] 13 킨맥 투톤네이비 파우치 추천
+05-13 03:30:54.590 I/SamsungTrafficBot(27559):   [2] 360쉴드 투톤네이비 가방 파우치 할인
+05-13 03:30:54.592 I/SamsungTrafficBot(27559):   [3] 노트북 S 가방 파우치 가격비교
+05-13 03:30:54.594 I/SamsungTrafficBot(27559):   [4] 13 킨맥 S 파우치 인기
+05-13 03:30:54.595 I/SamsungTrafficBot(27559):   [5] 노트북 S 투톤네이비 파우치 후기
+05-13 03:30:54.623 I/SamsungTrafficBot(27559): URL 로딩: https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+05-13 03:30:56.872 I/SamsungTrafficBot(27559): 로드 완료: https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+05-13 03:31:02.214 I/SamsungTrafficBot(27559): 네이버 로그인 완료
+05-13 03:31:02.236 I/SamsungTrafficBot(27559): A전략 반복 1/200 [1/5번 조합]
+05-13 03:31:02.255 I/SamsungTrafficBot(27559): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:31:02.273 I/SamsungTrafficBot(27559): 초기 랜딩: https://snsz.kr
+05-13 03:31:02.286 I/SamsungTrafficBot(27559): URL 로딩: https://snsz.kr
+05-13 03:31:03.587 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:31:05.515 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:31:05.532 I/SamsungTrafficBot(27559): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:31:05.539 I/SamsungTrafficBot(27559): URL 로딩: https://m.naver.com/
+05-13 03:31:07.908 I/SamsungTrafficBot(27559): 로드 완료: https://m.naver.com/
+05-13 03:31:10.795 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:31:11.249 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 파우치
+05-13 03:31:11.687 I/SamsungTrafficBot(27559): 1차 자동완성 시뮬레이션 [B]: 노트북 파우치
+05-13 03:31:13.017 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:31:13.663 I/SamsungTrafficBot(27559): 1차 검색: 노트북 파우치
+05-13 03:31:14.742 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:31:16.483 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=dww7sjxb
+05-13 03:31:16.984 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=dww7sjxb
+05-13 03:31:18.311 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=dww7sjxb
+05-13 03:31:18.345 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=dww7sjxb
+05-13 03:31:20.822 I/SamsungTrafficBot(27559): 1차 검색결과 스크롤
+05-13 03:31:26.755 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:31:27.505 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 13 킨맥 투톤네이비 파우치 추천
+05-13 03:31:27.936 I/SamsungTrafficBot(27559): 2차 자동완성 시뮬레이션 [B]: 13 킨맥 투톤네이비 파우치 추천
+05-13 03:31:30.116 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 5회 ("13"→"13 킨맥 투톤네이")
+05-13 03:31:30.748 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 13 킨맥 투톤네이비 파우치 추천
+05-13 03:31:30.977 I/SamsungTrafficBot(27559): 2차 검색: 13 킨맥 투톤네이비 파우치 추천
+05-13 03:31:32.047 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:31:33.918 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLx8dqoiT0ssRzXaUG-448008&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=bvj7x7ln
+05-13 03:31:34.425 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLx8dqoiT0ssRzXaUG-448008&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=bvj7x7ln
+05-13 03:31:35.755 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLx8dqoiT0ssRzXaUG-448008&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=bvj7x7ln
+05-13 03:31:35.802 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLx8dqoiT0ssRzXaUG-448008&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=bvj7x7ln
+05-13 03:31:38.684 I/SamsungTrafficBot(27559): 2차 검색결과 스크롤
+05-13 03:31:42.366 I/SamsungTrafficBot(27559): MID 상품 터치 진입: 89408249403
+05-13 03:31:43.516 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:31:44.191 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=1&where=m_web
+05-13 03:31:45.675 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:31:46.260 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=16&where=m_web
+05-13 03:31:48.066 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:31:49.749 I/SamsungTrafficBot(27559): 로드 오류: net::ERR_FAILED
+05-13 03:31:49.781 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=31&where=m_web
+05-13 03:31:50.264 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:31:51.331 I/SamsungTrafficBot(27559): MID(89408249403) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 03:31:51.387 I/SamsungTrafficBot(27559): MID 없음 → 2차 검색어 제외: 13 킨맥 투톤네이비 파우치 추천 (잔여 4개)
+05-13 03:31:51.415 I/SamsungTrafficBot(27559): A전략 반복 2/200 [2/4번 조합]
+05-13 03:31:51.426 I/SamsungTrafficBot(27559): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:31:51.437 I/SamsungTrafficBot(27559): 초기 랜딩: https://snsz.kr
+05-13 03:31:51.449 I/SamsungTrafficBot(27559): URL 로딩: https://snsz.kr
+05-13 03:31:51.745 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:31:51.792 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:31:53.503 I/SamsungTrafficBot(27559): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:31:53.550 I/SamsungTrafficBot(27559): URL 로딩: https://m.naver.com/
+05-13 03:32:11.401 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:32:11.927 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 파우치
+05-13 03:32:12.475 I/SamsungTrafficBot(27559): 1차 자동완성 시뮬레이션 [B]: 노트북 파우치
+05-13 03:32:14.014 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:32:14.678 I/SamsungTrafficBot(27559): 1차 검색: 노트북 파우치
+05-13 03:32:15.750 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:32:46.298 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.naver.com/
+05-13 03:32:48.972 I/SamsungTrafficBot(27559): 1차 검색결과 스크롤
+05-13 03:32:55.518 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:32:56.177 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 S 가방 파우치 가격비교
+05-13 03:32:56.810 I/SamsungTrafficBot(27559): 2차 자동완성 시뮬레이션 [B]: 노트북 S 가방 파우치 가격비교
+05-13 03:32:58.393 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 5회 ("노트"→"노트북 S 가방 파")
+05-13 03:32:59.009 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 S 가방 파우치 가격비교
+05-13 03:32:59.261 I/SamsungTrafficBot(27559): 2차 검색: 노트북 S 가방 파우치 가격비교
+05-13 03:33:00.347 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:33:30.885 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.naver.com/
+05-13 03:33:33.965 I/SamsungTrafficBot(27559): 2차 검색결과 스크롤
+05-13 03:33:39.873 I/SamsungTrafficBot(27559): MID 상품 터치 진입: 89408249403
+05-13 03:33:39.984 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → none
+05-13 03:33:40.020 I/SamsungTrafficBot(27559): MID 없음 → 2차 검색어 제외: 노트북 S 가방 파우치 가격비교 (잔여 3개)
+05-13 03:33:40.042 I/SamsungTrafficBot(27559): A전략 반복 3/200 [3/3번 조합]
+05-13 03:33:40.062 I/SamsungTrafficBot(27559): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:33:40.082 I/SamsungTrafficBot(27559): 초기 랜딩: https://snsz.kr
+05-13 03:33:40.102 I/SamsungTrafficBot(27559): URL 로딩: https://snsz.kr
+05-13 03:33:41.145 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:33:41.178 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:33:43.098 I/SamsungTrafficBot(27559): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:33:43.160 I/SamsungTrafficBot(27559): URL 로딩: https://m.naver.com/
+05-13 03:33:44.898 I/SamsungTrafficBot(27559): 로드 완료: https://m.naver.com/
+05-13 03:33:47.678 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:33:48.366 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 파우치
+05-13 03:33:48.997 I/SamsungTrafficBot(27559): 1차 자동완성 시뮬레이션 [B]: 노트북 파우치
+05-13 03:33:50.375 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:33:50.841 I/SamsungTrafficBot(27559): 1차 검색: 노트북 파우치
+05-13 03:33:51.891 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:33:53.886 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=ieve9iby
+05-13 03:33:54.386 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=ieve9iby
+05-13 03:33:55.970 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=ieve9iby
+05-13 03:33:56.028 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=ieve9iby
+05-13 03:33:57.110 I/SamsungTrafficBot(27559): 1차 검색결과 스크롤
+05-13 03:34:00.950 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:34:01.610 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 S 투톤네이비 파우치 후기
+05-13 03:34:02.237 I/SamsungTrafficBot(27559): 2차 자동완성 시뮬레이션 [B]: 노트북 S 투톤네이비 파우치 후기
+05-13 03:34:03.813 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 5회 ("노트"→"노트북 S 투톤네이")
+05-13 03:34:04.360 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 S 투톤네이비 파우치 후기
+05-13 03:34:04.616 I/SamsungTrafficBot(27559): 2차 검색: 노트북 S 투톤네이비 파우치 후기
+05-13 03:34:05.711 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:34:07.446 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyBwqoiT0ssRzX6Us-124868&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=zp4spq7n
+05-13 03:34:07.946 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyBwqoiT0ssRzX6Us-124868&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=zp4spq7n
+05-13 03:34:09.038 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyBwqoiT0ssRzX6Us-124868&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=zp4spq7n
+05-13 03:34:09.138 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyBwqoiT0ssRzX6Us-124868&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=zp4spq7n
+05-13 03:34:12.333 I/SamsungTrafficBot(27559): 2차 검색결과 스크롤
+05-13 03:34:16.223 I/SamsungTrafficBot(27559): MID 상품 터치 진입: 89408249403
+05-13 03:34:17.414 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:34:18.568 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=1&where=m_web
+05-13 03:34:19.610 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:34:20.520 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=16&where=m_web
+05-13 03:34:21.635 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:34:21.912 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=31&where=m_web
+05-13 03:34:23.710 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:34:24.272 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=46&where=m_web
+05-13 03:34:24.666 I/SamsungTrafficBot(27559): MID(89408249403) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 03:34:24.724 I/SamsungTrafficBot(27559): MID 없음 → 2차 검색어 제외: 노트북 S 투톤네이비 파우치 후기 (잔여 2개)
+05-13 03:34:24.766 I/SamsungTrafficBot(27559): A전략 반복 4/200 [2/2번 조합]
+05-13 03:34:24.792 I/SamsungTrafficBot(27559): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:34:24.813 I/SamsungTrafficBot(27559): 초기 랜딩: https://snsz.kr
+05-13 03:34:24.833 I/SamsungTrafficBot(27559): URL 로딩: https://snsz.kr
+05-13 03:34:25.291 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:34:26.325 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:34:26.716 I/SamsungTrafficBot(27559): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:34:26.775 I/SamsungTrafficBot(27559): URL 로딩: https://m.naver.com/
+05-13 03:34:29.009 I/SamsungTrafficBot(27559): 로드 완료: https://m.naver.com/
+05-13 03:34:32.296 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:34:33.068 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 파우치
+05-13 03:34:33.636 I/SamsungTrafficBot(27559): 1차 자동완성 시뮬레이션 [B]: 노트북 파우치
+05-13 03:34:34.932 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:34:35.566 I/SamsungTrafficBot(27559): 1차 검색: 노트북 파우치
+05-13 03:34:36.665 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:34:38.622 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=l3n8p5ea
+05-13 03:34:39.123 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=l3n8p5ea
+05-13 03:34:40.467 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=l3n8p5ea
+05-13 03:34:40.524 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=l3n8p5ea
+05-13 03:34:42.871 I/SamsungTrafficBot(27559): 1차 검색결과 스크롤
+05-13 03:34:48.579 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:34:49.061 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 13 킨맥 S 파우치 인기
+05-13 03:34:49.545 I/SamsungTrafficBot(27559): 2차 자동완성 시뮬레이션 [B]: 13 킨맥 S 파우치 인기
+05-13 03:34:51.060 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 5회 ("13"→"13 킨맥 S 파우")
+05-13 03:34:51.603 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 13 킨맥 S 파우치 인기
+05-13 03:34:51.882 I/SamsungTrafficBot(27559): 2차 검색: 13 킨맥 S 파우치 인기
+05-13 03:34:52.955 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:34:55.141 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyXwqoiT0ssRzXKLs-065952&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=807wtet4
+05-13 03:34:55.641 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyXwqoiT0ssRzXKLs-065952&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=807wtet4
+05-13 03:34:56.843 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyXwqoiT0ssRzXKLs-065952&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=807wtet4
+05-13 03:34:56.928 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyXwqoiT0ssRzXKLs-065952&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=807wtet4
+05-13 03:34:58.426 I/SamsungTrafficBot(27559): 2차 검색결과 스크롤
+05-13 03:35:03.180 I/SamsungTrafficBot(27559): MID 상품 터치 진입: 89408249403
+05-13 03:35:04.292 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:35:06.857 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:35:08.119 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=16&where=m_web
+05-13 03:35:09.169 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:35:10.572 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=31&where=m_web
+05-13 03:35:11.665 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:35:12.690 I/SamsungTrafficBot(27559): MID(89408249403) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 03:35:12.767 I/SamsungTrafficBot(27559): MID 없음 → 2차 검색어 제외: 13 킨맥 S 파우치 인기 (잔여 1개)
+05-13 03:35:12.788 I/SamsungTrafficBot(27559): A전략 반복 5/200 [1/1번 조합]
+05-13 03:35:12.809 I/SamsungTrafficBot(27559): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 03:35:12.830 I/SamsungTrafficBot(27559): 초기 랜딩: https://snsz.kr
+05-13 03:35:12.851 I/SamsungTrafficBot(27559): URL 로딩: https://snsz.kr
+05-13 03:35:13.512 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:35:13.567 I/SamsungTrafficBot(27559): 로드 완료: https://snsz.kr/
+05-13 03:35:15.498 I/SamsungTrafficBot(27559): 네이버 홈 진입: 검색창 탭 준비
+05-13 03:35:15.571 I/SamsungTrafficBot(27559): URL 로딩: https://m.naver.com/
+05-13 03:35:18.434 I/SamsungTrafficBot(27559): 로드 완료: https://m.naver.com/
+05-13 03:35:21.284 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:35:21.809 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 노트북 파우치
+05-13 03:35:22.405 I/SamsungTrafficBot(27559): 1차 자동완성 시뮬레이션 [B]: 노트북 파우치
+05-13 03:35:24.300 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 4회 ("노트"→"노트북 파우치")
+05-13 03:35:24.847 I/SamsungTrafficBot(27559): 1차 검색: 노트북 파우치
+05-13 03:35:25.953 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:35:28.547 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=k8fvym1w
+05-13 03:35:29.048 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=k8fvym1w
+05-13 03:35:31.082 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=k8fvym1w
+05-13 03:35:31.169 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=k8fvym1w
+05-13 03:35:33.236 I/SamsungTrafficBot(27559): 1차 검색결과 스크롤
+05-13 03:35:37.659 I/SamsungTrafficBot(27559): 검색창 탭 완료
+05-13 03:35:38.177 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 360쉴드 투톤네이비 가방 파우치 할인
+05-13 03:35:38.727 I/SamsungTrafficBot(27559): 2차 자동완성 시뮬레이션 [B]: 360쉴드 투톤네이비 가방 파우치 할인
+05-13 03:35:40.701 I/SamsungTrafficBot(27559): 자동완성 시뮬레이션: 5회 ("36"→"360쉴드 투톤네이")
+05-13 03:35:41.218 I/SamsungTrafficBot(27559): 검색창 키워드 입력 완료: 360쉴드 투톤네이비 가방 파우치 할인
+05-13 03:35:41.476 I/SamsungTrafficBot(27559): 2차 검색: 360쉴드 투톤네이비 가방 파우치 할인
+05-13 03:35:42.534 I/SamsungTrafficBot(27559): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 03:35:44.869 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyJdqoiT0ssRzXLwh-474445&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=qfli2agy
+05-13 03:35:45.369 I/SamsungTrafficBot(27559): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyJdqoiT0ssRzXLwh-474445&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=qfli2agy
+05-13 03:35:46.977 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyJdqoiT0ssRzXLwh-474445&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=qfli2agy
+05-13 03:35:46.997 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyJdqoiT0ssRzXLwh-474445&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=qfli2agy
+05-13 03:35:47.059 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&tqi=jlLyJdqoiT0ssRzXLwh-474445&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&ackey=qfli2agy
+05-13 03:35:49.908 I/SamsungTrafficBot(27559): 2차 검색결과 스크롤
+05-13 03:35:54.662 I/SamsungTrafficBot(27559): MID 상품 터치 진입: 89408249403
+05-13 03:35:55.776 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:35:57.917 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:36:00.593 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:36:02.583 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=16&where=m_web
+05-13 03:36:03.009 I/SamsungTrafficBot(27559): 플러스스토어 캐러셀 → clicked|0|0
+05-13 03:36:03.654 I/SamsungTrafficBot(27559): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EB%85%B8%ED%8A%B8%EB%B6%81+%ED%8C%8C%EC%9A%B0%EC%B9%98&sm=mtb_pge&start=31&where=m_web
+05-13 03:36:04.471 I/SamsungTrafficBot(27559): MID(89408249403) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 03:36:04.532 I/SamsungTrafficBot(27559): MID 없음 → 2차 검색어 제외: 360쉴드 투톤네이비 가방 파우치 할인 (잔여 0개)
+05-13 03:36:04.555 I/SamsungTrafficBot(27559): 모든 2차 검색어 조합 제외됨: 종료
+--------- beginning of system
+05-13 07:23:19.975 I/SamsungTrafficBot(10765): ADB autoRun 요청 수신
+05-13 07:23:19.985 I/SamsungTrafficBot(10765): 네이버 계정 빌드 기본값 적용됨
+05-13 07:23:20.100 I/SamsungTrafficBot(10765): 전략 변형: C
+05-13 07:23:20.103 I/SamsungTrafficBot(10765): 서버 URL 없음: 로컬 smoke 모드
+05-13 07:23:20.122 I/SamsungTrafficBot(10765): 상품 task 없음: 하드코딩 smoke 상품 사용
+05-13 07:23:20.127 I/SamsungTrafficBot(10765): 2차 검색어 5개 조합 생성 (필수: 선글라스, 꼬리: 추천/할인/가격비교/인기/후기)
+05-13 07:23:20.129 I/SamsungTrafficBot(10765):   [1] 블랙 보잉 차단 선글라스 추천
+05-13 07:23:20.130 I/SamsungTrafficBot(10765):   [2] 여름 블랙 자외선 선글라스 할인
+05-13 07:23:20.131 I/SamsungTrafficBot(10765):   [3] 보잉 남성 차단 선글라스 가격비교
+05-13 07:23:20.133 I/SamsungTrafficBot(10765):   [4] 자외선 남성 미러 선글라스 인기
+05-13 07:23:20.134 I/SamsungTrafficBot(10765):   [5] 자외선 블랙 남성 선글라스 후기
+05-13 07:23:20.167 I/SamsungTrafficBot(10765): URL 로딩: https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+05-13 07:23:42.782 I/SamsungTrafficBot(11062): ADB autoRun 요청 수신
+05-13 07:23:42.792 I/SamsungTrafficBot(11062): 네이버 계정 빌드 기본값 적용됨
+05-13 07:23:42.911 I/SamsungTrafficBot(11062): 전략 변형: C
+05-13 07:23:42.914 I/SamsungTrafficBot(11062): 서버 URL 없음: 로컬 smoke 모드
+05-13 07:23:42.929 I/SamsungTrafficBot(11062): 상품 task 없음: 하드코딩 smoke 상품 사용
+05-13 07:23:42.933 I/SamsungTrafficBot(11062): 2차 검색어 5개 조합 생성 (필수: 선글라스, 꼬리: 추천/할인/가격비교/인기/후기)
+05-13 07:23:42.935 I/SamsungTrafficBot(11062):   [1] 차단 여름 보잉 선글라스 추천
+05-13 07:23:42.936 I/SamsungTrafficBot(11062):   [2] 차단 보잉 자외선 선글라스 할인
+05-13 07:23:42.937 I/SamsungTrafficBot(11062):   [3] 여름 차단 블랙 선글라스 가격비교
+05-13 07:23:42.939 I/SamsungTrafficBot(11062):   [4] 차단 자외선 보잉 선글라스 인기
+05-13 07:23:42.940 I/SamsungTrafficBot(11062):   [5] 자외선 블랙 남성 선글라스 후기
+05-13 07:23:42.962 I/SamsungTrafficBot(11062): URL 로딩: https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+05-13 07:23:45.118 I/SamsungTrafficBot(11062): 로드 완료: https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/
+05-13 07:23:50.505 I/SamsungTrafficBot(11062): 네이버 로그인 완료
+05-13 07:23:50.531 I/SamsungTrafficBot(11062): A전략 반복 1/200 [1/5번 조합]
+05-13 07:23:50.549 I/SamsungTrafficBot(11062): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 07:23:50.568 I/SamsungTrafficBot(11062): 초기 랜딩: https://snsz.kr
+05-13 07:23:50.583 I/SamsungTrafficBot(11062): URL 로딩: https://snsz.kr
+05-13 07:23:51.688 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:23:53.525 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:23:53.718 I/SamsungTrafficBot(11062): 네이버 홈 진입: 검색창 탭 준비
+05-13 07:23:53.738 I/SamsungTrafficBot(11062): URL 로딩: https://m.naver.com/
+05-13 07:23:55.792 I/SamsungTrafficBot(11062): 로드 완료: https://m.naver.com/
+05-13 07:23:58.573 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:23:59.146 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 선글라스
+05-13 07:23:59.525 I/SamsungTrafficBot(11062): 1차 자동완성 시뮬레이션 [C]: 여름 선글라스
+05-13 07:24:01.185 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 4회 ("여름"→"여름 선글라스")
+05-13 07:24:01.665 I/SamsungTrafficBot(11062): 1차 검색: 여름 선글라스
+05-13 07:24:02.729 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:24:06.405 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=iyleu40h
+05-13 07:24:06.905 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=iyleu40h
+05-13 07:24:07.437 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=iyleu40h
+05-13 07:24:10.393 I/SamsungTrafficBot(11062): 1차 검색결과 스크롤
+05-13 07:24:15.074 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:24:15.757 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 여름 보잉 선글라스 추천
+05-13 07:24:16.127 I/SamsungTrafficBot(11062): 2차 자동완성 시뮬레이션 [C]: 차단 여름 보잉 선글라스 추천
+05-13 07:24:18.129 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 5회 ("차단"→"차단 여름 보잉 선")
+05-13 07:24:18.671 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 여름 보잉 선글라스 추천
+05-13 07:24:18.909 I/SamsungTrafficBot(11062): 2차 검색: 차단 여름 보잉 선글라스 추천
+05-13 07:24:19.975 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:24:20.361 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoldqoiT0ssRzXgBV-093810&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=a0ybbk6y
+05-13 07:24:20.862 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoldqoiT0ssRzXgBV-093810&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=a0ybbk6y
+05-13 07:24:21.512 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoldqoiT0ssRzXgBV-093810&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=a0ybbk6y
+05-13 07:24:21.548 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoldqoiT0ssRzXgBV-093810&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=a0ybbk6y
+05-13 07:24:24.949 I/SamsungTrafficBot(11062): 2차 검색결과 스크롤
+05-13 07:24:27.312 I/SamsungTrafficBot(11062): 로드 오류: net::ERR_TIMED_OUT
+05-13 07:24:30.466 I/SamsungTrafficBot(11062): MID 상품 터치 진입: 90991583792
+05-13 07:24:31.616 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:24:32.151 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=1&where=m_web
+05-13 07:24:33.628 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:24:34.143 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=16&where=m_web
+05-13 07:24:35.931 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:24:36.287 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=31&where=m_web
+05-13 07:24:38.018 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:24:38.362 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=46&where=m_web
+05-13 07:24:39.011 I/SamsungTrafficBot(11062): MID(90991583792) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 07:24:39.046 I/SamsungTrafficBot(11062): MID 없음 → 2차 검색어 제외: 차단 여름 보잉 선글라스 추천 (잔여 4개)
+05-13 07:24:39.058 I/SamsungTrafficBot(11062): A전략 반복 2/200 [2/4번 조합]
+05-13 07:24:39.069 I/SamsungTrafficBot(11062): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 07:24:39.081 I/SamsungTrafficBot(11062): 초기 랜딩: https://snsz.kr
+05-13 07:24:39.093 I/SamsungTrafficBot(11062): URL 로딩: https://snsz.kr
+05-13 07:24:39.405 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:24:39.458 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:24:41.135 I/SamsungTrafficBot(11062): 네이버 홈 진입: 검색창 탭 준비
+05-13 07:24:41.205 I/SamsungTrafficBot(11062): URL 로딩: https://m.naver.com/
+05-13 07:24:43.521 I/SamsungTrafficBot(11062): 로드 완료: https://m.naver.com/
+05-13 07:24:46.012 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:24:46.643 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 선글라스
+05-13 07:24:47.086 I/SamsungTrafficBot(11062): 1차 자동완성 시뮬레이션 [C]: 여름 선글라스
+05-13 07:24:48.409 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 4회 ("여름"→"여름 선글라스")
+05-13 07:24:48.907 I/SamsungTrafficBot(11062): 1차 검색: 여름 선글라스
+05-13 07:24:50.098 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:24:50.528 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=efsuf0ta
+05-13 07:24:51.029 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=efsuf0ta
+05-13 07:24:52.056 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=efsuf0ta
+05-13 07:24:52.128 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=efsuf0ta
+05-13 07:24:55.357 I/SamsungTrafficBot(11062): 1차 검색결과 스크롤
+05-13 07:24:59.778 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:25:00.444 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 차단 블랙 선글라스 가격비교
+05-13 07:25:00.910 I/SamsungTrafficBot(11062): 2차 자동완성 시뮬레이션 [C]: 여름 차단 블랙 선글라스 가격비교
+05-13 07:25:02.870 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 5회 ("여름"→"여름 차단 블랙 선")
+05-13 07:25:03.503 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 차단 블랙 선글라스 가격비교
+05-13 07:25:03.742 I/SamsungTrafficBot(11062): 2차 검색: 여름 차단 블랙 선글라스 가격비교
+05-13 07:25:04.812 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:25:05.358 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoVdqoiT0ssRzXhNK-366248&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=c1odwkd1
+05-13 07:25:05.858 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoVdqoiT0ssRzXhNK-366248&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=c1odwkd1
+05-13 07:25:06.827 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoVdqoiT0ssRzXhNK-366248&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=c1odwkd1
+05-13 07:25:06.923 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMoVdqoiT0ssRzXhNK-366248&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=c1odwkd1
+05-13 07:25:09.296 I/SamsungTrafficBot(11062): 2차 검색결과 스크롤
+05-13 07:25:14.185 I/SamsungTrafficBot(11062): MID 상품 터치 진입: 90991583792
+05-13 07:25:14.690 I/SamsungTrafficBot(11062): 로드 오류: net::ERR_TIMED_OUT
+05-13 07:25:15.265 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:25:16.096 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=1&where=m_web
+05-13 07:25:17.224 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:25:19.198 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:25:19.486 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=31&where=m_web
+05-13 07:25:21.076 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=46&where=m_web
+05-13 07:25:21.178 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:25:22.167 I/SamsungTrafficBot(11062): MID(90991583792) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 07:25:22.223 I/SamsungTrafficBot(11062): MID 없음 → 2차 검색어 제외: 여름 차단 블랙 선글라스 가격비교 (잔여 3개)
+05-13 07:25:22.254 I/SamsungTrafficBot(11062): A전략 반복 3/200 [3/3번 조합]
+05-13 07:25:22.282 I/SamsungTrafficBot(11062): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 07:25:22.308 I/SamsungTrafficBot(11062): 초기 랜딩: https://snsz.kr
+05-13 07:25:22.332 I/SamsungTrafficBot(11062): URL 로딩: https://snsz.kr
+05-13 07:25:22.834 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:25:24.501 I/SamsungTrafficBot(11062): 네이버 홈 진입: 검색창 탭 준비
+05-13 07:25:24.583 I/SamsungTrafficBot(11062): URL 로딩: https://m.naver.com/
+05-13 07:25:26.595 I/SamsungTrafficBot(11062): 로드 완료: https://m.naver.com/
+05-13 07:25:29.628 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:25:30.397 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 선글라스
+05-13 07:25:30.792 I/SamsungTrafficBot(11062): 1차 자동완성 시뮬레이션 [C]: 여름 선글라스
+05-13 07:25:32.314 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 4회 ("여름"→"여름 선글라스")
+05-13 07:25:33.013 I/SamsungTrafficBot(11062): 1차 검색: 여름 선글라스
+05-13 07:25:34.115 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:25:34.420 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=3cs8cdtm
+05-13 07:25:34.921 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=3cs8cdtm
+05-13 07:25:35.799 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=3cs8cdtm
+05-13 07:25:39.283 I/SamsungTrafficBot(11062): 1차 검색결과 스크롤
+05-13 07:25:45.341 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:25:45.878 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 자외선 블랙 남성 선글라스 후기
+05-13 07:25:46.423 I/SamsungTrafficBot(11062): 2차 자동완성 시뮬레이션 [C]: 자외선 블랙 남성 선글라스 후기
+05-13 07:25:48.427 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 5회 ("자외"→"자외선 블랙 남성 ")
+05-13 07:25:49.075 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 자외선 블랙 남성 선글라스 후기
+05-13 07:25:49.321 I/SamsungTrafficBot(11062): 2차 검색: 자외선 블랙 남성 선글라스 후기
+05-13 07:25:49.389 I/SamsungTrafficBot(11062): 검색 버튼 탭 실패: missing
+05-13 07:25:52.641 I/SamsungTrafficBot(11062): 2차 검색결과 스크롤
+05-13 07:25:55.738 I/SamsungTrafficBot(11062): MID 상품 터치 진입: 90991583792
+05-13 07:25:56.815 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:25:57.750 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=1&where=m_web
+05-13 07:25:58.757 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=16&where=m_web
+05-13 07:25:58.829 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:00.801 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:01.471 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=31&where=m_web
+05-13 07:26:02.781 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:03.448 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=46&where=m_web
+05-13 07:26:03.781 I/SamsungTrafficBot(11062): MID(90991583792) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 07:26:03.829 I/SamsungTrafficBot(11062): MID 없음 → 2차 검색어 제외: 자외선 블랙 남성 선글라스 후기 (잔여 2개)
+05-13 07:26:03.862 I/SamsungTrafficBot(11062): A전략 반복 4/200 [2/2번 조합]
+05-13 07:26:03.885 I/SamsungTrafficBot(11062): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 07:26:03.908 I/SamsungTrafficBot(11062): 초기 랜딩: https://snsz.kr
+05-13 07:26:03.932 I/SamsungTrafficBot(11062): URL 로딩: https://snsz.kr
+05-13 07:26:04.383 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:26:04.617 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:26:06.118 I/SamsungTrafficBot(11062): 네이버 홈 진입: 검색창 탭 준비
+05-13 07:26:06.181 I/SamsungTrafficBot(11062): URL 로딩: https://m.naver.com/
+05-13 07:26:08.187 I/SamsungTrafficBot(11062): 로드 완료: https://m.naver.com/
+05-13 07:26:10.892 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:26:11.538 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 선글라스
+05-13 07:26:12.134 I/SamsungTrafficBot(11062): 1차 자동완성 시뮬레이션 [C]: 여름 선글라스
+05-13 07:26:13.445 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 4회 ("여름"→"여름 선글라스")
+05-13 07:26:14.010 I/SamsungTrafficBot(11062): 1차 검색: 여름 선글라스
+05-13 07:26:15.082 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:26:16.817 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=g1d49ap2
+05-13 07:26:16.855 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=g1d49ap2
+05-13 07:26:16.908 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=g1d49ap2
+05-13 07:26:17.318 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=g1d49ap2
+05-13 07:26:17.956 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=g1d49ap2
+05-13 07:26:20.624 I/SamsungTrafficBot(11062): 1차 검색결과 스크롤
+05-13 07:26:25.468 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:26:26.232 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 자외선 보잉 선글라스 인기
+05-13 07:26:26.669 I/SamsungTrafficBot(11062): 2차 자동완성 시뮬레이션 [C]: 차단 자외선 보잉 선글라스 인기
+05-13 07:26:28.669 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 5회 ("차단"→"차단 자외선 보잉 ")
+05-13 07:26:29.355 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 자외선 보잉 선글라스 인기
+05-13 07:26:29.596 I/SamsungTrafficBot(11062): 2차 검색: 차단 자외선 보잉 선글라스 인기
+05-13 07:26:30.676 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:26:31.132 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMptlqoiT0ssRzWT2l-301272&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=9lo3je2a
+05-13 07:26:31.633 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMptlqoiT0ssRzWT2l-301272&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=9lo3je2a
+05-13 07:26:32.345 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMptlqoiT0ssRzWT2l-301272&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=9lo3je2a
+05-13 07:26:35.947 I/SamsungTrafficBot(11062): 2차 검색결과 스크롤
+05-13 07:26:39.694 I/SamsungTrafficBot(11062): MID 상품 터치 진입: 90991583792
+05-13 07:26:40.795 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:41.617 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=1&where=m_web
+05-13 07:26:42.771 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:43.389 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=16&where=m_web
+05-13 07:26:44.732 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:45.554 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=31&where=m_web
+05-13 07:26:46.724 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:26:47.190 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=46&where=m_web
+05-13 07:26:47.716 I/SamsungTrafficBot(11062): MID(90991583792) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 07:26:47.766 I/SamsungTrafficBot(11062): MID 없음 → 2차 검색어 제외: 차단 자외선 보잉 선글라스 인기 (잔여 1개)
+05-13 07:26:47.801 I/SamsungTrafficBot(11062): A전략 반복 5/200 [1/1번 조합]
+05-13 07:26:47.825 I/SamsungTrafficBot(11062): 대장봇 실행: 그룹 IP owner (5건마다 회전)
+05-13 07:26:47.849 I/SamsungTrafficBot(11062): 초기 랜딩: https://snsz.kr
+05-13 07:26:47.873 I/SamsungTrafficBot(11062): URL 로딩: https://snsz.kr
+05-13 07:26:48.365 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:26:48.616 I/SamsungTrafficBot(11062): 로드 완료: https://snsz.kr/
+05-13 07:26:49.769 I/SamsungTrafficBot(11062): 네이버 홈 진입: 검색창 탭 준비
+05-13 07:26:49.839 I/SamsungTrafficBot(11062): URL 로딩: https://m.naver.com/
+05-13 07:26:52.171 I/SamsungTrafficBot(11062): 로드 완료: https://m.naver.com/
+05-13 07:26:54.846 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:26:55.465 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 여름 선글라스
+05-13 07:26:55.821 I/SamsungTrafficBot(11062): 1차 자동완성 시뮬레이션 [C]: 여름 선글라스
+05-13 07:26:57.525 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 4회 ("여름"→"여름 선글라스")
+05-13 07:26:58.282 I/SamsungTrafficBot(11062): 1차 검색: 여름 선글라스
+05-13 07:26:59.375 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:26:59.982 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=xrvsmsqi
+05-13 07:27:00.482 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=xrvsmsqi
+05-13 07:27:01.678 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtp_hty.top&where=m&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=xrvsmsqi
+05-13 07:27:04.504 I/SamsungTrafficBot(11062): 1차 검색결과 스크롤
+05-13 07:27:09.411 I/SamsungTrafficBot(11062): 검색창 탭 완료
+05-13 07:27:10.082 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 보잉 자외선 선글라스 할인
+05-13 07:27:10.638 I/SamsungTrafficBot(11062): 2차 자동완성 시뮬레이션 [C]: 차단 보잉 자외선 선글라스 할인
+05-13 07:27:12.727 I/SamsungTrafficBot(11062): 자동완성 시뮬레이션: 5회 ("차단"→"차단 보잉 자외선 ")
+05-13 07:27:13.292 I/SamsungTrafficBot(11062): 검색창 키워드 입력 완료: 차단 보잉 자외선 선글라스 할인
+05-13 07:27:13.560 I/SamsungTrafficBot(11062): 2차 검색: 차단 보잉 자외선 선글라스 할인
+05-13 07:27:14.628 I/SamsungTrafficBot(11062): 검색 버튼 탭 완료 — 페이지 로드 대기
+05-13 07:27:15.305 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMpKlqoiT0ssRzXC1G-372976&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=ois32a1w
+05-13 07:27:15.806 I/SamsungTrafficBot(11062): 검색 제출 착지: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMpKlqoiT0ssRzXC1G-372976&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=ois32a1w
+05-13 07:27:16.502 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMpKlqoiT0ssRzXC1G-372976&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=ois32a1w
+05-13 07:27:16.608 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&tqi=jlMpKlqoiT0ssRzXC1G-372976&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&ackey=ois32a1w
+05-13 07:27:19.733 I/SamsungTrafficBot(11062): 2차 검색결과 스크롤
+05-13 07:27:25.368 I/SamsungTrafficBot(11062): MID 상품 터치 진입: 90991583792
+05-13 07:27:26.479 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:27:27.369 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=2&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=1&where=m_web
+05-13 07:27:28.465 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:27:29.365 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=3&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=16&where=m_web
+05-13 07:27:30.488 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:27:31.114 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=4&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=31&where=m_web
+05-13 07:27:32.446 I/SamsungTrafficBot(11062): 플러스스토어 캐러셀 → clicked|0|0
+05-13 07:27:32.997 I/SamsungTrafficBot(11062): 로드 완료: https://m.search.naver.com/search.naver?nso=&page=5&query=%EC%97%AC%EB%A6%84+%EC%84%A0%EA%B8%80%EB%9D%BC%EC%8A%A4&sm=mtb_pge&start=46&where=m_web
+05-13 07:27:33.409 I/SamsungTrafficBot(11062): MID(90991583792) 상품 미노출 (캐러셀 5페이지 탐색 완료)
+05-13 07:27:33.458 I/SamsungTrafficBot(11062): MID 없음 → 2차 검색어 제외: 차단 보잉 자외선 선글라스 할인 (잔여 0개)
+05-13 07:27:33.502 I/SamsungTrafficBot(11062): 모든 2차 검색어 조합 제외됨: 종료

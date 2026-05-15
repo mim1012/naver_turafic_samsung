@@ -1,15 +1,24 @@
 package com.navertraffic.samsung.strategy
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.SystemClock
 import android.view.MotionEvent
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.webkit.CookieManager
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
+import kotlin.math.PI
+import kotlin.math.sin
+import kotlin.random.Random
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -17,15 +26,17 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
 class SamsungWebViewManager(
-    private val webView: WebView,
+    private var webView: WebView,
     private val log: (String) -> Unit,
 ) {
     private var pageLoad = CompletableDeferred<Unit>()
     private var lastLoadHadError = false
+    @Volatile var rendererGone = false
+        private set
 
     @SuppressLint("SetJavaScriptEnabled")
     fun initialize() {
-        WebView.setWebContentsDebuggingEnabled(true)
+        WebView.setWebContentsDebuggingEnabled(false)
         webView.isFocusable = true
         webView.isFocusableInTouchMode = true
         webView.settings.apply {
@@ -36,6 +47,7 @@ class SamsungWebViewManager(
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             loadsImagesAutomatically = true
             blockNetworkImage = false
+            userAgentString = SAMSUNG_BROWSER_UA
         }
 
         CookieManager.getInstance().apply {
@@ -44,8 +56,19 @@ class SamsungWebViewManager(
         }
 
         webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val url = request?.url?.toString() ?: return false
+                if (!url.startsWith("http://") && !url.startsWith("https://")) return true
+                return false
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                view?.evaluateJavascript(NAVIGATOR_SPOOF_JS, null)
+            }
+
             override fun onPageFinished(view: WebView?, url: String?) {
                 if (!pageLoad.isCompleted) pageLoad.complete(Unit)
+                view?.evaluateJavascript(NAVIGATOR_SPOOF_JS, null)
                 log("로드 완료: ${url ?: "(unknown)"}")
             }
 
@@ -58,16 +81,31 @@ class SamsungWebViewManager(
                 if (!pageLoad.isCompleted) pageLoad.complete(Unit)
                 log("로드 오류: ${error?.description ?: "unknown"}")
             }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+                rendererGone = true
+                if (!pageLoad.isCompleted) pageLoad.complete(Unit)
+                log("WebView 렌더러 OOM: 루프 재개 대기 중")
+                return true
+            }
         }
     }
 
     suspend fun loadAndWait(url: String, timeoutMs: Long = 30_000) {
+        if (rendererGone) return
+        val referer = withContext(Dispatchers.Main) {
+            webView.url?.takeIf { it.isNotEmpty() && it != "about:blank" && !it.startsWith("about:") }
+        }
         repeat(3) { attempt ->
-            pageLoad = CompletableDeferred()
             lastLoadHadError = false
             log("URL 로딩: $url")
+            // pageLoad reset must happen atomically with loadUrl on the main thread.
+            // If reset on the coroutine thread, a stale onPageFinished from the
+            // previous navigation can complete the new deferred before loadUrl fires.
             withContext(Dispatchers.Main) {
-                webView.loadUrl(url, samsungHeaders())
+                pageLoad = CompletableDeferred()
+                webView.loadUrl(url, samsungHeaders(referer))
             }
             withTimeoutOrNull(timeoutMs) { pageLoad.await() }
             delay(500)
@@ -79,6 +117,33 @@ class SamsungWebViewManager(
         }
     }
 
+    // Fast session check: reads NID_AUT/NID_SES cookies without loading any page.
+    // CookieManager persists cookies to disk across app restarts automatically.
+    fun hasCookieSession(): Boolean {
+        val cm = CookieManager.getInstance()
+        // Check both nid.naver.com (login origin) and www.naver.com (shared cookie domain)
+        val raw = cm.getCookie("https://nid.naver.com")
+            ?.takeIf { it.contains("NID_AUT=") }
+            ?: cm.getCookie("https://www.naver.com")
+            ?: return false
+        return raw.contains("NID_AUT=") && raw.contains("NID_SES=")
+    }
+
+    fun saveCredentials(context: Context, id: String, pw: String) {
+        if (id.isBlank() || pw.isBlank()) return
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(PREF_ID, id)
+            .putString(PREF_PW, pw)
+            .apply()
+    }
+
+    fun loadCredentials(context: Context): Pair<String, String>? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val id = prefs.getString(PREF_ID, null) ?: return null
+        val pw = prefs.getString(PREF_PW, null) ?: return null
+        return id to pw
+    }
+
     fun setNaverCookie(cookie: String) {
         if (cookie.isBlank()) return
         val manager = CookieManager.getInstance()
@@ -86,10 +151,33 @@ class SamsungWebViewManager(
             .map { it.trim() }
             .filter { it.isNotEmpty() && it.contains("=") }
             .forEach { item ->
-                manager.setCookie(".naver.com", "$item; domain=.naver.com; path=/")
+                val maxAge = when {
+                    item.startsWith("NID_AUT=") -> "; Max-Age=2592000"  // 30일
+                    item.startsWith("NID_SES=") -> "; Max-Age=86400"    // 24시간
+                    else -> ""
+                }
+                manager.setCookie(".naver.com", "$item; domain=.naver.com; path=/$maxAge")
             }
         manager.flush()
         log("네이버 쿠키 주입 완료")
+    }
+
+    private fun persistNaverSessionCookies() {
+        val manager = CookieManager.getInstance()
+        listOf("https://nid.naver.com", "https://www.naver.com", "https://m.naver.com")
+            .mapNotNull { manager.getCookie(it) }
+            .flatMap { it.split(";") }
+            .map { it.trim() }
+            .filter { it.contains("=") }
+            .forEach { item ->
+                val maxAge = when {
+                    item.startsWith("NID_AUT=") -> "; Max-Age=2592000"
+                    item.startsWith("NID_SES=") -> "; Max-Age=86400"
+                    else -> return@forEach
+                }
+                manager.setCookie(".naver.com", "$item; domain=.naver.com; path=/$maxAge")
+            }
+        manager.flush()
     }
 
     suspend fun visibleText(): String {
@@ -119,8 +207,9 @@ class SamsungWebViewManager(
     }
 
     suspend fun loginNaver(loginId: String, password: String): Boolean {
-        if (isNaverLoggedIn()) {
-            log("네이버 로그인 세션 유지됨")
+        // Fast path: check NID_AUT/NID_SES cookies without loading a page
+        if (hasCookieSession()) {
+            log("네이버 쿠키 세션 유지됨 — 로그인 생략")
             return true
         }
         if (loginId.isBlank() || password.isBlank()) {
@@ -138,6 +227,8 @@ class SamsungWebViewManager(
             log("네이버 로그인 폼 입력 실패")
             return false
         }
+        // 자동 로그인 체크 → NID_AUT에 Max-Age 부여 (세션 쿠키 방지)
+        checkAutoLogin()
         if (!tapLoginButton()) {
             log("네이버 로그인 버튼 터치 실패")
             return false
@@ -146,13 +237,25 @@ class SamsungWebViewManager(
         repeat(45) {
             delay(1_000)
             if (currentUrl()?.contains("nidlogin.login") != true) {
-                CookieManager.getInstance().flush()
+                persistNaverSessionCookies()
                 log("네이버 로그인 완료")
                 return true
             }
         }
         log("네이버 로그인 타임아웃")
         return false
+    }
+
+    private suspend fun checkAutoLogin() {
+        evaluateText(
+            """
+            (function() {
+              var cb = document.querySelector('#keep, input[name="keep"], input[id*="auto"], label[for="keep"]');
+              if (cb && !cb.checked) { cb.click(); return "checked"; }
+              return cb ? "already" : "not_found";
+            })();
+            """.trimIndent(),
+        )
     }
 
     private suspend fun hasLoginChallenge(): Boolean {
@@ -222,9 +325,138 @@ class SamsungWebViewManager(
         return true
     }
 
-    suspend fun clickMidLink(mid: String): Boolean {
-        if (mid.isBlank()) return false
+    // Returns "clicked|cur|total", "end|cur|total", or "none"
+    private suspend fun clickShopCarouselNext(maxPage: Int): String {
         val js = """
+            (function(maxPage) {
+              var isVisible = function(el) {
+                var rect = el.getBoundingClientRect();
+                var s = window.getComputedStyle(el);
+                return rect.width > 0 && rect.height > 0 && s.visibility !== 'hidden' && s.display !== 'none';
+              };
+              var readPaging = function(text) {
+                var s = text.match(/(\d+)\s*\/\s*(\d+)/);
+                if (s) return { current: Number(s[1]), total: Number(s[2]) };
+                var a = text.match(/현재\s*(\d+)\s*전체\s*(\d+)/);
+                if (a) return { current: Number(a[1]), total: Number(a[2]) };
+                return null;
+              };
+              var readPagingFromRoot = function(root) {
+                if (!root) return null;
+                var curText = (root.querySelector('._current, .cmm_npgs_now, [aria-current="page"]') || {}).textContent || '';
+                var totText = (root.querySelector('._total') || {}).textContent || '';
+                var cur = Number((curText.match(/\d+/) || [])[0]);
+                var tot = Number((totText.match(/\d+/) || [])[0]);
+                if (cur > 0 && tot > 0) return { current: cur, total: tot };
+                return readPaging((root.textContent || '').replace(/\s+/g, ' ').trim());
+              };
+              var shopLike = function(text) { return /(플러스스토어|가격비교|쇼핑|상품|스토어|상품판매)/.test(text); };
+              var tapCoords = function(el) {
+                el.scrollIntoView({ block: 'center', inline: 'center' });
+                var r = el.getBoundingClientRect();
+                return 'tap|' + (r.left + r.width / 2) + '|' + (r.top + r.height / 2);
+              };
+              var NEXT_SEL = [
+                'a.cmm_pg_next._next.on', 'button.cmm_pg_next._next.on',
+                '.pagination_wrap._page_root a.cmm_pg_next._next.on',
+                '.pagination_wrap._page_root button.cmm_pg_next._next.on',
+                'a._next.on', 'button._next.on',
+                "a[class*='pg_next'].on", "button[class*='pg_next'].on",
+                "a[class*='btn_next']", "button[class*='btn_next']"
+              ].join(',');
+              var candidates = Array.from(document.querySelectorAll(NEXT_SEL)).filter(function(el, i, a) { return a.indexOf(el) === i; });
+              for (var i = 0; i < candidates.length; i++) {
+                var next = candidates[i];
+                if (!isVisible(next)) continue;
+                var aria = (next.getAttribute('aria-label') || '') + ' ' + (next.getAttribute('title') || '') + ' ' + (next.textContent || '');
+                var cls = next.className || '';
+                if (/이전|prev|previous|left/i.test(aria + ' ' + cls)) continue;
+                if (next.getAttribute('aria-disabled') === 'true' || next.hasAttribute('disabled') || /disabled|_off|inactive/i.test(cls)) continue;
+                var pagingRoot = next.closest('.pagination_wrap._page_root, .pagination_wrap, .cmm_pgs');
+                var paging = readPagingFromRoot(pagingRoot);
+                if (paging) {
+                  var limit = Math.min(paging.total, maxPage);
+                  if (paging.current >= limit) return 'end|' + paging.current + '|' + paging.total;
+                }
+                var coords = tapCoords(next);
+                return coords + '|' + (paging ? paging.current : 0) + '|' + (paging ? paging.total : 0);
+              }
+              var SECTION_SEL = [
+                'section._root_shp_lis','section._root_shs_lis','section._sp_nshop_gift',
+                "section[class*='sp_shop']","section[class*='shop_gift']","section[class*='shop_product']",
+                "section[class*='_root_shp']","section[class*='_root_shs']","section"
+              ].join(',');
+              var sections = Array.from(document.querySelectorAll(SECTION_SEL)).filter(function(el, i, a) { return a.indexOf(el) === i; });
+              for (var si = 0; si < sections.length; si++) {
+                var sec = sections[si];
+                var text = sec.innerText || '';
+                if (!/(플러스스토어|쇼핑|상품|스토어)/.test(text)) continue;
+                var paging = readPaging(text);
+                if (!paging) continue;
+                var limit = Math.min(paging.total, maxPage);
+                if (paging.current >= limit) return 'end|' + paging.current + '|' + paging.total;
+                var secRect = sec.getBoundingClientRect();
+                var directNext = sec.querySelector('a.cmm_pg_next._next.on, button.cmm_pg_next._next.on, a._next.on, button._next.on');
+                var btns = (directNext ? [directNext] : []).concat(
+                  Array.from(sec.querySelectorAll("button,a,[role='button']"))
+                ).filter(function(el) {
+                  if (!isVisible(el)) return false;
+                  var a = (el.getAttribute('aria-label') || '') + ' ' + (el.getAttribute('title') || '') + ' ' + (el.textContent || '');
+                  var c = el.className || '';
+                  if (el.getAttribute('aria-disabled') === 'true' || el.hasAttribute('disabled') || /disabled|_off|inactive/i.test(c)) return false;
+                  if (/이전|prev|previous|left/i.test(a + ' ' + c)) return false;
+                  if (/다음|next|right|btn_next|pg_next|cmm_pg_next|pagination_next|_next/i.test(a + ' ' + c)) return true;
+                  var r = el.getBoundingClientRect();
+                  return r.left > secRect.left + secRect.width / 2 && r.width >= 18 && r.width <= 90 && r.height >= 18 && r.height <= 90;
+                }).sort(function(a, b) { return b.getBoundingClientRect().left - a.getBoundingClientRect().left; });
+                if (!btns.length) continue;
+                var coords = tapCoords(btns[0]);
+                return coords + '|' + paging.current + '|' + paging.total;
+              }
+              return 'none';
+            })(${quoteJs(maxPage.toString()).drop(1).dropLast(1)});
+        """.trimIndent()
+        val raw = evaluateText(js).ifBlank { "none" }
+        if (raw.startsWith("tap|")) {
+            val parts = raw.split("|")
+            val cx = parts.getOrNull(1)?.toFloatOrNull() ?: return "none"
+            val cy = parts.getOrNull(2)?.toFloatOrNull() ?: return "none"
+            val cur = parts.getOrNull(3) ?: "0"
+            val total = parts.getOrNull(4) ?: "0"
+            tapCssPoint(cx, cy)
+            return "clicked|$cur|$total"
+        }
+        return raw
+    }
+
+    suspend fun clickMidLink(mid: String, maxCarouselPages: Int = 5): Boolean {
+        if (mid.isBlank()) return false
+
+        repeat(maxCarouselPages) { pageIdx ->
+            val result = evaluateText(buildMidScanJs(mid))
+            if (result.startsWith("found|")) {
+                val parts = result.split("|")
+                val method = parts.getOrNull(1) ?: "unknown"
+                val cssX = parts.getOrNull(2)?.toFloatOrNull() ?: return@repeat
+                val cssY = parts.getOrNull(3)?.toFloatOrNull() ?: return@repeat
+                log("MID($mid) 상품 발견: $method (캐러셀 ${pageIdx + 1}페이지)")
+                tapCssPoint(cssX, cssY)
+                return true
+            }
+            // MID not on this carousel page → try next
+            if (pageIdx < maxCarouselPages - 1) {
+                val state = clickShopCarouselNext(maxCarouselPages)
+                log("플러스스토어 캐러셀 → $state")
+                if (!state.startsWith("clicked")) return false
+                delay(900) // wait for carousel to settle
+            }
+        }
+        log("MID($mid) 상품 미노출 (캐러셀 ${maxCarouselPages}페이지 탐색 완료)")
+        return false
+    }
+
+    private fun buildMidScanJs(mid: String): String {
+        return """
             (function(mid) {
               function isAdAnchor(anchor) {
                 var inv = anchor.getAttribute('data-shp-inventory') ||
@@ -258,22 +490,61 @@ class SamsungWebViewManager(
               return ['found', picked.method, r.left + r.width / 2, r.top + r.height / 2].join('|');
             })(${quoteJs(mid)});
         """.trimIndent()
-        val result = evaluateText(js)
-        if (!result.startsWith("found|")) {
-            log("MID($mid) 상품 미노출")
-            return false
-        }
-        val parts = result.split("|")
-        val method = parts.getOrNull(1) ?: "unknown"
-        val cssX = parts.getOrNull(2)?.toFloatOrNull() ?: return false
-        val cssY = parts.getOrNull(3)?.toFloatOrNull() ?: return false
-        log("MID($mid) 상품 발견: $method")
-        tapCssPoint(cssX, cssY)
-        return true
     }
 
     suspend fun swipeDetail(durationMs: Long = 2_000) {
         dispatchSwipe(durationMs)
+    }
+
+    suspend fun scrollByJs(dy: Int) {
+        withContext(Dispatchers.Main) {
+            webView.evaluateJavascript("window.scrollBy(0,$dy)", null)
+        }
+        delay(200)
+    }
+
+    fun setUserAgent(ua: String) {
+        webView.settings.userAgentString = ua
+    }
+
+    fun extractNaverCookies(): String {
+        val manager = CookieManager.getInstance()
+        return listOf(
+            manager.getCookie("https://nid.naver.com"),
+            manager.getCookie("https://www.naver.com"),
+            manager.getCookie("https://m.naver.com"),
+        ).filterNotNull()
+            .flatMap { it.split(";") }
+            .map { it.trim() }
+            .filter { it.startsWith("NID_AUT=") || it.startsWith("NID_SES=") }
+            .distinct()
+            .joinToString("; ")
+    }
+
+    fun pauseTimers() {
+        runCatching { webView.pauseTimers() }
+    }
+
+    fun resumeTimers() {
+        runCatching { webView.resumeTimers() }
+    }
+
+    suspend fun rebuildWebView(container: ViewGroup) {
+        withContext(Dispatchers.Main) {
+            val params = webView.layoutParams
+            val viewId = webView.id
+            webView.stopLoading()
+            webView.destroy()
+            container.removeView(webView)
+            webView = WebView(container.context).apply {
+                layoutParams = params
+                id = viewId
+            }
+            container.addView(webView, 0)
+            rendererGone = false
+            initialize()
+        }
+        log("WebView 재생성 완료")
     }
 
     suspend fun resetSurface() {
@@ -285,9 +556,165 @@ class SamsungWebViewManager(
         log("브라우저 화면 재시작: 쿠키 세션 유지")
     }
 
+    // Load about:blank and wait for TCP connections to close before network toggle.
+    // Prevents modem driver kernel panic (S7 Android 8.0) from active naver.com connections.
+    suspend fun typeIntoSearchBar(keyword: String): Boolean {
+        val selectors = listOf(
+            "input#query",
+            "input[name=\"query\"]",
+            "input[type=\"search\"]",
+            ".gnb_search input",
+            ".lnb_search input",
+        )
+        for (sel in selectors) {
+            val result = evaluateText(
+                """
+                (function(sel, text) {
+                    var el = document.querySelector(sel);
+                    if (!el) return "missing";
+                    el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+                    el.focus();
+                    var nativeSetter = Object.getOwnPropertyDescriptor(
+                        window.HTMLInputElement.prototype, 'value').set;
+                    nativeSetter.call(el, text);
+                    el.dispatchEvent(new Event('input',  { bubbles: true, cancelable: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    return String(el.value.length);
+                })(${quoteJs(sel)}, ${quoteJs(keyword)});
+                """.trimIndent()
+            )
+            val len = result?.toIntOrNull() ?: -1
+            if (len == keyword.length) {
+                log("검색창 키워드 입력 완료: $keyword")
+                return true
+            }
+            if (result != "missing") {
+                log("검색창 입력 부분 실패 ($sel): expected=${keyword.length} actual=$len")
+            }
+        }
+        log("검색창 키워드 입력 실패")
+        return false
+    }
+
+    suspend fun tapSearchSubmitAndWait(timeoutMs: Long = 30_000): Boolean {
+        val js = """
+            (function() {
+                var selectors = [
+                    'button[type="submit"]', 'input[type="submit"]',
+                    '.btn_search', '.search_btn', 'button.submit',
+                    'button[aria-label*="검색"]', 'button[title*="검색"]',
+                    'button[class*="search"]'
+                ];
+                for (var i = 0; i < selectors.length; i++) {
+                    var el = document.querySelector(selectors[i]);
+                    if (!el) continue;
+                    var r = el.getBoundingClientRect();
+                    if (r.width > 0 && r.height > 0) {
+                        el.scrollIntoView({block: 'center', inline: 'center', behavior: 'instant'});
+                        return 'found|' + (r.left + r.width / 2) + '|' + (r.top + r.height / 2);
+                    }
+                }
+                return 'missing';
+            })();
+        """.trimIndent()
+        val result = evaluateText(js)
+        if (!result.startsWith("found|")) {
+            log("검색 버튼 탭 실패: $result")
+            return false
+        }
+        val parts = result.split("|")
+        val cssX = parts.getOrNull(1)?.toFloatOrNull() ?: return false
+        val cssY = parts.getOrNull(2)?.toFloatOrNull() ?: return false
+        lastLoadHadError = false
+        withContext(Dispatchers.Main) {
+            pageLoad = CompletableDeferred()
+        }
+        tapCssPoint(cssX, cssY)
+        log("검색 버튼 탭 완료 — 페이지 로드 대기")
+        withTimeoutOrNull(timeoutMs) { pageLoad.await() }
+        delay(500)
+        log("검색 제출 착지: ${currentUrl()}")
+        return true
+    }
+
+    suspend fun tapSearchBar(): Boolean {
+        val js = """
+            (function() {
+                var selectors = [
+                    'input#query', 'input[name="query"]', 'input[type="search"]',
+                    '.gnb_search input', '.lnb_search input', '.search_input input',
+                    'input[placeholder]'
+                ];
+                for (var i = 0; i < selectors.length; i++) {
+                    var el = document.querySelector(selectors[i]);
+                    if (!el) continue;
+                    el.scrollIntoView({block: 'center', inline: 'center', behavior: 'instant'});
+                    var r = el.getBoundingClientRect();
+                    if (r.width > 0 && r.height > 0) {
+                        return 'found|' + (r.left + r.width / 2) + '|' + (r.top + r.height / 2);
+                    }
+                }
+                return 'missing';
+            })();
+        """.trimIndent()
+        val result = evaluateText(js)
+        if (!result.startsWith("found|")) {
+            log("검색창 탭 실패: $result")
+            return false
+        }
+        val parts = result.split("|")
+        val cssX = parts.getOrNull(1)?.toFloatOrNull() ?: return false
+        val cssY = parts.getOrNull(2)?.toFloatOrNull() ?: return false
+        tapCssPoint(cssX, cssY)
+        log("검색창 탭 완료")
+        return true
+    }
+
+    suspend fun simulateAutocomplete(keyword: String) {
+        val trimmed = keyword.trim()
+        if (trimmed.isEmpty() || rendererGone) return
+        val partials = mutableListOf<String>()
+        var acc = ""
+        for (ch in trimmed) {
+            acc += ch
+            if (acc.length >= 2 && (acc.length % 2 == 0 || acc == trimmed)) {
+                partials.add(acc)
+            }
+            if (partials.size >= 5) break
+        }
+        if (partials.isEmpty()) partials.add(trimmed)
+        for (partial in partials) {
+            val js = """
+                (function(q) {
+                    try {
+                        fetch('https://ac.search.naver.com/ac?q=' + encodeURIComponent(q) + '&q_enc=UTF-8&st=100&r_format=json', {
+                            method: 'GET',
+                            credentials: 'include',
+                            mode: 'no-cors'
+                        });
+                    } catch(e) {}
+                })(${quoteJs(partial)});
+            """.trimIndent()
+            evaluateText(js)
+            delay(Random.nextLong(200, 480))
+        }
+        log("자동완성 시뮬레이션: ${partials.size}회 (\"${partials.first()}\"→\"${partials.last()}\")")
+    }
+
+    suspend fun clearPage() {
+        withContext(Dispatchers.Main) {
+            webView.stopLoading()
+            webView.loadUrl("about:blank")
+        }
+        delay(3_000)
+        log("WebView 연결 정리 완료 (IP 로테이션 전)")
+    }
+
     private suspend fun evaluateText(script: String): String {
+        if (rendererGone) return ""
         val result = CompletableDeferred<String>()
         withContext(Dispatchers.Main) {
+            if (rendererGone) { result.complete(""); return@withContext }
             webView.evaluateJavascript(script) { raw ->
                 result.complete(
                     raw
@@ -313,25 +740,30 @@ class SamsungWebViewManager(
     }
 
     private suspend fun dispatchSwipe(durationMs: Long) {
-        val safeDuration = durationMs.coerceAtLeast(200)
+        val safeDuration = durationMs.coerceAtLeast(800)
         withContext(Dispatchers.Main) {
             val width = webView.width.toFloat().coerceAtLeast(1f)
             val height = webView.height.toFloat().coerceAtLeast(1f)
-            val x = width / 2f
-            val startY = height * 0.78f
-            val endY = height * 0.32f
+            // 손가락 시작 위치에 약간의 랜덤 편차
+            val baseX = width / 2f + Random.nextFloat() * 30f - 15f
+            val startY = height * (0.72f + Random.nextFloat() * 0.06f)
+            val endY = height * (0.28f + Random.nextFloat() * 0.06f)
             val downTime = SystemClock.uptimeMillis()
-            webView.dispatchTouchEvent(MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, startY, 0))
-            val steps = 12
+            val steps = 40
+            webView.dispatchTouchEvent(MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, baseX, startY, 0))
             for (i in 1 until steps) {
                 val t = i.toFloat() / steps.toFloat()
+                // ease-in-out quadratic: 천천히 시작, 빠르게, 천천히 끝
+                val eased = if (t < 0.5f) 2f * t * t else -1f + (4f - 2f * t) * t
                 val now = downTime + (safeDuration * t).toLong()
-                val y = startY + (endY - startY) * t
-                webView.dispatchTouchEvent(MotionEvent.obtain(downTime, now, MotionEvent.ACTION_MOVE, x, y, 0))
+                val y = startY + (endY - startY) * eased
+                // 손가락이 완전히 직선이 아니라 자연스럽게 약간 흔들림
+                val xDrift = baseX + sin(t * PI).toFloat() * 6f
+                webView.dispatchTouchEvent(MotionEvent.obtain(downTime, now, MotionEvent.ACTION_MOVE, xDrift, y, 0))
             }
-            webView.dispatchTouchEvent(MotionEvent.obtain(downTime, downTime + safeDuration, MotionEvent.ACTION_UP, x, endY, 0))
+            webView.dispatchTouchEvent(MotionEvent.obtain(downTime, downTime + safeDuration, MotionEvent.ACTION_UP, baseX, endY, 0))
         }
-        delay(500)
+        delay(Random.nextLong(400, 900))
     }
 
     private fun quoteJs(value: String): String {
@@ -342,18 +774,60 @@ class SamsungWebViewManager(
             .replace("\r", "") + "\""
     }
 
-    private fun samsungHeaders(): Map<String, String> {
-        return mapOf(
-            "Accept-Language" to "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-        )
+    fun setBrowserMode(isChrome: Boolean) {
+        chromeMode = isChrome
+        webView.settings.userAgentString = if (isChrome) CHROME_137_UA else SAMSUNG_BROWSER_UA
+    }
+
+    private var chromeMode = false
+
+    private fun samsungHeaders(referer: String? = null): Map<String, String> {
+        return buildMap {
+            put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+            if (chromeMode) {
+                put("sec-ch-ua", "\"Chromium\";v=\"137\", \"Google Chrome\";v=\"137\", \"Not/A)Brand\";v=\"24\"")
+            } else {
+                put("sec-ch-ua", "\"Chromium\";v=\"136\", \"Samsung Internet\";v=\"29\", \"Not.A/Brand\";v=\"99\"")
+            }
+            put("sec-ch-ua-mobile", "?1")
+            put("sec-ch-ua-platform", "\"Android\"")
+            referer?.let { put("Referer", it) }
+        }
     }
 
     companion object {
         const val SAMSUNG_PACKAGE = "com.sec.android.app.sbrowser"
         const val NAVER_LOGIN_URL =
             "https://nid.naver.com/nidlogin.login?mode=form&url=https://www.naver.com/"
-        const val SAMSUNG_MOBILE_UA =
-            "Mozilla/5.0 (Linux; Android 13; SM-G991N) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) SamsungBrowser/23.0 Chrome/120.0.0.0 Mobile Safari/537.36"
+
+        // AI Reward 실측 기준: SamsungBrowser/29.0 Chrome/136 (런타임 오버라이드 스펙)
+        const val SAMSUNG_BROWSER_UA =
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) SamsungBrowser/29.0 Chrome/136.0.0.0 Mobile Safari/537.36"
+
+        // G전략 전용 UA
+        const val CHROME_137_UA =
+            "Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"
+
+        // navigator.webdriver 및 자동화 지문 제거
+        const val NAVIGATOR_SPOOF_JS = """
+            (function() {
+              try {
+                Object.defineProperty(navigator, 'webdriver', {get: () => undefined, configurable: true});
+                Object.defineProperty(navigator, 'languages', {get: () => ['ko-KR','ko','en-US','en'], configurable: true});
+                Object.defineProperty(navigator, 'platform', {get: () => 'Linux armv8l', configurable: true});
+                Object.defineProperty(navigator, 'hardwareConcurrency', {get: () => 4, configurable: true});
+                Object.defineProperty(navigator, 'deviceMemory', {get: () => 4, configurable: true});
+                if (typeof window.chrome === 'undefined') {
+                  window.chrome = {runtime: {}, app: {}, loadTimes: function(){}, csi: function(){}};
+                }
+              } catch(e) {}
+            })();
+        """
+
+        private const val PREFS_NAME = "naver_session"
+        private const val PREF_ID = "naver_id"
+        private const val PREF_PW = "naver_pw"
     }
 }

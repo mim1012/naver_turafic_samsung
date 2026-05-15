@@ -1,76 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Samsung Traffic Bot"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/etDeviceName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="z1 or z1-1"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/etRotateEvery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Boss rotates group IP every N tasks"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/etServerUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Server URL, e.g. http://192.168.43.1:8080"
-        android:inputType="textUri" />
-
-    <EditText
-        android:id="@+id/etApiKey"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Optional API key"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/etNaverId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Naver ID"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/etNaverPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Naver password"
-        android:inputType="textPassword" />
-
-    <Button
-        android:id="@+id/btnRunA"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login + Run Strategy A" />
-
+    <!-- WebView fills the entire screen -->
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+        android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/tvLog"
+    <!-- Config panel overlays the top — hidden when running -->
+    <LinearLayout
+        android:id="@+id/configPanel"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textSize="13sp" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:background="#FFFFFFFF"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Samsung Traffic Bot"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etDeviceName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="z1 or z1-1"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etNaverId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Naver ID"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etNaverPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Naver password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btnRunA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="저장 후 시작" />
+
+    </LinearLayout>
+
+    <!-- Status bar overlay at the bottom — visible when running -->
+    <LinearLayout
+        android:id="@+id/statusBar"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_gravity="bottom"
+        android:background="#CC000000"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvLog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:lines="5"
+            android:textColor="#FFFFFFFF"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

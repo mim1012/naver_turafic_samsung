@@ -24,6 +24,7 @@ function createState(options = {}) {
     leases: new Map(),
     taskLeases: new Map(),
     groups: new Map(),
+    cookieStore: new Map(),
     policy: { ...DEFAULT_POLICY, ...(options.policy || {}) },
   };
 }
@@ -55,6 +56,10 @@ function createServer(state = createState()) {
           return sendJson(res, 200, heartbeat(state, body));
         case "/android/group/rotation-report":
           return sendJson(res, 200, rotationReport(state, body));
+        case "/android/cookies/save":
+          return sendJson(res, 200, await saveCookies(state, body));
+        case "/android/cookies/load":
+          return sendJson(res, 200, await loadCookies(state, body));
         default:
           return sendJson(res, 404, { error: "not_found" });
       }
@@ -134,58 +139,48 @@ async function reportTask(state, body) {
 }
 
 async function leaseTaskFromSupabase(state, body) {
+  const strategy = String(body.strategy || "A");
+  const deviceName = String(body.deviceName || "");
+
+  const claimedSlotIds = new Set(
+    Array.from(state.taskLeases.values())
+      .filter((l) => l.status === "active" && l.supabaseSlotId)
+      .map((l) => l.supabaseSlotId),
+  );
+
+  const now = new Date().toISOString();
   const rows = await supabaseRequestJson(
     state,
     "GET",
-    "/traffic-navershopping-app?select=*&order=id.asc&limit=1",
+    `/${state.supabaseSlotTable}?select=id,keyword,keyword_name,mid,link_url,success_count,fail_count,daily_target` +
+      `&status=eq.${encodeURIComponent("작동중")}` +
+      `&expiry_date=gt.${encodeURIComponent(now)}` +
+      `&order=id.asc&limit=20`,
   );
-  const row = Array.isArray(rows) ? rows[0] : null;
-  if (!row) return null;
+  if (!Array.isArray(rows) || rows.length === 0) return null;
 
-  const trafficId = row.id;
-  const slotId = row.slot_id || 0;
-  const keyword = row.keyword || "";
-  const linkUrl = row.link_url || "";
-
-  let slot = {};
-  if (slotId) {
-    const slots = await supabaseRequestJson(
-      state,
-      "GET",
-      `/${state.supabaseSlotTable}?select=id,mid,keyword_name,success_count,fail_count&id=eq.${encodeURIComponent(slotId)}`,
-    );
-    slot = Array.isArray(slots) && slots[0] ? slots[0] : {};
-  }
-
-  const keywordName = slot.keyword_name || "";
-  if (!slot.mid || !keywordName) {
-    await supabaseRequestJson(
-      state,
-      "DELETE",
-      `/traffic-navershopping-app?id=eq.${encodeURIComponent(trafficId)}`,
-    );
-    return null;
-  }
-
-  await supabaseRequestJson(
-    state,
-    "DELETE",
-    `/traffic-navershopping-app?id=eq.${encodeURIComponent(trafficId)}`,
+  const slot = rows.find(
+    (row) =>
+      !claimedSlotIds.has(row.id) &&
+      row.mid &&
+      row.keyword_name &&
+      Number(row.success_count || 0) + Number(row.fail_count || 0) < Number(row.daily_target || 100),
   );
+  if (!slot) return null;
 
   const lease = {
-    id: `sb_${trafficId}`,
-    supabaseTrafficId: trafficId,
-    supabaseSlotId: slotId,
+    id: `sb_${slot.id}_${Date.now()}`,
+    supabaseSlotId: slot.id,
     product: {
-      keyword,
-      secondKeyword: keywordName,
-      linkUrl,
-      mid: slot.mid,
-      productTitle: keywordName,
+      keyword: slot.keyword || "",
+      secondKeyword: strategy === "G" ? null : (slot.keyword_name || ""),
+      keywordName: strategy === "G" ? (slot.keyword_name || "") : null,
+      linkUrl: slot.link_url || "",
+      mid: slot.mid || "",
+      productTitle: slot.keyword_name || "",
     },
-    deviceName: String(body.deviceName || ""),
-    strategy: String(body.strategy || "A"),
+    deviceName,
+    strategy,
     status: "active",
   };
   state.taskLeases.set(lease.id, lease);
@@ -195,7 +190,6 @@ async function leaseTaskFromSupabase(state, body) {
 async function reportTaskToSupabase(state, body) {
   const taskLeaseId = String(body.taskLeaseId || "");
   const lease = state.taskLeases.get(taskLeaseId);
-  const trafficId = lease?.supabaseTrafficId || Number(taskLeaseId.replace(/^sb_/, ""));
   const slotId = lease?.supabaseSlotId || 0;
   const result = String(body.result || "");
   const success = result === "success";
@@ -224,8 +218,8 @@ async function reportTaskToSupabase(state, body) {
     "/slot_rank_naverapp_history",
     {
       slot_status_id: slotId || null,
-      source_table: "traffic-navershopping-app",
-      source_row_id: trafficId || null,
+      source_table: state.supabaseSlotTable,
+      source_row_id: slotId || null,
       customer_id: null,
       keyword: lease?.product?.keyword || null,
       link_url: lease?.product?.linkUrl || null,
@@ -246,19 +240,22 @@ async function leaseTaskFromZero(state, body) {
   const claimed = await postJson(`${state.zeroTrafficApiUrl.replace(/\/$/, "")}/claim-work`, payload);
   if (!claimed || !claimed.traffic_id) return null;
 
+  const zeroStrategy = String(body.strategy || "A");
+  const zeroKeywordName = claimed.keyword_name || "";
   const lease = {
     id: `zero_${claimed.traffic_id}`,
     zeroTrafficId: claimed.traffic_id,
     zeroSlotId: claimed.slot_id || 0,
     product: {
       keyword: claimed.short_keyword || claimed.product_name || "",
-      secondKeyword: claimed.product_name || claimed.short_keyword || "",
+      secondKeyword: zeroStrategy === "G" ? null : (zeroKeywordName || claimed.product_name || ""),
+      keywordName: zeroStrategy === "G" ? zeroKeywordName : null,
       linkUrl: claimed.target_url || claimed.link_url || "",
       mid: claimed.nv_mid || "",
       productTitle: claimed.product_name || "",
     },
     deviceName: String(body.deviceName || ""),
-    strategy: String(body.strategy || "A"),
+    strategy: zeroStrategy,
     status: "active",
   };
   state.taskLeases.set(lease.id, lease);
@@ -273,12 +270,13 @@ async function reportTaskToZero(state, body) {
   const result = String(body.result || "");
   const base = state.zeroTrafficApiUrl.replace(/\/$/, "");
 
+  const source = lease?.strategy === "G" ? "android-samsung-login-G" : "android-samsung-login-A";
   if (result === "success") {
     await postJson(`${base}/complete`, {
       traffic_id: trafficId,
       slot_id: slotId,
       device_id: String(body.deviceName || ""),
-      metadata: { source: "android-samsung-login-A" },
+      metadata: { source },
     });
   } else {
     await postJson(`${base}/fail`, {
@@ -286,7 +284,7 @@ async function reportTaskToZero(state, body) {
       slot_id: slotId,
       device_id: String(body.deviceName || ""),
       error_message: String(body.message || "android strategy task failed"),
-      metadata: { source: "android-samsung-login-A" },
+      metadata: { source },
     });
   }
   if (lease) lease.status = "reported";
@@ -376,6 +374,40 @@ function heartbeat(state, body) {
   return controlResponse(state, group, role);
 }
 
+async function saveCookies(state, body) {
+  const deviceName = String(body.deviceName || "");
+  const cookies = String(body.cookies || "");
+  if (!deviceName || !cookies) return { ok: false, error: "missing_fields" };
+  const now = new Date().toISOString();
+  state.cookieStore.set(deviceName, { cookies, savedAt: now });
+  if (state.supabaseRestUrl && state.supabaseAnonKey) {
+    await supabaseRequestJson(
+      state, "POST", "/device_cookies?on_conflict=device_name",
+      { device_name: deviceName, cookies, updated_at: now },
+      true,
+    ).catch((e) => console.error("cookie save failed:", e.message));
+  }
+  return { ok: true };
+}
+
+async function loadCookies(state, body) {
+  const deviceName = String(body.deviceName || "");
+  if (state.supabaseRestUrl && state.supabaseAnonKey) {
+    const rows = await supabaseRequestJson(
+      state, "GET",
+      `/device_cookies?device_name=eq.${encodeURIComponent(deviceName)}&limit=1`,
+    ).catch(() => null);
+    const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    if (row) {
+      state.cookieStore.set(deviceName, { cookies: row.cookies, savedAt: row.updated_at });
+      return { cookies: row.cookies, savedAt: row.updated_at };
+    }
+  }
+  const entry = state.cookieStore.get(deviceName);
+  if (!entry) return { cookies: null };
+  return { cookies: entry.cookies, savedAt: entry.savedAt };
+}
+
 function rotationReport(state, body) {
   const group = getGroup(state, String(body.groupId || "default"));
   if (body.success) {
@@ -442,7 +474,8 @@ function taskLeaseResponse(product, lease) {
   return {
     taskLeaseId: lease.id,
     keyword: product.keyword,
-    secondKeyword: product.secondKeyword,
+    secondKeyword: product.secondKeyword || null,
+    keywordName: product.keywordName || null,
     linkUrl: product.linkUrl,
     mid: product.mid || null,
     productTitle: product.productTitle || null,

@@ -1,0 +1,2 @@
+05-08 19:50:19.689 E/adbd    ( 7468): service_to_fd: shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-v' 'time' '-s' 'SamsungTrafficBot'
+05-08 19:50:27.694 E/adbd    ( 7468): service_to_fd: shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-v' 'time' '-s' 'SamsungTrafficBot'

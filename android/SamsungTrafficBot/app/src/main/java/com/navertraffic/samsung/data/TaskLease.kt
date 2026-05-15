@@ -1,11 +1,15 @@
 package com.navertraffic.samsung.data
 
 import com.navertraffic.samsung.strategy.StrategyATask
+import com.navertraffic.samsung.strategy.StrategyGTask
 
 data class StrategyTaskLease(
     val taskLeaseId: String,
-    val task: StrategyATask,
-)
+    val task: StrategyATask? = null,
+    val taskG: StrategyGTask? = null,
+) {
+    val strategyName: String get() = if (taskG != null) "G" else "A"
+}
 
 enum class StrategyTaskResult {
     SUCCESS,

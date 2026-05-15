@@ -14,4 +14,14 @@ interface BrowserSession {
     suspend fun swipeDetail(durationMs: Long = 2_000) = Unit
 
     suspend fun resetSurface() = Unit
+
+    suspend fun simulateAutocomplete(keyword: String) = Unit
+
+    suspend fun tapSearchBar(): Boolean = false
+
+    suspend fun typeIntoSearchBar(keyword: String): Boolean = false
+
+    suspend fun tapSearchSubmitAndWait(timeoutMs: Long = 30_000): Boolean = false
+
+    suspend fun scrollBy(dy: Int) = Unit
 }

@@ -3,6 +3,7 @@ package com.navertraffic.samsung.data
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.navertraffic.samsung.strategy.StrategyATask
+import com.navertraffic.samsung.strategy.StrategyGTask
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -11,7 +12,7 @@ class AndroidServerApiClient(
     private val baseUrl: String,
     private val apiKey: String? = null,
     private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport(),
-) : AccountLeaseClient, GroupControlClient, StrategyTaskLeaseClient {
+) : AccountLeaseClient, GroupControlClient, StrategyTaskLeaseClient, CookieStorageClient {
     override suspend fun leaseAccount(
         deviceName: String,
         role: DeviceIdentity.Role,
@@ -76,6 +77,17 @@ class AndroidServerApiClient(
         post("/android/tasks/report", AndroidServerApiJson.strategyTaskReportBody(report))
     }
 
+    override suspend fun saveCookies(deviceName: String, cookies: String) {
+        val body = jsonBody("deviceName" to deviceName, "cookies" to cookies)
+        post("/android/cookies/save", body)
+    }
+
+    override suspend fun loadCookies(deviceName: String): String? {
+        val body = jsonBody("deviceName" to deviceName)
+        val raw = post("/android/cookies/load", body)
+        return readString(raw, "cookies")?.takeIf { it.isNotBlank() }
+    }
+
     private suspend fun post(path: String, body: JsonBody): String {
         val normalizedBase = baseUrl.trimEnd('/')
         val normalizedPath = if (path.startsWith("/")) path else "/$path"
@@ -127,16 +139,32 @@ object AndroidServerApiJson {
 
     fun parseStrategyTaskLease(raw: String): StrategyTaskLease? {
         val taskLeaseId = readString(raw, "taskLeaseId")?.takeIf { it.isNotBlank() } ?: return null
-        return StrategyTaskLease(
-            taskLeaseId = taskLeaseId,
-            task = StrategyATask(
-                keyword = readString(raw, "keyword").orEmpty(),
-                secondKeyword = readString(raw, "secondKeyword").orEmpty(),
-                linkUrl = readString(raw, "linkUrl").orEmpty(),
-                mid = readString(raw, "mid")?.takeIf { it.isNotBlank() },
-                productTitle = readString(raw, "productTitle")?.takeIf { it.isNotBlank() },
-            ),
-        )
+        val keywordName = readString(raw, "keywordName")?.takeIf { it.isNotBlank() }
+        val mid = readString(raw, "mid")?.takeIf { it.isNotBlank() }
+
+        return if (keywordName != null && mid != null) {
+            StrategyTaskLease(
+                taskLeaseId = taskLeaseId,
+                taskG = StrategyGTask(
+                    keyword = readString(raw, "keyword").orEmpty(),
+                    keywordName = keywordName,
+                    linkUrl = readString(raw, "linkUrl").orEmpty(),
+                    mid = mid,
+                    productTitle = readString(raw, "productTitle")?.takeIf { it.isNotBlank() },
+                ),
+            )
+        } else {
+            StrategyTaskLease(
+                taskLeaseId = taskLeaseId,
+                task = StrategyATask(
+                    keyword = readString(raw, "keyword").orEmpty(),
+                    secondKeyword = readString(raw, "secondKeyword").orEmpty(),
+                    linkUrl = readString(raw, "linkUrl").orEmpty(),
+                    mid = mid,
+                    productTitle = readString(raw, "productTitle")?.takeIf { it.isNotBlank() },
+                ),
+            )
+        }
     }
 
     fun deviceHeartbeatBody(heartbeat: DeviceHeartbeat): JsonBody {
@@ -185,41 +213,44 @@ object AndroidServerApiJson {
 }
 
 interface HttpJsonTransport {
+    suspend fun request(
+        method: String,
+        url: String,
+        body: String?,
+        headers: Map<String, String>,
+    ): String
+
     suspend fun postJson(
         url: String,
         body: String,
         headers: Map<String, String>,
-    ): String
+    ): String = request("POST", url, body, headers)
 }
 
 class UrlConnectionHttpJsonTransport : HttpJsonTransport {
-    override suspend fun postJson(
+    override suspend fun request(
+        method: String,
         url: String,
-        body: String,
+        body: String?,
         headers: Map<String, String>,
     ): String = withContext(Dispatchers.IO) {
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"
+            requestMethod = method
             connectTimeout = 10_000
             readTimeout = 20_000
-            doOutput = true
+            if (body != null) doOutput = true
             headers.forEach { (key, value) -> setRequestProperty(key, value) }
         }
 
         try {
-            OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use {
-                it.write(body)
+            if (body != null) {
+                OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { it.write(body) }
             }
 
-            val stream = if (connection.responseCode in 200..299) {
-                connection.inputStream
-            } else {
-                connection.errorStream ?: connection.inputStream
-            }
-            val response = stream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-            if (connection.responseCode !in 200..299) {
-                error("HTTP ${connection.responseCode}: $response")
-            }
+            val code = connection.responseCode
+            val stream = if (code in 200..299) connection.inputStream else (connection.errorStream ?: connection.inputStream)
+            val response = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
+            if (code !in 200..299) error("HTTP $code: $response")
             response
         } finally {
             connection.disconnect()
@@ -269,14 +300,36 @@ private fun escapeJson(value: String): String {
     }
 }
 
-private fun readString(raw: String, key: String): String? {
+internal fun parseJsonArray(raw: String): List<String> {
+    val trimmed = raw.trim()
+    if (!trimmed.startsWith("[")) return emptyList()
+    val results = mutableListOf<String>()
+    var depth = 0
+    var start = -1
+    var inString = false
+    var escape = false
+    for (i in trimmed.indices) {
+        val c = trimmed[i]
+        if (escape) { escape = false; continue }
+        if (c == '\\' && inString) { escape = true; continue }
+        if (c == '"') { inString = !inString; continue }
+        if (inString) continue
+        when (c) {
+            '{' -> { if (depth == 0) start = i; depth++ }
+            '}' -> { depth--; if (depth == 0 && start >= 0) { results.add(trimmed.substring(start, i + 1)); start = -1 } }
+        }
+    }
+    return results
+}
+
+internal fun readString(raw: String, key: String): String? {
     val match = Regex(""""${Regex.escape(key)}"\s*:\s*(null|"((?:\\.|[^"])*)")""")
         .find(raw) ?: return null
     if (match.groupValues[1] == "null") return null
     return unescapeJson(match.groupValues[2])
 }
 
-private fun readInt(raw: String, key: String, default: Int): Int {
+internal fun readInt(raw: String, key: String, default: Int): Int {
     return Regex(""""${Regex.escape(key)}"\s*:\s*(-?\d+)""")
         .find(raw)
         ?.groupValues

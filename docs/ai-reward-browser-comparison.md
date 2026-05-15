@@ -95,6 +95,12 @@ node tools\adb-mid-exposure-check.mjs
 
 The trace is diagnostic only. It does not change tapping, search, cookies, or browser lifecycle. Sensitive tracking parameters are redacted in the new trace/final URL logs.
 
+## Runtime Snapshot Evidence
+
+UA, Client Hints, viewport, WebGL/GPU, profile state, and request headers are not fully captured by the `test/0506` flow artifacts. If the comparison needs these browser-context values, collect them with the checklist in `docs/ai-reward-runtime-snapshot-plan.md`.
+
+Those values are comparison evidence, not strict pass conditions for the Samsung path-parity test. The Samsung line should continue to treat browser package, launch owner, Chromium profile path, WebGL/GPU, and device fingerprint as expected differences unless the goal explicitly changes to AI Reward browser identity research.
+
 ## Priority Fixes
 
 1. Run one short Samsung trace with `TRACE_REDIRECTS=1` and compare the chain against the AI Reward capture.

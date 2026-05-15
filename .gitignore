@@ -38,6 +38,8 @@ test/ip-check/
 
 # Secrets
 .env
+.env.local
+*.env.local
 *.keystore
 secrets.properties
 server/accounts.local.json

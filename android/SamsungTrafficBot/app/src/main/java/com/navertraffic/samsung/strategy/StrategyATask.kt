@@ -6,6 +6,7 @@ data class StrategyATask(
     val linkUrl: String,
     val mid: String? = null,
     val productTitle: String? = null,
+    val tailKeyword: String? = null,
 ) {
     fun validate(): String? {
         if (keyword.isBlank()) return "keyword is required"
