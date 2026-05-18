@@ -32,6 +32,8 @@ android {
         buildConfigField("String", "DEBUG_NAVER_PW",    "\"${localProp("debug.naver.pw")}\"")
         buildConfigField("String", "SUPABASE_URL",         "\"${localProp("supabase.url")}\"")
         buildConfigField("String", "SUPABASE_KEY",         "\"${localProp("supabase.key")}\"")
+        buildConfigField("String", "DEFAULT_SERVER_URL",   "\"${localProp("server.url", "https://www.sellermate.ai.kr")}\"")
+        buildConfigField("String", "DEVICE_API_TOKEN",     "\"${localProp("android.device.api.token")}\"")
         buildConfigField("int",    "ROTATE_EVERY",         localProp("rotate.every", "5"))
         buildConfigField("int",    "ROTATION_DRAIN_WAIT_SEC", localProp("rotation.drain.wait.sec", "90"))
     }

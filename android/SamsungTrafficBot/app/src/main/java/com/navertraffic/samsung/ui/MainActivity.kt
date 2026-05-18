@@ -107,7 +107,8 @@ class MainActivity : AppCompatActivity() {
             val config = ConfigStore(this)
             val hasCredentials = etNaverId.text.isNotBlank() && etNaverPassword.text.isNotBlank()
             val hasSession = webViewManager.hasCookieSession()
-            if (config.isConfigured() && (hasCredentials || hasSession)) {
+            val hasServer = resolveServerUrl(config).isNotBlank()
+            if (config.isConfigured() && (hasServer || hasCredentials || hasSession)) {
                 appendLog("저장된 설정 확인 → 자동 시작")
                 etDeviceName.post { checkUpdateAndRun() }
             } else if (hasCredentials || hasSession) {
@@ -183,13 +184,8 @@ class MainActivity : AppCompatActivity() {
     private fun checkUpdateAndRun() {
         lifecycleScope.launch {
             val config = ConfigStore(this@MainActivity)
-            val serverUrl = intent.getStringExtra(EXTRA_SERVER_URL)
-                ?.takeIf { it.isNotBlank() }
-                ?: etServerUrl.text.toString().trim().takeIf { it.isNotBlank() }
-                ?: config.serverUrl
-            val apiKey = intent.getStringExtra(EXTRA_API_KEY)
-                ?.takeIf { it.isNotBlank() }
-                ?: config.apiKey
+            val serverUrl = resolveServerUrl(config)
+            val apiKey = resolveApiKey(config)
             val updateManager = AppUpdateManager(this@MainActivity, ::appendLog)
             val updated = if (serverUrl.isNotBlank()) {
                 updateManager.checkAndUpdateFromServer(serverUrl, apiKey.takeIf { it.isNotBlank() })
@@ -207,7 +203,9 @@ class MainActivity : AppCompatActivity() {
     private fun loadSavedConfig() {
         val config = ConfigStore(this)
         if (etDeviceName.text.isBlank() && config.deviceName.isNotBlank()) etDeviceName.setText(config.deviceName)
-        if (etServerUrl.text.isBlank() && config.serverUrl.isNotBlank()) etServerUrl.setText(config.serverUrl)
+        if (etServerUrl.text.isBlank()) {
+            resolveServerUrl(config).takeIf { it.isNotBlank() }?.let { etServerUrl.setText(it) }
+        }
     }
 
     // ── Strategy A ───────────────────────────────────────────────────────────
@@ -224,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         config.save(
             deviceName = deviceName,
             loopCount = loopCount,
-            serverUrl = etServerUrl.text.toString().trim(),
+            serverUrl = resolveServerUrl(config),
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val externalBrowser = getBoolExtra(EXTRA_EXTERNAL_BROWSER)
@@ -424,7 +422,7 @@ class MainActivity : AppCompatActivity() {
         config.save(
             deviceName = deviceName,
             loopCount = loopCount,
-            serverUrl = etServerUrl.text.toString().trim(),
+            serverUrl = resolveServerUrl(config),
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
 
@@ -779,13 +777,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun buildServerClient(): ServerClients {
         val config = ConfigStore(this)
-        val serverUrl = intent.getStringExtra(EXTRA_SERVER_URL)
-            ?.takeIf { it.isNotBlank() }
-            ?: etServerUrl.text.toString().trim().takeIf { it.isNotBlank() }
-            ?: config.serverUrl
-        val apiKey = intent.getStringExtra(EXTRA_API_KEY)
-            ?.takeIf { it.isNotBlank() }
-            ?: config.apiKey
+        val serverUrl = resolveServerUrl(config)
+        val apiKey = resolveApiKey(config)
         if (serverUrl.isNotBlank()) {
             val client = AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
             return ServerClients(client, client, client, client)
@@ -814,6 +807,22 @@ class MainActivity : AppCompatActivity() {
             else ->
                 appendLog("Vercel 서버 API 연동 모드 활성")
         }
+    }
+
+    private fun resolveServerUrl(config: ConfigStore): String {
+        return intent.getStringExtra(EXTRA_SERVER_URL)
+            ?.takeIf { it.isNotBlank() }
+            ?: BuildConfig.DEFAULT_SERVER_URL.trim().takeIf { it.isNotBlank() }
+            ?: etServerUrl.text.toString().trim().takeIf { it.isNotBlank() }
+            ?: config.serverUrl.takeIf { it.isNotBlank() }
+            ?: ""
+    }
+
+    private fun resolveApiKey(config: ConfigStore): String {
+        return intent.getStringExtra(EXTRA_API_KEY)
+            ?.takeIf { it.isNotBlank() }
+            ?: config.apiKey.takeIf { it.isNotBlank() }
+            ?: BuildConfig.DEVICE_API_TOKEN.trim()
     }
 
     private fun appendLog(message: String) {

@@ -37,7 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Vercel server URL"
-            android:inputType="textUri" />
+            android:inputType="textUri"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/etNaverId"
