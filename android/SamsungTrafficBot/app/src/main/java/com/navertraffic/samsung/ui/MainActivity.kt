@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etServerUrl: EditText
     private lateinit var etNaverId: EditText
     private lateinit var etNaverPassword: EditText
+    private lateinit var cbShowNaverPassword: CheckBox
     private lateinit var tvLog: TextView
     private lateinit var configPanel: android.view.View
     private lateinit var statusBar: android.view.View
@@ -77,7 +78,8 @@ class MainActivity : AppCompatActivity() {
         etServerUrl = findViewById(R.id.etServerUrl)
         etNaverId = findViewById(R.id.etNaverId)
         etNaverPassword = findViewById(R.id.etNaverPassword)
-        findViewById<CheckBox>(R.id.cbShowNaverPassword).setOnCheckedChangeListener { _, checked ->
+        cbShowNaverPassword = findViewById(R.id.cbShowNaverPassword)
+        cbShowNaverPassword.setOnCheckedChangeListener { _, checked ->
             setNaverPasswordVisible(checked)
         }
         tvLog = findViewById(R.id.tvLog)
@@ -130,8 +132,10 @@ class MainActivity : AppCompatActivity() {
         if (resolveServerUrl(ConfigStore(this)).isNotBlank()) {
             etNaverId.text.clear()
             etNaverPassword.text.clear()
+            setNaverCredentialInputsVisible(false)
             return
         }
+        setNaverCredentialInputsVisible(true)
         if (etNaverId.text.isBlank() && etNaverPassword.text.isBlank()) {
             val saved = webViewManager.loadCredentials(this)
             if (saved != null) {
@@ -192,6 +196,13 @@ class MainActivity : AppCompatActivity() {
     private fun applyNaverCredentialToUi(loginId: String, password: String) {
         etNaverId.setText(loginId)
         etNaverPassword.setText(password)
+    }
+
+    private fun setNaverCredentialInputsVisible(visible: Boolean) {
+        val visibility = if (visible) View.VISIBLE else View.GONE
+        etNaverId.visibility = visibility
+        etNaverPassword.visibility = visibility
+        cbShowNaverPassword.visibility = visibility
     }
 
     private fun applyLaunchExtras() {
