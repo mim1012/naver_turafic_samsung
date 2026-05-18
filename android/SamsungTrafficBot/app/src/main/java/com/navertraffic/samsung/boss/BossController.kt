@@ -8,7 +8,6 @@ import com.navertraffic.samsung.data.DeviceIdentity
 import com.navertraffic.samsung.data.DeviceRuntimeState
 import com.navertraffic.samsung.data.GroupCommand
 import com.navertraffic.samsung.data.GroupControlClient
-import kotlinx.coroutines.delay
 import com.navertraffic.samsung.data.GroupControlResponse
 import com.navertraffic.samsung.data.GroupState
 import com.navertraffic.samsung.data.NoopAccountLeaseClient
@@ -19,6 +18,11 @@ import com.navertraffic.samsung.strategy.BotStrategy
 import com.navertraffic.samsung.strategy.StrategyAResult
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class BossController(
     private val identity: DeviceIdentity,
@@ -32,6 +36,21 @@ class BossController(
     private val beforeRotate: (suspend () -> Unit)? = null,
 ) {
     private var taskCount = 0
+    @Volatile
+    private var runtimeState = DeviceRuntimeState.IDLE
+    @Volatile
+    private var lastError: String? = null
+
+    fun startHeartbeatMonitor(
+        scope: CoroutineScope,
+        intervalMs: Long = HEARTBEAT_INTERVAL_MS,
+    ): Job = scope.launch {
+        log("대장봇 heartbeat 모니터 시작: ${intervalMs / 1000}초 주기")
+        while (isActive) {
+            heartbeat(runtimeState)
+            delay(intervalMs)
+        }
+    }
 
     suspend fun runOnce(task: StrategyATask): StrategyAResult {
         val strategy = (botStrategy as? BotStrategy.A)?.strategy
@@ -50,6 +69,7 @@ class BossController(
         run: suspend () -> StrategyAResult,
     ): StrategyAResult {
         log("대장봇 실행: 그룹 IP owner (${rotateEveryGroupTasks}건마다 회전)")
+        runtimeState = DeviceRuntimeState.IDLE
         val control = heartbeat(DeviceRuntimeState.IDLE)
         if (handleControl(control)) return StrategyAResult(success = false, message = "group_paused")
 
@@ -58,8 +78,17 @@ class BossController(
         }.onFailure { log("계정 lease 실패: ${it.message}") }.getOrNull()
         lease?.let { log("계정 lease 획득: ${it.accountAlias}") }
 
+        runtimeState = DeviceRuntimeState.RUNNING_TASK
         heartbeat(DeviceRuntimeState.RUNNING_TASK)
-        val result = run()
+        val result = try {
+            run()
+        } catch (error: Throwable) {
+            lastError = error.message ?: error::class.java.simpleName
+            runtimeState = DeviceRuntimeState.ERROR
+            heartbeat(DeviceRuntimeState.ERROR)
+            throw error
+        }
+        lastError = if (result.success) null else result.message
 
         val reportResult = when {
             result.success -> AccountLeaseResult.SUCCESS
@@ -96,12 +125,15 @@ class BossController(
                 rotateGroupIp()
             }
         }
-        heartbeat(DeviceRuntimeState.IDLE)
+        runtimeState = if (result.success) DeviceRuntimeState.IDLE else DeviceRuntimeState.ERROR
+        heartbeat(runtimeState)
         return result
     }
 
     suspend fun rotateGroupIp(commandId: String? = null) {
         log("대장봇 IP 로테이션: DRAINING 신호 (쫄병 ${rotationDrainWaitMs / 1000}초 대기)")
+        runtimeState = DeviceRuntimeState.ROTATING
+        heartbeat(DeviceRuntimeState.ROTATING)
         runCatching { groupControlClient.startRotation(identity.groupId) }
             .onFailure { log("rotation 시작 신호 실패: ${it.message}") }
         val drainStepMs = 10_000L
@@ -131,6 +163,8 @@ class BossController(
                 ),
             )
         }.onFailure { log("로테이션 report 실패: ${it.message}") }
+        runtimeState = DeviceRuntimeState.IDLE
+        heartbeat(DeviceRuntimeState.IDLE)
     }
 
     private suspend fun heartbeat(state: DeviceRuntimeState): GroupControlResponse? {
@@ -142,6 +176,7 @@ class BossController(
                     role = identity.role,
                     state = state,
                     taskCount = taskCount,
+                    lastError = lastError,
                 ),
             )
         }.onFailure { log("heartbeat 실패: ${it.message}") }.getOrNull()
@@ -157,6 +192,8 @@ class BossController(
             response.command == GroupCommand.PAUSE_FOR_ROTATION ||
                 response.groupState == GroupState.DRAINING ||
                 response.groupState == GroupState.ROTATING -> {
+                runtimeState = DeviceRuntimeState.PAUSED
+                heartbeat(DeviceRuntimeState.PAUSED)
                 log("그룹 상태 ${response.groupState}: 새 작업 대기")
                 true
             }
@@ -164,6 +201,8 @@ class BossController(
                 response.groupState == GroupState.STOPPED ||
                 response.groupState == GroupState.PAUSED ||
                 response.groupState == GroupState.ROTATION_FAILED -> {
+                runtimeState = DeviceRuntimeState.PAUSED
+                heartbeat(DeviceRuntimeState.PAUSED)
                 log("그룹 상태 ${response.groupState}: 작업 중지")
                 true
             }
@@ -173,5 +212,6 @@ class BossController(
 
     companion object {
         private const val APP_VERSION = "0.1.0"
+        private const val HEARTBEAT_INTERVAL_MS = 30_000L
     }
 }

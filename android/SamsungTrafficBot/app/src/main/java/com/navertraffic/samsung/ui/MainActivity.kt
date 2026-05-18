@@ -15,6 +15,7 @@ import com.navertraffic.samsung.AppUpdateManager
 import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.R
 import com.navertraffic.samsung.boss.BossController
+import com.navertraffic.samsung.data.AccountLease
 import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AndroidServerApiClient
 import com.navertraffic.samsung.data.DeviceIdentity
@@ -49,6 +50,7 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etDeviceName: EditText
+    private lateinit var etServerUrl: EditText
     private lateinit var etNaverId: EditText
     private lateinit var etNaverPassword: EditText
     private lateinit var tvLog: TextView
@@ -58,12 +60,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webViewContainer: android.view.ViewGroup
 
     private val logLines = ArrayDeque<String>()
+    private val validatedCookieSessions = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         etDeviceName = findViewById(R.id.etDeviceName)
+        etServerUrl = findViewById(R.id.etServerUrl)
         etNaverId = findViewById(R.id.etNaverId)
         etNaverPassword = findViewById(R.id.etNaverPassword)
         tvLog = findViewById(R.id.tvLog)
@@ -126,9 +130,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyLaunchExtras() {
+        val config = ConfigStore(this)
         intent.getStringExtra(EXTRA_DEVICE_NAME)?.let { etDeviceName.setText(it) }
         intent.getStringExtra(EXTRA_NAVER_ID)?.let { etNaverId.setText(it) }
         intent.getStringExtra(EXTRA_NAVER_PASSWORD)?.let { etNaverPassword.setText(it) }
+        intent.getStringExtra(EXTRA_SERVER_URL)?.takeIf { it.isNotBlank() }?.let {
+            etServerUrl.setText(it)
+            config.serverUrl = it
+            appendLog("서버 URL 저장됨")
+        }
+        intent.getStringExtra(EXTRA_API_KEY)?.takeIf { it.isNotBlank() }?.let {
+            config.apiKey = it
+            appendLog("서버 API 키 저장됨")
+        }
         if (getBoolExtra(EXTRA_AUTO_RUN)) {
             appendLog("autoRun 수신")
             etDeviceName.post { checkUpdateAndRun() }
@@ -163,8 +177,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkUpdateAndRun() {
         lifecycleScope.launch {
-            val updated = AppUpdateManager(this@MainActivity, ::appendLog)
-                .checkAndUpdate(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_KEY)
+            val config = ConfigStore(this@MainActivity)
+            val serverUrl = intent.getStringExtra(EXTRA_SERVER_URL)
+                ?.takeIf { it.isNotBlank() }
+                ?: etServerUrl.text.toString().trim().takeIf { it.isNotBlank() }
+                ?: config.serverUrl
+            val apiKey = intent.getStringExtra(EXTRA_API_KEY)
+                ?.takeIf { it.isNotBlank() }
+                ?: config.apiKey
+            val updateManager = AppUpdateManager(this@MainActivity, ::appendLog)
+            val updated = if (serverUrl.isNotBlank()) {
+                updateManager.checkAndUpdateFromServer(serverUrl, apiKey.takeIf { it.isNotBlank() })
+            } else {
+                updateManager.checkAndUpdate(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_KEY)
+            }
             if (!updated) runBot()
         }
     }
@@ -176,6 +202,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadSavedConfig() {
         val config = ConfigStore(this)
         if (etDeviceName.text.isBlank() && config.deviceName.isNotBlank()) etDeviceName.setText(config.deviceName)
+        if (etServerUrl.text.isBlank() && config.serverUrl.isNotBlank()) etServerUrl.setText(config.serverUrl)
     }
 
     // ── Strategy A ───────────────────────────────────────────────────────────
@@ -185,9 +212,15 @@ class MainActivity : AppCompatActivity() {
         DeviceIdentity.validateInput(deviceName)?.let { appendLog(it); return }
 
         val identity = DeviceIdentity.parse(deviceName) ?: return
+        val config = ConfigStore(this)
         val rotateEvery = BuildConfig.ROTATE_EVERY
         val drainWaitMs = BuildConfig.ROTATION_DRAIN_WAIT_SEC * 1000L
         val loopCount = getIntExtra(EXTRA_LOOP_COUNT, BuildConfig.DEBUG_LOOP_COUNT).coerceIn(1, 1_000)
+        config.save(
+            deviceName = deviceName,
+            loopCount = loopCount,
+            serverUrl = etServerUrl.text.toString().trim(),
+        )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val externalBrowser = getBoolExtra(EXTRA_EXTERNAL_BROWSER)
         val variant = when (intent.getStringExtra(EXTRA_STRATEGY_VARIANT)?.uppercase()) {
@@ -223,8 +256,7 @@ class MainActivity : AppCompatActivity() {
         }
         val botStrategy = BotStrategy.A(strategyImpl)
         val serverClient = buildServerClient()
-        if (serverClient.taskLeaseClient is NoopStrategyTaskLeaseClient) appendLog("Supabase URL 없음: 로컬 smoke 모드")
-        else appendLog("Supabase 연동 모드 활성")
+        logServerMode(serverClient)
         enterRunningMode("전략 A 실행 중")
 
         lifecycleScope.launch {
@@ -261,83 +293,111 @@ class MainActivity : AppCompatActivity() {
                 log = ::appendLog,
             ) else null
 
-            val keywordCombos = SecondKeywordStore.generateCombinations(
-                source = task.secondKeyword,
-                requiredWord = task.keyword,
-                count = 5,
-            )
-            appendLog("2차 검색어 ${keywordCombos.size}개 조합 생성 (필수: ${task.keyword})")
-            keywordCombos.forEachIndexed { i, k -> appendLog("  [${i + 1}] $k") }
+            val heartbeatJob = bossController?.startHeartbeatMonitor(this)
+                ?: soldierController?.startHeartbeatMonitor(this)
 
-            val excludedCombos = mutableSetOf<String>()
-            var comboIndex = 0
-            var successCount = 0
+            try {
+                val keywordCombos = SecondKeywordStore.generateCombinations(
+                    source = task.secondKeyword,
+                    requiredWord = task.keyword,
+                    count = 5,
+                )
+                appendLog("2차 검색어 ${keywordCombos.size}개 조합 생성 (필수: ${task.keyword})")
+                keywordCombos.forEachIndexed { i, k -> appendLog("  [${i + 1}] $k") }
 
-            repeat(loopCount) { index ->
-                val available = keywordCombos.filter { it !in excludedCombos }
-                if (available.isEmpty()) {
-                    appendLog("모든 2차 검색어 조합 제외됨: 종료")
-                    return@launch
-                }
-                val secondKeywordNow = available[comboIndex % available.size]
-                comboIndex++
-                val currentTask = task.copy(secondKeyword = secondKeywordNow)
+                val excludedCombos = mutableSetOf<String>()
+                var comboIndex = 0
+                var successCount = 0
 
-                if (!dryRun && !externalBrowser) {
-                    val naverId = etNaverId.text.toString().trim()
-                    val naverPw = etNaverPassword.text.toString()
-                    if (!ensureNaverLogin(naverId, naverPw, serverClient.cookieClient, identity.rawName)) {
+                repeat(loopCount) { index ->
+                    val available = keywordCombos.filter { it !in excludedCombos }
+                    if (available.isEmpty()) {
+                        appendLog("모든 2차 검색어 조합 제외됨: 종료")
                         exitRunningMode()
                         return@launch
                     }
-                    if (index == 0) webViewManager.saveCredentials(this@MainActivity, naverId, naverPw)
-                }
+                    val secondKeywordNow = available[comboIndex % available.size]
+                    comboIndex++
+                    val currentTask = task.copy(secondKeyword = secondKeywordNow)
 
-                appendLog("A전략 반복 ${index + 1}/$loopCount [${available.indexOf(secondKeywordNow) + 1}/${available.size}번 조합]")
-                val result: StrategyAResult = bossController?.runOnce(currentTask)
-                    ?: soldierController?.runOnce(currentTask)
-                    ?: StrategyAResult(success = false, message = "no_controller")
+                    if (!dryRun && !externalBrowser) {
+                        val credential = resolveNaverLogin(serverClient, identity, "A")
+                        if (credential == null ||
+                            !ensureNaverLogin(
+                                credential.loginId,
+                                credential.password,
+                                credential.accountAlias,
+                                serverClient.cookieClient,
+                                identity.rawName,
+                            )
+                        ) {
+                            exitRunningMode()
+                            return@launch
+                        }
+                    }
 
-                if (!dryRun && !externalBrowser && webViewManager.rendererGone) {
-                    appendLog("렌더러 OOM 감지: WebView 재생성 중")
-                    webViewManager.rebuildWebView(webViewContainer)
-                    val naverId = etNaverId.text.toString().trim()
-                    val naverPw = etNaverPassword.text.toString()
-                    if (!ensureNaverLogin(naverId, naverPw, serverClient.cookieClient, identity.rawName)) {
-                        exitRunningMode()
-                        return@launch
+                    appendLog("A전략 반복 ${index + 1}/$loopCount [${available.indexOf(secondKeywordNow) + 1}/${available.size}번 조합]")
+                    val result: StrategyAResult = bossController?.runOnce(currentTask)
+                        ?: soldierController?.runOnce(currentTask)
+                        ?: StrategyAResult(success = false, message = "no_controller")
+
+                    if (!dryRun && !externalBrowser && webViewManager.rendererGone) {
+                        appendLog("렌더러 OOM 감지: WebView 재생성 중")
+                        webViewManager.rebuildWebView(webViewContainer)
+                        val credential = resolveNaverLogin(serverClient, identity, "A")
+                        if (credential == null ||
+                            !ensureNaverLogin(
+                                credential.loginId,
+                                credential.password,
+                                credential.accountAlias,
+                                serverClient.cookieClient,
+                                identity.rawName,
+                            )
+                        ) {
+                            exitRunningMode()
+                            return@launch
+                        }
+                    }
+
+                    if (result.success) successCount += 1
+                    if (!result.success && result.message?.startsWith("MID product not found") == true) {
+                        excludedCombos.add(secondKeywordNow)
+                        appendLog("MID 없음 → 2차 검색어 제외: $secondKeywordNow")
+                    }
+
+                    runCatching {
+                        serverClient.taskLeaseClient.reportTask(
+                            StrategyTaskReport(
+                                taskLeaseId = taskLease?.taskLeaseId,
+                                deviceName = identity.rawName,
+                                result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
+                                message = if (result.success) null else result.message,
+                            ),
+                        )
+                    }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+
+                    if (!dryRun && !externalBrowser && (index + 1) % 30 == 0 && index + 1 < loopCount) {
+                        appendLog("주기적 WebView 재생성 (${index + 1}회차 이후)")
+                        webViewManager.rebuildWebView(webViewContainer)
+                        val credential = resolveNaverLogin(serverClient, identity, "A")
+                        if (credential == null ||
+                            !ensureNaverLogin(
+                                credential.loginId,
+                                credential.password,
+                                credential.accountAlias,
+                                serverClient.cookieClient,
+                                identity.rawName,
+                            )
+                        ) {
+                            exitRunningMode()
+                            return@launch
+                        }
                     }
                 }
-
-                if (result.success) successCount += 1
-                if (!result.success && result.message?.startsWith("MID product not found") == true) {
-                    excludedCombos.add(secondKeywordNow)
-                    appendLog("MID 없음 → 2차 검색어 제외: $secondKeywordNow")
-                }
-
-                runCatching {
-                    serverClient.taskLeaseClient.reportTask(
-                        StrategyTaskReport(
-                            taskLeaseId = taskLease?.taskLeaseId,
-                            deviceName = identity.rawName,
-                            result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
-                            message = if (result.success) null else result.message,
-                        ),
-                    )
-                }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
-
-                if (!dryRun && !externalBrowser && (index + 1) % 30 == 0 && index + 1 < loopCount) {
-                    appendLog("주기적 WebView 재생성 (${index + 1}회차 이후)")
-                    webViewManager.rebuildWebView(webViewContainer)
-                    val naverId = etNaverId.text.toString().trim()
-                    val naverPw = etNaverPassword.text.toString()
-                    if (!ensureNaverLogin(naverId, naverPw, serverClient.cookieClient, identity.rawName)) {
-                        exitRunningMode()
-                        return@launch
-                    }
-                }
+                appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
+            } finally {
+                heartbeatJob?.cancel()
             }
-            appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
             exitRunningMode()
         }
     }
@@ -357,6 +417,7 @@ class MainActivity : AppCompatActivity() {
         config.save(
             deviceName = deviceName,
             loopCount = loopCount,
+            serverUrl = etServerUrl.text.toString().trim(),
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
 
@@ -382,8 +443,7 @@ class MainActivity : AppCompatActivity() {
         }
         val botStrategy = BotStrategy.G(strategyImpl)
         val serverClient = buildServerClient()
-        if (serverClient.taskLeaseClient is NoopStrategyTaskLeaseClient) appendLog("Supabase URL 없음: 로컬 smoke 모드")
-        else appendLog("Supabase 연동 모드 활성")
+        logServerMode(serverClient)
         enterRunningMode("전략 G 실행 중")
 
         lifecycleScope.launch {
@@ -413,74 +473,90 @@ class MainActivity : AppCompatActivity() {
                 log = ::appendLog,
             ) else null
 
-            var successCount = 0
-            var taskIndex = 0
-            var credentialsSaved = false
-            while (taskIndex < loopCount) {
-                // 반복마다 트래픽 큐에서 새 작업 가져오기
-                val taskLease = runCatching {
-                    serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
-                }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
-                val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
+            val heartbeatJob = bossController?.startHeartbeatMonitor(this)
+                ?: soldierController?.startHeartbeatMonitor(this)
 
-                if (task == null) {
-                    appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
-                    kotlinx.coroutines.delay(30_000)
-                    continue
-                }
-                appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
+            try {
+                var successCount = 0
+                var taskIndex = 0
+                while (taskIndex < loopCount) {
+                    // 반복마다 트래픽 큐에서 새 작업 가져오기
+                    val taskLease = runCatching {
+                        serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
+                    }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
+                    val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
 
-                if (!dryRun) {
-                    val naverId = etNaverId.text.toString().trim()
-                    val naverPw = etNaverPassword.text.toString()
-                    if (!ensureNaverLogin(naverId, naverPw, serverClient.cookieClient, identity.rawName)) {
-                        exitRunningMode()
-                        return@launch
+                    if (task == null) {
+                        appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
+                        kotlinx.coroutines.delay(30_000)
+                        continue
                     }
-                    if (!credentialsSaved) {
-                        webViewManager.saveCredentials(this@MainActivity, naverId, naverPw)
-                        credentialsSaved = true
+                    appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
+
+                    if (!dryRun) {
+                        val credential = resolveNaverLogin(serverClient, identity, "G")
+                        if (credential == null ||
+                            !ensureNaverLogin(
+                                credential.loginId,
+                                credential.password,
+                                credential.accountAlias,
+                                serverClient.cookieClient,
+                                identity.rawName,
+                            )
+                        ) {
+                            exitRunningMode()
+                            return@launch
+                        }
                     }
-                }
 
-                appendLog("G전략 반복 ${taskIndex + 1}/$loopCount")
-                val result: StrategyAResult = bossController?.runOnce(task)
-                    ?: soldierController?.runOnce(task)
-                    ?: StrategyAResult(success = false, message = "no_controller")
+                    appendLog("G전략 반복 ${taskIndex + 1}/$loopCount")
+                    val result: StrategyAResult = bossController?.runOnce(task)
+                        ?: soldierController?.runOnce(task)
+                        ?: StrategyAResult(success = false, message = "no_controller")
 
-                if (result.message == "group_paused") {
-                    appendLog("그룹 로테이션 대기 중 — 10초 후 재시도")
-                    kotlinx.coroutines.delay(10_000)
-                    continue
-                }
-                taskIndex++
-
-                if (!dryRun && webViewManager.rendererGone) {
-                    appendLog("렌더러 OOM 감지: WebView 재생성 중")
-                    webViewManager.rebuildWebView(webViewContainer)
-                    webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
-                    val naverId = etNaverId.text.toString().trim()
-                    val naverPw = etNaverPassword.text.toString()
-                    if (!ensureNaverLogin(naverId, naverPw, serverClient.cookieClient, identity.rawName)) {
-                        exitRunningMode()
-                        return@launch
+                    if (result.message == "group_paused") {
+                        appendLog("그룹 로테이션 대기 중 — 10초 후 재시도")
+                        kotlinx.coroutines.delay(10_000)
+                        continue
                     }
+                    taskIndex++
+
+                    if (!dryRun && webViewManager.rendererGone) {
+                        appendLog("렌더러 OOM 감지: WebView 재생성 중")
+                        webViewManager.rebuildWebView(webViewContainer)
+                        webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
+                        val credential = resolveNaverLogin(serverClient, identity, "G")
+                        if (credential == null ||
+                            !ensureNaverLogin(
+                                credential.loginId,
+                                credential.password,
+                                credential.accountAlias,
+                                serverClient.cookieClient,
+                                identity.rawName,
+                            )
+                        ) {
+                            exitRunningMode()
+                            return@launch
+                        }
+                    }
+
+                    if (result.success) successCount += 1
+
+                    runCatching {
+                        serverClient.taskLeaseClient.reportTask(
+                            StrategyTaskReport(
+                                taskLeaseId = taskLease?.taskLeaseId,
+                                deviceName = identity.rawName,
+                                result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
+                                message = if (result.success) null else result.message,
+                            ),
+                        )
+                    }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
                 }
-
-                if (result.success) successCount += 1
-
-                runCatching {
-                    serverClient.taskLeaseClient.reportTask(
-                        StrategyTaskReport(
-                            taskLeaseId = taskLease?.taskLeaseId,
-                            deviceName = identity.rawName,
-                            result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
-                            message = if (result.success) null else result.message,
-                        ),
-                    )
-                }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+                appendLog("G전략 반복 완료: ${successCount}/$loopCount 성공")
+            } finally {
+                heartbeatJob?.cancel()
             }
-            appendLog("G전략 반복 완료: ${successCount}/$loopCount 성공")
             exitRunningMode()
         }
     }
@@ -490,18 +566,41 @@ class MainActivity : AppCompatActivity() {
     private suspend fun ensureNaverLogin(
         naverId: String,
         naverPw: String,
+        accountAlias: String?,
         cookieClient: CookieStorageClient,
         deviceName: String,
     ): Boolean {
-        if (webViewManager.hasCookieSession()) return true
+        val sessionKey = cookieSessionKey(deviceName, accountAlias)
+        if (!webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
+            if (webViewManager.hasCookieSession()) {
+                appendLog("배정 계정 변경 감지: 기존 네이버 쿠키 삭제")
+                webViewManager.clearNaverCookies()
+            }
+            webViewManager.clearSessionAccount(this, deviceName)
+            validatedCookieSessions.removeAll { it.startsWith("$deviceName|") }
+        }
+
+        if (webViewManager.hasCookieSession()) {
+            if (sessionKey in validatedCookieSessions || webViewManager.isNaverLoggedIn()) {
+                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+                validatedCookieSessions.add(sessionKey)
+                return true
+            }
+            appendLog("기존 네이버 쿠키 세션 만료: 재로그인 진행")
+            webViewManager.clearNaverCookies()
+            webViewManager.clearSessionAccount(this, deviceName)
+            validatedCookieSessions.remove(sessionKey)
+        }
 
         // IP 로테이션 이후: 서버 저장 쿠키 복원 시도
-        val saved = runCatching { cookieClient.loadCookies(deviceName) }.getOrNull()
+        val saved = runCatching { cookieClient.loadCookies(deviceName, accountAlias) }.getOrNull()
         if (!saved.isNullOrBlank()) {
-            appendLog("서버 저장 쿠키 복원 시도")
+            appendLog("서버 저장 쿠키 복원 시도: ${accountAlias ?: "수동 입력 계정"}")
             webViewManager.setNaverCookie(saved)
             kotlinx.coroutines.delay(500)
-            if (webViewManager.hasCookieSession()) {
+            if (webViewManager.hasCookieSession() && webViewManager.isNaverLoggedIn()) {
+                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+                validatedCookieSessions.add(sessionKey)
                 appendLog("쿠키 복원 성공 — 로그인 생략")
                 return true
             }
@@ -518,17 +617,74 @@ class MainActivity : AppCompatActivity() {
         // 로그인 성공 → 쿠키 서버 저장
         val cookies = webViewManager.extractNaverCookies()
         if (cookies.isNotBlank()) {
-            runCatching { cookieClient.saveCookies(deviceName, cookies) }
+            webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+            validatedCookieSessions.add(sessionKey)
+            runCatching { cookieClient.saveCookies(deviceName, accountAlias, cookies) }
                 .onSuccess { appendLog("네이버 쿠키 서버 저장 완료") }
                 .onFailure { appendLog("쿠키 서버 저장 실패: ${it.message}") }
         }
         return true
     }
 
+    private fun cookieSessionKey(deviceName: String, accountAlias: String?): String {
+        return "$deviceName|${accountAlias?.takeIf { it.isNotBlank() } ?: "manual"}"
+    }
+
+    private suspend fun resolveNaverLogin(
+        serverClient: ServerClients,
+        identity: DeviceIdentity,
+        strategyName: String,
+    ): NaverLoginCredential? {
+        val lease: AccountLease? = runCatching {
+            serverClient.accountLeaseClient.leaseAccount(
+                identity.rawName,
+                identity.role,
+                strategyName,
+                APP_VERSION,
+            )
+        }.onFailure { appendLog("네이버 계정 lease 실패: ${it.message}") }.getOrNull()
+
+        if (lease != null && lease.loginId.isNotBlank() && lease.password.isNotBlank()) {
+            appendLog("네이버 계정 lease 사용: ${lease.accountAlias}")
+            return NaverLoginCredential(
+                loginId = lease.loginId,
+                password = lease.password,
+                accountAlias = lease.accountAlias,
+            )
+        }
+
+        val fallbackId = etNaverId.text.toString().trim()
+        val fallbackPassword = etNaverPassword.text.toString()
+        if (fallbackId.isNotBlank() && fallbackPassword.isNotBlank()) {
+            appendLog("서버 배정 계정 없음: 기기 입력 계정 사용")
+            return NaverLoginCredential(
+                loginId = fallbackId,
+                password = fallbackPassword,
+                accountAlias = null,
+            )
+        }
+
+        appendLog("네이버 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
+        return null
+    }
+
     private fun buildServerClient(): ServerClients {
-        val url = BuildConfig.SUPABASE_URL
-        val key = BuildConfig.SUPABASE_KEY
-        if (url.isBlank()) {
+        val config = ConfigStore(this)
+        val serverUrl = intent.getStringExtra(EXTRA_SERVER_URL)
+            ?.takeIf { it.isNotBlank() }
+            ?: etServerUrl.text.toString().trim().takeIf { it.isNotBlank() }
+            ?: config.serverUrl
+        val apiKey = intent.getStringExtra(EXTRA_API_KEY)
+            ?.takeIf { it.isNotBlank() }
+            ?: config.apiKey
+        if (serverUrl.isNotBlank()) {
+            val client = AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
+            return ServerClients(client, client, client, client)
+        }
+
+        val supabaseUrl = BuildConfig.SUPABASE_URL
+        val supabaseKey = BuildConfig.SUPABASE_KEY
+        if (supabaseUrl.isBlank()) {
             return ServerClients(
                 NoopAccountLeaseClient(),
                 NoopGroupControlClient(),
@@ -536,8 +692,19 @@ class MainActivity : AppCompatActivity() {
                 NoopCookieStorageClient(),
             )
         }
-        val client = SupabaseApiClient(url, key)
+        val client = SupabaseApiClient(supabaseUrl, supabaseKey)
         return ServerClients(NoopAccountLeaseClient(), client, client, client)
+    }
+
+    private fun logServerMode(serverClient: ServerClients) {
+        when {
+            serverClient.taskLeaseClient is NoopStrategyTaskLeaseClient ->
+                appendLog("서버 URL 없음: 로컬 smoke 모드")
+            serverClient.accountLeaseClient is NoopAccountLeaseClient ->
+                appendLog("직접 Supabase 연동 모드: 계정 lease 없음")
+            else ->
+                appendLog("Vercel 서버 API 연동 모드 활성")
+        }
     }
 
     private fun appendLog(message: String) {
@@ -553,6 +720,12 @@ class MainActivity : AppCompatActivity() {
         val groupControlClient: GroupControlClient,
         val taskLeaseClient: StrategyTaskLeaseClient,
         val cookieClient: CookieStorageClient,
+    )
+
+    private data class NaverLoginCredential(
+        val loginId: String,
+        val password: String,
+        val accountAlias: String?,
     )
 
     private fun getBoolExtra(key: String): Boolean {

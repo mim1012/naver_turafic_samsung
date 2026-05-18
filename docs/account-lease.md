@@ -13,6 +13,7 @@ encrypted_login_id
 encrypted_password
 status
 assigned_device_name
+group_id
 last_used_at
 last_login_at
 last_success_at
@@ -42,8 +43,12 @@ disabled
 - The server, not the Android app, decrypts account credentials.
 - The app should receive only the account currently leased to it.
 - A protected or manual-check account must never be leased automatically.
-- Prefer sticky assignment: a stable device should keep the same account alias when possible.
+- Prefer sticky assignment: exact `assigned_device_name` first, then the device's
+  `group_id` pool, then an unassigned global account.
 - Apply cooldown after failures and after high-frequency use.
+
+This means a bot named `z1-1` should receive the account assigned to `z1-1` when one
+exists. That is the main production path for per-device Naver ID/password assignment.
 
 ## API Contract
 
@@ -71,6 +76,46 @@ Response:
   "expiresAt": "2026-05-03T12:00:00Z"
 }
 ```
+
+If no account is available, return `{}`. The current Android app then falls back to the
+on-device Naver ID/password fields only for manual or local smoke testing.
+
+### `POST /android/cookies/load`
+
+Request:
+
+```json
+{
+  "deviceName": "z1-1",
+  "accountAlias": "naver_a"
+}
+```
+
+Response:
+
+```json
+{
+  "cookies": "NID_AUT=...; NID_SES=...",
+  "accountAlias": "naver_a",
+  "savedAt": "2026-05-03T12:00:00Z"
+}
+```
+
+### `POST /android/cookies/save`
+
+Request:
+
+```json
+{
+  "deviceName": "z1-1",
+  "accountAlias": "naver_a",
+  "cookies": "NID_AUT=...; NID_SES=..."
+}
+```
+
+Cookies are scoped by `deviceName + accountAlias`. When `accountAlias` changes,
+Android must not reuse cookies saved for the previous account. A blank
+`accountAlias` is reserved for manual/local smoke credentials.
 
 ### `POST /android/accounts/report`
 

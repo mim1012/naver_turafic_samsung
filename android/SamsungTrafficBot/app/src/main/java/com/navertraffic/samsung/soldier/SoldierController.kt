@@ -16,6 +16,11 @@ import com.navertraffic.samsung.strategy.BotStrategy
 import com.navertraffic.samsung.strategy.StrategyAResult
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class SoldierController(
     private val identity: DeviceIdentity,
@@ -25,6 +30,21 @@ class SoldierController(
     private val log: (String) -> Unit,
 ) {
     private var taskCount = 0
+    @Volatile
+    private var runtimeState = DeviceRuntimeState.IDLE
+    @Volatile
+    private var lastError: String? = null
+
+    fun startHeartbeatMonitor(
+        scope: CoroutineScope,
+        intervalMs: Long = HEARTBEAT_INTERVAL_MS,
+    ): Job = scope.launch {
+        log("쫄병봇 heartbeat 모니터 시작: ${intervalMs / 1000}초 주기")
+        while (isActive) {
+            heartbeat(runtimeState)
+            delay(intervalMs)
+        }
+    }
 
     suspend fun runOnce(task: StrategyATask): StrategyAResult {
         val strategy = (botStrategy as? BotStrategy.A)?.strategy
@@ -43,6 +63,7 @@ class SoldierController(
         run: suspend () -> StrategyAResult,
     ): StrategyAResult {
         log("쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행")
+        runtimeState = DeviceRuntimeState.IDLE
         val control = heartbeat(DeviceRuntimeState.IDLE)
         if (handleControl(control)) return StrategyAResult(success = false, message = "group_paused")
 
@@ -51,8 +72,17 @@ class SoldierController(
         }.onFailure { log("계정 lease 실패: ${it.message}") }.getOrNull()
         lease?.let { log("계정 lease 획득: ${it.accountAlias}") }
 
+        runtimeState = DeviceRuntimeState.RUNNING_TASK
         heartbeat(DeviceRuntimeState.RUNNING_TASK)
-        val result = run()
+        val result = try {
+            run()
+        } catch (error: Throwable) {
+            lastError = error.message ?: error::class.java.simpleName
+            runtimeState = DeviceRuntimeState.ERROR
+            heartbeat(DeviceRuntimeState.ERROR)
+            throw error
+        }
+        lastError = if (result.success) null else result.message
 
         val reportResult = when {
             result.success -> AccountLeaseResult.SUCCESS
@@ -86,7 +116,8 @@ class SoldierController(
             taskCount += 1
             log("쫄병봇 완료: ${taskCount}건")
         }
-        heartbeat(DeviceRuntimeState.IDLE)
+        runtimeState = if (result.success) DeviceRuntimeState.IDLE else DeviceRuntimeState.ERROR
+        heartbeat(runtimeState)
         return result
     }
 
@@ -99,17 +130,20 @@ class SoldierController(
                     role = identity.role,
                     state = state,
                     taskCount = taskCount,
+                    lastError = lastError,
                 ),
             )
         }.onFailure { log("heartbeat 실패: ${it.message}") }.getOrNull()
     }
 
-    private fun handleControl(response: GroupControlResponse?): Boolean {
+    private suspend fun handleControl(response: GroupControlResponse?): Boolean {
         if (response == null) return false
         return when {
             response.command == GroupCommand.PAUSE_FOR_ROTATION ||
                 response.groupState == GroupState.DRAINING ||
                 response.groupState == GroupState.ROTATING -> {
+                runtimeState = DeviceRuntimeState.PAUSED
+                heartbeat(DeviceRuntimeState.PAUSED)
                 log("그룹 상태 ${response.groupState}: 새 작업 대기")
                 true
             }
@@ -117,6 +151,8 @@ class SoldierController(
                 response.groupState == GroupState.STOPPED ||
                 response.groupState == GroupState.PAUSED ||
                 response.groupState == GroupState.ROTATION_FAILED -> {
+                runtimeState = DeviceRuntimeState.PAUSED
+                heartbeat(DeviceRuntimeState.PAUSED)
                 log("그룹 상태 ${response.groupState}: 작업 중지")
                 true
             }
@@ -126,5 +162,6 @@ class SoldierController(
 
     companion object {
         private const val APP_VERSION = "0.1.0"
+        private const val HEARTBEAT_INTERVAL_MS = 30_000L
     }
 }

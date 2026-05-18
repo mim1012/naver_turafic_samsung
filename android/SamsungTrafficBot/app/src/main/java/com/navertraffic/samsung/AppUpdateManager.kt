@@ -17,8 +17,18 @@ class AppUpdateManager(
         if (supabaseUrl.isBlank()) return@withContext false
 
         val latest = fetchLatestRelease(supabaseUrl, anonKey) ?: return@withContext false
+        installIfNewer(latest)
+    }
 
-        if (latest.versionCode <= BuildConfig.VERSION_CODE) return@withContext false
+    suspend fun checkAndUpdateFromServer(serverUrl: String, apiKey: String?): Boolean = withContext(Dispatchers.IO) {
+        if (serverUrl.isBlank()) return@withContext false
+
+        val latest = fetchLatestReleaseFromServer(serverUrl, apiKey) ?: return@withContext false
+        installIfNewer(latest)
+    }
+
+    private fun installIfNewer(latest: ReleaseInfo): Boolean {
+        if (latest.versionCode <= BuildConfig.VERSION_CODE) return false
 
         log("신버전 발견: ${latest.versionName} (코드 ${latest.versionCode}) — 현재: ${BuildConfig.VERSION_CODE}")
         log("APK 다운로드 중...")
@@ -26,7 +36,7 @@ class AppUpdateManager(
         val apkFile = File(context.cacheDir, "update.apk")
         if (!downloadApk(latest.apkUrl, apkFile)) {
             log("APK 다운로드 실패")
-            return@withContext false
+            return false
         }
 
         log("APK 설치 중 (루트 pm install)...")
@@ -37,7 +47,7 @@ class AppUpdateManager(
         val stderr = proc.errorStream.bufferedReader().readText().trim()
         val exitCode = proc.waitFor()
 
-        if (exitCode == 0 && (stdout.endsWith("Success") || stderr.endsWith("Success"))) {
+        return if (exitCode == 0 && (stdout.endsWith("Success") || stderr.endsWith("Success"))) {
             log("업데이트 완료 (${latest.versionName}) — 재시작")
             Runtime.getRuntime().exec(
                 arrayOf("su", "-c", "am start -n com.navertraffic.samsung/.ui.MainActivity")
@@ -51,13 +61,27 @@ class AppUpdateManager(
 
     private fun fetchLatestRelease(supabaseUrl: String, anonKey: String): ReleaseInfo? =
         runCatching {
-            val url = "${supabaseUrl.trimEnd('/')}/app_releases?order=version_code.desc&limit=1"
+            val url = "${supabaseUrl.trimEnd('/')}/app_releases?enabled=eq.true&order=version_code.desc&limit=1"
             val conn = URL(url).openConnection() as HttpURLConnection
             conn.connectTimeout = 8_000
             conn.readTimeout = 8_000
             conn.setRequestProperty("apikey", anonKey)
             conn.setRequestProperty("Authorization", "Bearer $anonKey")
             conn.setRequestProperty("Accept", "application/json")
+            val raw = conn.inputStream.bufferedReader().readText()
+            parseRelease(raw)
+        }.getOrNull()
+
+    private fun fetchLatestReleaseFromServer(serverUrl: String, apiKey: String?): ReleaseInfo? =
+        runCatching {
+            val url = "${serverUrl.trimEnd('/')}/android/app-release/latest"
+            val conn = URL(url).openConnection() as HttpURLConnection
+            conn.connectTimeout = 8_000
+            conn.readTimeout = 8_000
+            conn.setRequestProperty("Accept", "application/json")
+            if (!apiKey.isNullOrBlank()) {
+                conn.setRequestProperty("Authorization", "Bearer $apiKey")
+            }
             val raw = conn.inputStream.bufferedReader().readText()
             parseRelease(raw)
         }.getOrNull()

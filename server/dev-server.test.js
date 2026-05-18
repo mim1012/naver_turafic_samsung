@@ -121,6 +121,197 @@ test("leases a strategy A product task and reports it", async () => {
   assert.equal(report.ok, true);
 });
 
+test("serves admin snapshot with group and device status", async () => {
+  const state = createState({
+    accounts: [{ alias: "naver_a", loginId: "user", password: "secret", status: "available" }],
+  });
+  const baseUrl = await start(state);
+
+  await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 3,
+    currentIp: "127.0.0.1",
+  });
+
+  const snapshot = await get(baseUrl, "/admin/api/snapshot");
+
+  assert.equal(snapshot.summary.devices, 1);
+  assert.equal(snapshot.summary.accounts, 1);
+  assert.equal(snapshot.groups[0].groupId, "z1");
+  assert.equal(snapshot.devices[0].deviceName, "z1-1");
+  assert.equal(snapshot.devices[0].currentIp, "127.0.0.1");
+});
+
+test("adds admin account in memory and leases it to a device", async () => {
+  const state = createState({ accounts: [] });
+  const baseUrl = await start(state);
+
+  const added = await post(baseUrl, "/admin/api/accounts", {
+    alias: "naver_web",
+    loginId: "web-user",
+    password: "web-secret",
+    groupId: "z1",
+    assignedDeviceName: "z1-1",
+  });
+
+  assert.equal(added.ok, true);
+  assert.equal(added.persisted, false);
+  assert.equal(added.account.alias, "naver_web");
+  assert.equal(added.account.assignedDeviceName, "z1-1");
+
+  const lease = await post(baseUrl, "/android/accounts/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "A",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.accountAlias, "naver_web");
+  assert.equal(lease.loginId, "web-user");
+  assert.equal(lease.password, "web-secret");
+});
+
+test("prefers exact device account assignment over group pool accounts", async () => {
+  const state = createState({
+    accounts: [
+      { alias: "group_pool", loginId: "group-user", password: "group-secret", status: "available", groupId: "z1" },
+      { alias: "device_exact", loginId: "device-user", password: "device-secret", status: "available", assignedDeviceName: "z1-1" },
+    ],
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/accounts/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "G",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.accountAlias, "device_exact");
+  assert.equal(lease.loginId, "device-user");
+});
+
+test("leases group account when device has no exact assignment", async () => {
+  const state = createState({
+    accounts: [
+      { alias: "z1_pool", loginId: "group-user", password: "group-secret", status: "available", groupId: "z1" },
+    ],
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/accounts/lease", {
+    deviceName: "z1-2",
+    role: "soldier",
+    strategy: "G",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.accountAlias, "z1_pool");
+  assert.equal(lease.loginId, "group-user");
+});
+
+test("stores reusable cookies per device and account alias", async () => {
+  const state = createState();
+  const baseUrl = await start(state);
+
+  await post(baseUrl, "/android/cookies/save", {
+    deviceName: "z1-1",
+    accountAlias: "naver_a",
+    cookies: "NID_AUT=aaa; NID_SES=111",
+  });
+  await post(baseUrl, "/android/cookies/save", {
+    deviceName: "z1-1",
+    accountAlias: "naver_b",
+    cookies: "NID_AUT=bbb; NID_SES=222",
+  });
+
+  const first = await post(baseUrl, "/android/cookies/load", {
+    deviceName: "z1-1",
+    accountAlias: "naver_a",
+  });
+  const second = await post(baseUrl, "/android/cookies/load", {
+    deviceName: "z1-1",
+    accountAlias: "naver_b",
+  });
+  const missing = await post(baseUrl, "/android/cookies/load", {
+    deviceName: "z1-1",
+    accountAlias: "naver_c",
+  });
+
+  assert.equal(first.cookies, "NID_AUT=aaa; NID_SES=111");
+  assert.equal(first.accountAlias, "naver_a");
+  assert.equal(second.cookies, "NID_AUT=bbb; NID_SES=222");
+  assert.equal(second.accountAlias, "naver_b");
+  assert.equal(missing.cookies, null);
+});
+
+test("protects admin API with token and emits allowed CORS headers", async () => {
+  const state = createState({
+    adminApiToken: "admin-secret",
+    adminAllowedOrigins: ["https://example.vercel.app"],
+  });
+  const baseUrl = await start(state);
+
+  const unauthorized = await rawGet(baseUrl, "/admin/api/snapshot", {
+    Origin: "https://example.vercel.app",
+  });
+  assert.equal(unauthorized.status, 401);
+  assert.equal(unauthorized.headers.get("access-control-allow-origin"), "https://example.vercel.app");
+
+  const authorized = await rawGet(baseUrl, "/admin/api/snapshot", {
+    Origin: "https://example.vercel.app",
+    "X-Admin-Token": "admin-secret",
+  });
+  assert.equal(authorized.status, 200);
+  assert.equal(authorized.headers.get("access-control-allow-origin"), "https://example.vercel.app");
+
+  const preflight = await fetch(baseUrl + "/admin/api/snapshot", {
+    method: "OPTIONS",
+    headers: {
+      Origin: "https://example.vercel.app",
+      "Access-Control-Request-Method": "GET",
+    },
+  });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get("access-control-allow-origin"), "https://example.vercel.app");
+});
+
+test("omits admin API CORS headers for a disallowed origin", async () => {
+  const state = createState({
+    adminApiToken: "admin-secret",
+    adminAllowedOrigins: ["https://example.vercel.app"],
+  });
+  const baseUrl = await start(state);
+
+  const response = await rawGet(baseUrl, "/admin/api/snapshot", {
+    Origin: "https://evil.example",
+    "X-Admin-Token": "admin-secret",
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("access-control-allow-origin"), null);
+});
+
+test("serves latest app release for Vercel-style Android update checks", async () => {
+  const state = createState({
+    appReleases: [
+      { versionCode: 2, versionName: "0.2.0", apkUrl: "https://example.com/app-v2.apk", enabled: true },
+      { versionCode: 3, versionName: "0.3.0", apkUrl: "https://example.com/app-v3.apk", enabled: false },
+      { versionCode: 1, versionName: "0.1.0", apkUrl: "https://example.com/app-v1.apk", enabled: true },
+    ],
+  });
+  const baseUrl = await start(state);
+
+  const release = await get(baseUrl, "/android/app-release/latest");
+
+  assert.equal(release.version_code, 2);
+  assert.equal(release.version_name, "0.2.0");
+  assert.equal(release.apk_url, "https://example.com/app-v2.apk");
+});
+
 test("maps existing zero claim-work product task into strategy A lease", async () => {
   const upstream = await startUpstream({
     claim: {
@@ -165,6 +356,7 @@ test("maps existing supabase traffic queue into strategy A lease", async () => {
         id: 88,
         slot_id: 44,
         keyword: "삼성 갤럭시 이어폰",
+        keyword_name: "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료",
         link_url: "https://smartstore.naver.com/sunsaem/products/83539482665",
       },
     ],
@@ -191,7 +383,7 @@ test("maps existing supabase traffic queue into strategy A lease", async () => {
     appVersion: "0.1.0",
   });
 
-  assert.equal(lease.taskLeaseId, "sb_88");
+  assert.equal(lease.taskLeaseId, "sb_88_44");
   assert.equal(lease.keyword, "삼성 갤럭시 이어폰");
   assert.equal(lease.secondKeyword, "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료");
   assert.equal(lease.mid, "83539482665");
@@ -203,7 +395,7 @@ test("maps existing supabase traffic queue into strategy A lease", async () => {
   });
 
   assert.equal(report.ok, true);
-  assert.equal(upstream.requests.some((item) => item.method === "DELETE" && item.url.startsWith("/traffic-navershopping-app")), true);
+  assert.equal(upstream.requests.some((item) => item.method === "DELETE" && item.url.startsWith("/sellermate_traffic_navershopping")), true);
   assert.equal(upstream.requests.some((item) => item.method === "PATCH" && item.url.startsWith("/sellermate_slot_naver")), true);
 });
 
@@ -243,13 +435,13 @@ async function startSupabaseRest({ trafficRows, slotRows }) {
   const requests = [];
   const server = require("node:http").createServer(async (req, res) => {
     requests.push({ url: req.url, method: req.method });
-    if (req.method === "GET" && req.url.startsWith("/traffic-navershopping-app")) {
+    if (req.method === "GET" && req.url.startsWith("/sellermate_traffic_navershopping")) {
       return send(res, trafficRows);
     }
     if (req.method === "GET" && req.url.startsWith("/sellermate_slot_naver")) {
       return send(res, slotRows);
     }
-    if (req.method === "DELETE" && req.url.startsWith("/traffic-navershopping-app")) {
+    if (req.method === "DELETE" && req.url.startsWith("/sellermate_traffic_navershopping")) {
       return send(res, []);
     }
     if (req.method === "PATCH" && req.url.startsWith("/sellermate_slot_naver")) {
@@ -274,4 +466,14 @@ async function post(baseUrl, path, body) {
   });
   assert.equal(response.status, 200);
   return response.json();
+}
+
+async function get(baseUrl, path) {
+  const response = await fetch(baseUrl + path);
+  assert.equal(response.status, 200);
+  return response.json();
+}
+
+async function rawGet(baseUrl, path, headers = {}) {
+  return fetch(baseUrl + path, { headers });
 }

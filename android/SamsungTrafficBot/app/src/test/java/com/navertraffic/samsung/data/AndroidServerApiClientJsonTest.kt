@@ -78,6 +78,32 @@ class AndroidServerApiClientJsonTest {
     }
 
     @Test
+    fun serializesCookieBodiesWithAccountAlias() {
+        val save = AndroidServerApiJson.cookieSaveBody(
+            deviceName = "z1-1",
+            accountAlias = "naver_a",
+            cookies = "NID_AUT=aaa; NID_SES=111",
+        )
+        val load = AndroidServerApiJson.cookieLoadBody(
+            deviceName = "z1-1",
+            accountAlias = "naver_a",
+        )
+
+        assertEquals("z1-1", save.getString("deviceName"))
+        assertEquals("naver_a", save.getString("accountAlias"))
+        assertEquals("NID_AUT=aaa; NID_SES=111", save.getString("cookies"))
+        assertEquals("z1-1", load.getString("deviceName"))
+        assertEquals("naver_a", load.getString("accountAlias"))
+    }
+
+    @Test
+    fun serializesManualCookieAccountAsNull() {
+        val body = AndroidServerApiJson.cookieLoadBody("z1-1", null)
+
+        assertEquals(true, body.text.contains(""""accountAlias":null"""))
+    }
+
+    @Test
     fun parsesStrategyTaskLeaseResponse() {
         val json = """
             {

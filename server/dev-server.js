@@ -16,13 +16,20 @@ const DEFAULT_SUPABASE_SLOT_TABLE = "sellermate_slot_naver";
 
 function createState(options = {}) {
   return {
-    accounts: options.accounts || loadAccounts(),
+    startedAt: Date.now(),
+    accountsFile: options.accountsFile || path.join(__dirname, "accounts.local.json"),
+    accountCryptoKey: normalizeAccountCryptoKey(options.accountCryptoKey || process.env.ACCOUNT_ENCRYPTION_KEY || ""),
+    accounts: options.accounts || loadAccounts(options.accountsFile),
     products: options.products || loadProducts(),
+    appReleases: options.appReleases || [],
     zeroTrafficApiUrl: options.zeroTrafficApiUrl || process.env.ZERO_TRAFFIC_API_URL || "",
     supabaseRestUrl: options.supabaseRestUrl || process.env.SUPABASE_REST_URL || "",
-    supabaseAnonKey: options.supabaseAnonKey || process.env.SUPABASE_ANON_KEY || "",
+    supabaseAnonKey: options.supabaseAnonKey || options.supabaseKey ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "",
     supabaseTrafficTable: options.supabaseTrafficTable || process.env.SUPABASE_TRAFFIC_TABLE || DEFAULT_SUPABASE_TRAFFIC_TABLE,
     supabaseSlotTable: options.supabaseSlotTable || process.env.SUPABASE_SLOT_TABLE || DEFAULT_SUPABASE_SLOT_TABLE,
+    adminApiToken: options.adminApiToken || process.env.ADMIN_API_TOKEN || "",
+    adminAllowedOrigins: options.adminAllowedOrigins || parseCsv(process.env.ADMIN_ALLOWED_ORIGINS || ""),
     leases: new Map(),
     taskLeases: new Map(),
     groups: new Map(),
@@ -34,8 +41,50 @@ function createState(options = {}) {
 function createServer(state = createState()) {
   return http.createServer(async (req, res) => {
     try {
-      if (req.method === "GET" && req.url === "/health") {
+      const requestUrl = new URL(req.url, "http://localhost");
+      const pathname = requestUrl.pathname;
+
+      if (req.method === "GET" && pathname === "/health") {
         return sendJson(res, 200, { ok: true });
+      }
+
+      if (req.method === "GET" && pathname === "/favicon.ico") {
+        res.writeHead(204);
+        return res.end();
+      }
+
+      if (pathname.startsWith("/admin/api/")) {
+        const corsHeaders = adminCorsHeaders(state, req);
+        if (req.method === "OPTIONS") {
+          res.writeHead(204, corsHeaders);
+          return res.end();
+        }
+        if (!isAdminApiAuthorized(state, req)) {
+          return sendJson(res, 401, { error: "unauthorized" }, corsHeaders);
+        }
+        if (req.method === "GET" && pathname === "/admin/api/snapshot") {
+          return sendJson(res, 200, adminSnapshot(state), corsHeaders);
+        }
+        if (req.method === "POST") {
+          const body = await readJson(req);
+          switch (pathname) {
+            case "/admin/api/accounts":
+              return sendJson(res, 200, addAdminAccount(state, body), corsHeaders);
+            case "/admin/api/groups/state":
+              return sendJson(res, 200, setAdminGroupState(state, body), corsHeaders);
+            default:
+              return sendJson(res, 404, { error: "not_found" }, corsHeaders);
+          }
+        }
+        return sendJson(res, 405, { error: "method_not_allowed" }, corsHeaders);
+      }
+
+      if (req.method === "GET" && (pathname === "/" || pathname === "/admin" || pathname.startsWith("/admin/"))) {
+        return serveAdminAsset(res, pathname);
+      }
+
+      if (req.method === "GET" && pathname === "/android/app-release/latest") {
+        return sendJson(res, 200, await latestAppRelease(state));
       }
 
       if (req.method !== "POST") {
@@ -43,7 +92,7 @@ function createServer(state = createState()) {
       }
 
       const body = await readJson(req);
-      switch (req.url) {
+      switch (pathname) {
         case "/android/accounts/lease":
           return sendJson(res, 200, leaseAccount(state, body));
         case "/android/accounts/report":
@@ -299,16 +348,28 @@ async function reportTaskToZero(state, body) {
 
 function leaseAccount(state, body) {
   const deviceName = String(body.deviceName || "");
+  const requestedGroupId = String(body.groupId || inferGroupId(deviceName) || "").trim();
   const now = Date.now();
   const existing = Array.from(state.leases.values()).find(
     (lease) => lease.deviceName === deviceName && lease.expiresAtMs > now && lease.status === "active",
   );
-  if (existing) return leaseResponse(existing.account, existing);
+  if (existing) return leaseResponse(state, existing.account, existing);
 
   const account = state.accounts.find(
     (item) =>
       (item.status || "available") === "available" &&
-      (!item.assignedDeviceName || item.assignedDeviceName === deviceName),
+      item.assignedDeviceName === deviceName,
+  ) || state.accounts.find(
+    (item) =>
+      (item.status || "available") === "available" &&
+      !item.assignedDeviceName &&
+      item.groupId &&
+      item.groupId === requestedGroupId,
+  ) || state.accounts.find(
+    (item) =>
+      (item.status || "available") === "available" &&
+      !item.assignedDeviceName &&
+      !item.groupId,
   );
   if (!account) return {};
 
@@ -326,7 +387,12 @@ function leaseAccount(state, body) {
     expiresAtMs: now + 15 * 60 * 1000,
   };
   state.leases.set(lease.id, lease);
-  return leaseResponse(account, lease);
+  return leaseResponse(state, account, lease);
+}
+
+function inferGroupId(deviceName) {
+  const match = /^([A-Za-z]+\d+)(?:-\d+)?$/.exec(String(deviceName || "").trim());
+  return match ? match[1].toLowerCase() : "";
 }
 
 function reportAccount(state, body) {
@@ -370,9 +436,16 @@ function heartbeat(state, body) {
 
   group.devices.set(deviceName, {
     deviceName,
+    groupId,
     role,
     state: String(body.state || "IDLE"),
     taskCount: currentCount,
+    currentIp: body.currentIp || null,
+    lastError: body.lastError || null,
+    appVersion: body.appVersion || null,
+    batteryLevel: body.batteryLevel || null,
+    model: body.model || null,
+    carrier: body.carrier || null,
     updatedAt: Date.now(),
   });
 
@@ -382,36 +455,81 @@ function heartbeat(state, body) {
 
 async function saveCookies(state, body) {
   const deviceName = String(body.deviceName || "");
+  const accountAlias = normalizeCookieAccountAlias(body);
   const cookies = String(body.cookies || "");
   if (!deviceName || !cookies) return { ok: false, error: "missing_fields" };
   const now = new Date().toISOString();
-  state.cookieStore.set(deviceName, { cookies, savedAt: now });
+  state.cookieStore.set(cookieStoreKey(deviceName, accountAlias), { cookies, accountAlias, savedAt: now });
   if (state.supabaseRestUrl && state.supabaseAnonKey) {
     await supabaseRequestJson(
-      state, "POST", "/device_cookies?on_conflict=device_name",
-      { device_name: deviceName, cookies, updated_at: now },
+      state, "POST", "/device_cookies?on_conflict=device_name,account_alias",
+      { device_name: deviceName, account_alias: accountAlias, cookies, updated_at: now },
       true,
-    ).catch((e) => console.error("cookie save failed:", e.message));
+    ).catch(() => supabaseRequestJson(
+      state, "POST", "/device_cookies?on_conflict=device_name",
+      { device_name: deviceName, account_alias: accountAlias, cookies, updated_at: now },
+      true,
+    )).catch((e) => console.error("cookie save failed:", e.message));
   }
   return { ok: true };
 }
 
 async function loadCookies(state, body) {
   const deviceName = String(body.deviceName || "");
+  const accountAlias = normalizeCookieAccountAlias(body);
   if (state.supabaseRestUrl && state.supabaseAnonKey) {
     const rows = await supabaseRequestJson(
       state, "GET",
-      `/device_cookies?device_name=eq.${encodeURIComponent(deviceName)}&limit=1`,
+      `/device_cookies?device_name=eq.${encodeURIComponent(deviceName)}&account_alias=eq.${encodeURIComponent(accountAlias)}&limit=1`,
     ).catch(() => null);
     const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
     if (row) {
-      state.cookieStore.set(deviceName, { cookies: row.cookies, savedAt: row.updated_at });
-      return { cookies: row.cookies, savedAt: row.updated_at };
+      state.cookieStore.set(cookieStoreKey(deviceName, accountAlias), {
+        cookies: row.cookies,
+        accountAlias: row.account_alias || accountAlias,
+        savedAt: row.updated_at,
+      });
+      return { cookies: row.cookies, accountAlias: row.account_alias || accountAlias, savedAt: row.updated_at };
     }
   }
-  const entry = state.cookieStore.get(deviceName);
+  const entry = state.cookieStore.get(cookieStoreKey(deviceName, accountAlias));
   if (!entry) return { cookies: null };
-  return { cookies: entry.cookies, savedAt: entry.savedAt };
+  return { cookies: entry.cookies, accountAlias: entry.accountAlias, savedAt: entry.savedAt };
+}
+
+function normalizeCookieAccountAlias(body) {
+  return String(body.accountAlias || body.account_alias || "").trim();
+}
+
+function cookieStoreKey(deviceName, accountAlias) {
+  return `${deviceName}\u0000${accountAlias}`;
+}
+
+async function latestAppRelease(state) {
+  if (state.supabaseRestUrl && state.supabaseAnonKey) {
+    const rows = await supabaseRequestJson(
+      state, "GET",
+      "/app_releases?select=version_code,version_name,apk_url,sha256&enabled=eq.true&order=version_code.desc&limit=1",
+    ).catch(() => null);
+    const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    if (row) return row;
+  }
+
+  const release = state.appReleases
+    .filter((item) => item.enabled !== false)
+    .sort((a, b) => releaseVersionCode(b) - releaseVersionCode(a))[0];
+
+  if (!release) return {};
+  return {
+    version_code: releaseVersionCode(release),
+    version_name: release.versionName || release.version_name || "",
+    apk_url: release.apkUrl || release.apk_url || "",
+    sha256: release.sha256 || null,
+  };
+}
+
+function releaseVersionCode(release) {
+  return Number(release.versionCode || release.version_code || 0);
 }
 
 function rotationReport(state, body) {
@@ -488,12 +606,12 @@ function taskLeaseResponse(product, lease) {
   };
 }
 
-function leaseResponse(account, lease) {
+function leaseResponse(state, account, lease) {
   return {
     leaseId: lease.id,
     accountAlias: account.alias,
-    loginId: account.loginId,
-    password: account.password,
+    loginId: readAccountSecret(state, account, "loginId"),
+    password: readAccountSecret(state, account, "password"),
     expiresAt: new Date(lease.expiresAtMs).toISOString(),
   };
 }
@@ -507,11 +625,296 @@ function loadProducts() {
   return Array.isArray(parsed.products) ? parsed.products : [];
 }
 
-function loadAccounts() {
-  const localPath = path.join(__dirname, "accounts.local.json");
+function loadAccounts(accountsFile) {
+  const localPath = accountsFile || path.join(__dirname, "accounts.local.json");
   if (!fs.existsSync(localPath)) return [];
   const parsed = JSON.parse(fs.readFileSync(localPath, "utf8"));
   return Array.isArray(parsed.accounts) ? parsed.accounts : [];
+}
+
+function parseCsv(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function adminCorsHeaders(state, req) {
+  const origin = req.headers.origin;
+  if (!origin) return {};
+  const allowed = state.adminAllowedOrigins;
+  if (allowed.length === 0) return {};
+  if (!allowed.includes("*") && !allowed.includes(origin)) return {};
+  return {
+    "Access-Control-Allow-Origin": allowed.includes("*") ? "*" : origin,
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Admin-Token",
+    "Access-Control-Max-Age": "600",
+    Vary: "Origin",
+  };
+}
+
+function isAdminApiAuthorized(state, req) {
+  if (!state.adminApiToken) return true;
+  const authorization = String(req.headers.authorization || "");
+  const bearer = authorization.startsWith("Bearer ") ? authorization.slice("Bearer ".length) : "";
+  const headerToken = String(req.headers["x-admin-token"] || "");
+  return safeEqual(state.adminApiToken, bearer) || safeEqual(state.adminApiToken, headerToken);
+}
+
+function safeEqual(expected, actual) {
+  const expectedBuffer = Buffer.from(String(expected));
+  const actualBuffer = Buffer.from(String(actual));
+  if (expectedBuffer.length !== actualBuffer.length) return false;
+  return crypto.timingSafeEqual(expectedBuffer, actualBuffer);
+}
+
+function adminSnapshot(state) {
+  const now = Date.now();
+  const groups = Array.from(state.groups.values())
+    .sort((a, b) => a.groupId.localeCompare(b.groupId))
+    .map((group) => {
+      const devices = Array.from(group.devices.values());
+      const onlineDevices = devices.filter((device) => now - device.updatedAt <= 120_000);
+      return {
+        groupId: group.groupId,
+        state: group.state,
+        commandId: group.commandId,
+        completedSinceRotation: group.completedSinceRotation,
+        drainingStartedAt: group.drainingStartedAt ? new Date(group.drainingStartedAt).toISOString() : null,
+        deviceCount: devices.length,
+        onlineCount: onlineDevices.length,
+        bossCount: devices.filter((device) => device.role === "boss").length,
+        soldierCount: devices.filter((device) => device.role === "soldier").length,
+        runningCount: devices.filter((device) => device.state === "RUNNING_TASK").length,
+        lastRotationReport: group.lastRotationReport || null,
+      };
+    });
+
+  const devices = Array.from(state.groups.values())
+    .flatMap((group) => Array.from(group.devices.values()).map((device) => ({
+      ...device,
+      online: now - device.updatedAt <= 120_000,
+      updatedAtIso: new Date(device.updatedAt).toISOString(),
+      lastSeenSec: Math.floor((now - device.updatedAt) / 1000),
+    })))
+    .sort((a, b) => a.groupId.localeCompare(b.groupId) || a.deviceName.localeCompare(b.deviceName));
+
+  return {
+    server: {
+      now: new Date(now).toISOString(),
+      uptimeSec: Math.floor((now - state.startedAt) / 1000),
+      zeroTrafficApiConfigured: Boolean(state.zeroTrafficApiUrl),
+      supabaseConfigured: Boolean(state.supabaseRestUrl && state.supabaseAnonKey),
+      accountPersistence: state.accountCryptoKey ? "encrypted-file" : "memory-only",
+      adminApiProtected: Boolean(state.adminApiToken),
+      adminAllowedOrigins: state.adminAllowedOrigins,
+    },
+    policy: state.policy,
+    summary: {
+      groups: groups.length,
+      devices: devices.length,
+      onlineDevices: devices.filter((device) => device.online).length,
+      bosses: devices.filter((device) => device.role === "boss").length,
+      soldiers: devices.filter((device) => device.role === "soldier").length,
+      runningDevices: devices.filter((device) => device.state === "RUNNING_TASK").length,
+      accounts: state.accounts.length,
+      availableAccounts: state.accounts.filter((account) => (account.status || "available") === "available").length,
+      protectedAccounts: state.accounts.filter((account) => ["protected", "manual_check_required"].includes(account.status)).length,
+      products: state.products.length,
+      activeTaskLeases: Array.from(state.taskLeases.values()).filter((lease) => lease.status === "active").length,
+    },
+    groups,
+    devices,
+    accounts: state.accounts.map((account) => publicAccountInfo(account, state)),
+    products: state.products.slice(0, 100).map(publicProductInfo),
+    taskLeases: Array.from(state.taskLeases.values()).slice(-50).map(publicTaskLeaseInfo),
+  };
+}
+
+function addAdminAccount(state, body) {
+  const alias = String(body.alias || "").trim();
+  const loginId = String(body.loginId || "").trim();
+  const password = String(body.password || "");
+  const groupId = String(body.groupId || "").trim();
+  const assignedDeviceName = String(body.assignedDeviceName || body.deviceName || "").trim();
+  if (!alias || !loginId || !password) {
+    return { ok: false, error: "missing_fields", message: "alias, loginId, password are required" };
+  }
+  if (state.accounts.some((account) => account.alias === alias)) {
+    return { ok: false, error: "duplicate_alias", message: "account alias already exists" };
+  }
+
+  const account = {
+    alias,
+    status: "available",
+    groupId: groupId || null,
+    assignedDeviceName: assignedDeviceName || null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  if (state.accountCryptoKey) {
+    account.loginIdEnc = encryptSecret(state.accountCryptoKey, loginId);
+    account.passwordEnc = encryptSecret(state.accountCryptoKey, password);
+  } else {
+    account.loginId = loginId;
+    account.password = password;
+    account.memoryOnly = true;
+  }
+
+  state.accounts.push(account);
+  let persisted = false;
+  if (state.accountCryptoKey) {
+    persistAccounts(state);
+    persisted = true;
+  }
+
+  return { ok: true, persisted, account: publicAccountInfo(account, state) };
+}
+
+function setAdminGroupState(state, body) {
+  const groupId = String(body.groupId || "").trim();
+  const nextState = String(body.state || "").trim().toUpperCase();
+  const allowed = new Set(["READY", "DRAINING", "ROTATING", "ROTATION_FAILED", "PAUSED", "STOPPED"]);
+  if (!groupId || !allowed.has(nextState)) {
+    return { ok: false, error: "invalid_group_state" };
+  }
+  const group = getGroup(state, groupId);
+  group.state = nextState;
+  group.commandId = `cmd_${crypto.randomUUID()}`;
+  group.drainingStartedAt = nextState === "DRAINING" ? Date.now() : null;
+  if (nextState === "READY") group.completedSinceRotation = 0;
+  return { ok: true, groupId, groupState: group.state, commandId: group.commandId };
+}
+
+function publicAccountInfo(account, state = null) {
+  const loginId = account.loginId || (state ? readAccountSecret(state, account, "loginId") : "");
+  return {
+    alias: account.alias,
+    groupId: account.groupId || null,
+    status: account.status || "available",
+    assignedDeviceName: account.assignedDeviceName || null,
+    lastUsedAt: account.lastUsedAt || null,
+    lastSuccessAt: account.lastSuccessAt || null,
+    protectionDetectedAt: account.protectionDetectedAt || null,
+    failCount: Number(account.failCount || 0),
+    loginIdMasked: maskLogin(loginId || (account.loginIdEnc ? "encrypted" : "")),
+    secretStorage: account.loginIdEnc || account.passwordEnc ? "encrypted" : (account.memoryOnly ? "memory" : "plain-file"),
+  };
+}
+
+function publicProductInfo(product) {
+  return {
+    keyword: product.keyword || "",
+    secondKeyword: product.secondKeyword || null,
+    keywordName: product.keywordName || null,
+    linkUrl: product.linkUrl || "",
+    mid: product.mid || null,
+    productTitle: product.productTitle || null,
+    strategy: product.strategy || "A",
+    status: product.status || "available",
+    successCount: Number(product.successCount || 0),
+    failCount: Number(product.failCount || 0),
+    assignedDeviceName: product.assignedDeviceName || null,
+    lastUsedAt: product.lastUsedAt || null,
+  };
+}
+
+function publicTaskLeaseInfo(lease) {
+  return {
+    id: lease.id,
+    deviceName: lease.deviceName,
+    strategy: lease.strategy,
+    status: lease.status,
+    leasedAt: lease.leasedAt || null,
+    result: lease.result || null,
+    productTitle: lease.product?.productTitle || null,
+    mid: lease.product?.mid || null,
+  };
+}
+
+function maskLogin(loginId) {
+  if (!loginId) return "";
+  if (loginId === "encrypted") return "encrypted";
+  const [name, domain] = loginId.split("@");
+  const maskedName = name.length <= 2 ? `${name[0] || ""}*` : `${name.slice(0, 2)}***${name.slice(-1)}`;
+  return domain ? `${maskedName}@${domain}` : maskedName;
+}
+
+function persistAccounts(state) {
+  const accounts = state.accounts.map((account) => {
+    const copy = { ...account };
+    delete copy.memoryOnly;
+    if (!copy.loginIdEnc && copy.loginId) copy.loginIdEnc = encryptSecret(state.accountCryptoKey, copy.loginId);
+    if (!copy.passwordEnc && copy.password) copy.passwordEnc = encryptSecret(state.accountCryptoKey, copy.password);
+    delete copy.loginId;
+    delete copy.password;
+    return copy;
+  });
+  fs.writeFileSync(state.accountsFile, `${JSON.stringify({ accounts }, null, 2)}\n`, "utf8");
+}
+
+function readAccountSecret(state, account, field) {
+  const plain = account[field];
+  if (plain) return plain;
+  const encrypted = account[`${field}Enc`];
+  if (!encrypted) return "";
+  const key = state.accountCryptoKey;
+  if (!key) return "";
+  return decryptSecret(key, encrypted);
+}
+
+function normalizeAccountCryptoKey(secret) {
+  if (!secret) return null;
+  return crypto.createHash("sha256").update(String(secret)).digest();
+}
+
+function encryptSecret(key, value) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+  const encrypted = Buffer.concat([cipher.update(String(value), "utf8"), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `v1:${iv.toString("base64url")}:${tag.toString("base64url")}:${encrypted.toString("base64url")}`;
+}
+
+function decryptSecret(key, value) {
+  const [version, ivRaw, tagRaw, encryptedRaw] = String(value).split(":");
+  if (version !== "v1") return "";
+  const decipher = crypto.createDecipheriv("aes-256-gcm", key, Buffer.from(ivRaw, "base64url"));
+  decipher.setAuthTag(Buffer.from(tagRaw, "base64url"));
+  return Buffer.concat([
+    decipher.update(Buffer.from(encryptedRaw, "base64url")),
+    decipher.final(),
+  ]).toString("utf8");
+}
+
+function serveAdminAsset(res, pathname) {
+  const adminRoot = path.resolve(
+    process.env.ADMIN_ASSET_DIR || path.join(__dirname, "..", "web", "admin"),
+  );
+  const relativePath = pathname === "/" || pathname === "/admin" || pathname === "/admin/"
+    ? "index.html"
+    : pathname.replace(/^\/admin\//, "");
+  const normalized = path.normalize(relativePath).replace(/^(\.\.[/\\])+/, "");
+  const target = path.join(adminRoot, normalized);
+  const resolvedTarget = path.resolve(target);
+  if (!resolvedTarget.startsWith(adminRoot) || !fs.existsSync(resolvedTarget) || fs.statSync(resolvedTarget).isDirectory()) {
+    return sendJson(res, 404, { error: "not_found" });
+  }
+  const ext = path.extname(resolvedTarget).toLowerCase();
+  const mime = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".svg": "image/svg+xml",
+  }[ext] || "application/octet-stream";
+  const body = fs.readFileSync(resolvedTarget);
+  res.writeHead(200, {
+    "Content-Type": mime,
+    "Content-Length": body.length,
+    "Cache-Control": "no-store",
+  });
+  res.end(body);
 }
 
 function readJson(req) {
@@ -531,11 +934,12 @@ function readJson(req) {
   });
 }
 
-function sendJson(res, status, body) {
+function sendJson(res, status, body, headers = {}) {
   const text = JSON.stringify(body);
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Content-Length": Buffer.byteLength(text),
+    ...headers,
   });
   res.end(text);
 }

@@ -30,6 +30,7 @@ class SupabaseApiClient(
 
     private fun base() = baseUrl.trimEnd('/')
     private fun enc(value: String) = URLEncoder.encode(value, "UTF-8")
+    private fun cookieAlias(accountAlias: String?) = accountAlias?.trim().orEmpty()
 
     private fun jsonStr(value: String?): String {
         if (value == null) return "null"
@@ -153,20 +154,32 @@ class SupabaseApiClient(
 
     // ── Cookies ──────────────────────────────────────────────────────────────
 
-    override suspend fun saveCookies(deviceName: String, cookies: String) = withContext(Dispatchers.IO) {
-        val body = """{"device_name":${jsonStr(deviceName)},"cookies":${jsonStr(cookies)},"updated_at":${jsonStr(now())}}"""
+    override suspend fun saveCookies(deviceName: String, accountAlias: String?, cookies: String) = withContext(Dispatchers.IO) {
+        val alias = cookieAlias(accountAlias)
+        val body = """{"device_name":${jsonStr(deviceName)},"account_alias":${jsonStr(alias)},"cookies":${jsonStr(cookies)},"updated_at":${jsonStr(now())}}"""
         runCatching {
-            transport.request("POST", "${base()}/device_cookies?on_conflict=device_name", body, upsertHeaders)
+            transport.request("POST", "${base()}/device_cookies?on_conflict=device_name,account_alias", body, upsertHeaders)
+        }.onFailure {
+            runCatching {
+                transport.request("POST", "${base()}/device_cookies?on_conflict=device_name", body, upsertHeaders)
+            }
         }
         Unit
     }
 
-    override suspend fun loadCookies(deviceName: String): String? = withContext(Dispatchers.IO) {
-        val url = "${base()}/device_cookies?device_name=eq.${enc(deviceName)}&limit=1"
+    override suspend fun loadCookies(deviceName: String, accountAlias: String?): String? = withContext(Dispatchers.IO) {
+        val alias = cookieAlias(accountAlias)
+        val url = "${base()}/device_cookies?device_name=eq.${enc(deviceName)}&account_alias=eq.${enc(alias)}&limit=1"
         val raw = runCatching { transport.request("GET", url, null, headers) }.getOrNull()
+        val row = raw?.let { parseJsonArray(it).firstOrNull() }
+        if (row != null) return@withContext readString(row, "cookies")?.takeIf { it.isNotBlank() }
+        if (alias.isNotBlank()) return@withContext null
+
+        val legacyUrl = "${base()}/device_cookies?device_name=eq.${enc(deviceName)}&account_alias=is.null&limit=1"
+        val legacyRaw = runCatching { transport.request("GET", legacyUrl, null, headers) }.getOrNull()
             ?: return@withContext null
-        val row = parseJsonArray(raw).firstOrNull() ?: return@withContext null
-        readString(row, "cookies")?.takeIf { it.isNotBlank() }
+        val legacyRow = parseJsonArray(legacyRaw).firstOrNull() ?: return@withContext null
+        readString(legacyRow, "cookies")?.takeIf { it.isNotBlank() }
     }
 
     // ── Group Control ─────────────────────────────────────────────────────────

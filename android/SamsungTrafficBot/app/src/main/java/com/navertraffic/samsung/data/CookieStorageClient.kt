@@ -1,11 +1,11 @@
 package com.navertraffic.samsung.data
 
 interface CookieStorageClient {
-    suspend fun saveCookies(deviceName: String, cookies: String)
-    suspend fun loadCookies(deviceName: String): String?
+    suspend fun saveCookies(deviceName: String, accountAlias: String?, cookies: String)
+    suspend fun loadCookies(deviceName: String, accountAlias: String?): String?
 }
 
 class NoopCookieStorageClient : CookieStorageClient {
-    override suspend fun saveCookies(deviceName: String, cookies: String) = Unit
-    override suspend fun loadCookies(deviceName: String): String? = null
+    override suspend fun saveCookies(deviceName: String, accountAlias: String?, cookies: String) = Unit
+    override suspend fun loadCookies(deviceName: String, accountAlias: String?): String? = null
 }

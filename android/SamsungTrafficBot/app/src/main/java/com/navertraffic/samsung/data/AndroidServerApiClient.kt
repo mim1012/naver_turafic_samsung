@@ -77,14 +77,12 @@ class AndroidServerApiClient(
         post("/android/tasks/report", AndroidServerApiJson.strategyTaskReportBody(report))
     }
 
-    override suspend fun saveCookies(deviceName: String, cookies: String) {
-        val body = jsonBody("deviceName" to deviceName, "cookies" to cookies)
-        post("/android/cookies/save", body)
+    override suspend fun saveCookies(deviceName: String, accountAlias: String?, cookies: String) {
+        post("/android/cookies/save", AndroidServerApiJson.cookieSaveBody(deviceName, accountAlias, cookies))
     }
 
-    override suspend fun loadCookies(deviceName: String): String? {
-        val body = jsonBody("deviceName" to deviceName)
-        val raw = post("/android/cookies/load", body)
+    override suspend fun loadCookies(deviceName: String, accountAlias: String?): String? {
+        val raw = post("/android/cookies/load", AndroidServerApiJson.cookieLoadBody(deviceName, accountAlias))
         return readString(raw, "cookies")?.takeIf { it.isNotBlank() }
     }
 
@@ -176,6 +174,21 @@ object AndroidServerApiJson {
             "taskCount" to heartbeat.taskCount,
             "currentIp" to heartbeat.currentIp,
             "lastError" to heartbeat.lastError,
+        )
+    }
+
+    fun cookieSaveBody(deviceName: String, accountAlias: String?, cookies: String): JsonBody {
+        return jsonBody(
+            "deviceName" to deviceName,
+            "accountAlias" to accountAlias?.takeIf { it.isNotBlank() },
+            "cookies" to cookies,
+        )
+    }
+
+    fun cookieLoadBody(deviceName: String, accountAlias: String?): JsonBody {
+        return jsonBody(
+            "deviceName" to deviceName,
+            "accountAlias" to accountAlias?.takeIf { it.isNotBlank() },
         )
     }
 

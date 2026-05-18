@@ -2,6 +2,8 @@
   "accounts": [
     {
       "alias": "naver_a",
+      "assignedDeviceName": "z1-1",
+      "groupId": "z1",
       "loginId": "replace-with-id",
       "password": "replace-with-password",
       "status": "available"

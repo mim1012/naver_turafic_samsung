@@ -144,6 +144,25 @@ class SamsungWebViewManager(
         return id to pw
     }
 
+    fun sessionAccountMatches(context: Context, deviceName: String, accountAlias: String?): Boolean {
+        val saved = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(sessionAccountKey(deviceName), null)
+            ?: return false
+        return saved == normalizeSessionAccount(accountAlias)
+    }
+
+    fun saveSessionAccount(context: Context, deviceName: String, accountAlias: String?) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(sessionAccountKey(deviceName), normalizeSessionAccount(accountAlias))
+            .apply()
+    }
+
+    fun clearSessionAccount(context: Context, deviceName: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .remove(sessionAccountKey(deviceName))
+            .apply()
+    }
+
     fun setNaverCookie(cookie: String) {
         if (cookie.isBlank()) return
         val manager = CookieManager.getInstance()
@@ -160,6 +179,22 @@ class SamsungWebViewManager(
             }
         manager.flush()
         log("네이버 쿠키 주입 완료")
+    }
+
+    fun clearNaverCookies() {
+        val manager = CookieManager.getInstance()
+        val expiredCookies = listOf("NID_AUT", "NID_SES").flatMap { name ->
+            listOf(
+                "$name=; domain=.naver.com; path=/; Max-Age=0",
+                "$name=; domain=naver.com; path=/; Max-Age=0",
+                "$name=; path=/; Max-Age=0",
+            )
+        }
+        listOf("https://nid.naver.com", "https://www.naver.com", "https://m.naver.com", "https://naver.com").forEach { url ->
+            expiredCookies.forEach { manager.setCookie(url, it) }
+        }
+        manager.flush()
+        log("네이버 쿠키 삭제 완료")
     }
 
     private fun persistNaverSessionCookies() {
@@ -829,5 +864,13 @@ class SamsungWebViewManager(
         private const val PREFS_NAME = "naver_session"
         private const val PREF_ID = "naver_id"
         private const val PREF_PW = "naver_pw"
+        private const val PREF_SESSION_ACCOUNT_PREFIX = "session_account:"
+        private const val MANUAL_SESSION_ACCOUNT = "__manual__"
+
+        private fun sessionAccountKey(deviceName: String) = PREF_SESSION_ACCOUNT_PREFIX + deviceName
+
+        private fun normalizeSessionAccount(accountAlias: String?): String {
+            return accountAlias?.takeIf { it.isNotBlank() } ?: MANUAL_SESSION_ACCOUNT
+        }
     }
 }
