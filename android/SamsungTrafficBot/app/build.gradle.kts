@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.gradle.api.GradleException
 
 plugins {
     id("com.android.application")
@@ -12,6 +13,21 @@ val localProps = Properties().also { props ->
 
 fun localProp(key: String, default: String = "") =
     (localProps.getProperty(key) ?: default).trim()
+
+fun localOrEnv(propKey: String, envKey: String, default: String = "") =
+    (localProps.getProperty(propKey) ?: System.getenv(envKey) ?: default).trim()
+
+val releaseStoreFile = localOrEnv("release.store.file", "ANDROID_RELEASE_STORE_FILE")
+val releaseStorePassword = localOrEnv("release.store.password", "ANDROID_RELEASE_STORE_PASSWORD")
+val releaseKeyAlias = localOrEnv("release.key.alias", "ANDROID_RELEASE_KEY_ALIAS")
+val releaseKeyPassword = localOrEnv("release.key.password", "ANDROID_RELEASE_KEY_PASSWORD")
+val releaseSigningConfigured =
+    releaseStoreFile.isNotBlank() &&
+        releaseStorePassword.isNotBlank() &&
+        releaseKeyAlias.isNotBlank() &&
+        releaseKeyPassword.isNotBlank()
+val releaseSigningRequested =
+    gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
 
 android {
     namespace = "com.navertraffic.samsung"
@@ -38,9 +54,27 @@ android {
         buildConfigField("int",    "ROTATION_DRAIN_WAIT_SEC", localProp("rotation.drain.wait.sec", "90"))
     }
 
+    signingConfigs {
+        create("release") {
+            if (releaseSigningConfigured) {
+                storeFile = rootProject.file(releaseStoreFile)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (releaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            } else if (releaseSigningRequested) {
+                throw GradleException(
+                    "Release signing is required. Set release.store.file, release.store.password, release.key.alias, and release.key.password in local.properties.",
+                )
+            }
         }
     }
 

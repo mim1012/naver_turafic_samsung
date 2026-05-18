@@ -4,6 +4,7 @@ build/
 local.properties
 *.apk
 *.aab
+*.jks
 *.iml
 .idea/
 .omx/
@@ -41,6 +42,8 @@ test/ip-check/
 .env.local
 *.env.local
 *.keystore
+keystore.properties
+release-signing.properties
 secrets.properties
 server/accounts.local.json
 server/products.local.json
