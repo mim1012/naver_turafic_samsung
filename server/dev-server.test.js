@@ -248,6 +248,42 @@ test("stores reusable cookies per device and account alias", async () => {
   assert.equal(missing.cookies, null);
 });
 
+test("surfaces login protection reports on the matching device", async () => {
+  const state = createState({
+    accounts: [{ alias: "naver_a", loginId: "user", password: "secret", status: "available" }],
+  });
+  const baseUrl = await start(state);
+
+  await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 0,
+  });
+  const lease = await post(baseUrl, "/android/accounts/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "A",
+    appVersion: "0.1.0",
+  });
+  await post(baseUrl, "/android/accounts/report", {
+    leaseId: lease.leaseId,
+    deviceName: "z1-1",
+    result: "protected",
+    signals: ["PHONE_VERIFICATION_REQUIRED"],
+    message: "temporary protection",
+  });
+
+  const snapshot = await get(baseUrl, "/admin/api/snapshot");
+
+  assert.equal(snapshot.summary.protectedDevices, 1);
+  assert.equal(snapshot.devices[0].deviceName, "z1-1");
+  assert.equal(snapshot.devices[0].state, "ERROR");
+  assert.equal(snapshot.devices[0].accountAlert.active, true);
+  assert.equal(snapshot.devices[0].accountAlert.signals[0], "PHONE_VERIFICATION_REQUIRED");
+});
+
 test("protects admin API with token and emits allowed CORS headers", async () => {
   const state = createState({
     adminApiToken: "admin-secret",

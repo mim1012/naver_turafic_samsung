@@ -43,6 +43,27 @@ class BrowserAccessibilityService : AccessibilityService() {
         return false
     }
 
+    private fun visibleTextSnapshot(): String {
+        val values = mutableListOf<String>()
+
+        fun visit(node: AccessibilityNodeInfo?) {
+            if (node == null) return
+            listOfNotNull(node.text, node.contentDescription)
+                .joinToString(" ")
+                .takeIf { it.isNotBlank() }
+                ?.let { values += it }
+            for (i in 0 until node.childCount) {
+                node.getChild(i)?.let { child ->
+                    visit(child)
+                    child.recycle()
+                }
+            }
+        }
+
+        visit(rootInActiveWindow)
+        return values.joinToString(" ")
+    }
+
     private fun findBestNode(root: AccessibilityNodeInfo?, words: List<String>): AccessibilityNodeInfo? {
         if (root == null) return null
         var best: AccessibilityNodeInfo? = null
@@ -137,6 +158,12 @@ class BrowserAccessibilityService : AccessibilityService() {
 
         suspend fun swipeDetail(durationMs: Long): Boolean {
             return instance?.swipeUp(durationMs) == true
+        }
+
+        suspend fun visibleText(): String {
+            return withContext(Dispatchers.Main) {
+                instance?.visibleTextSnapshot().orEmpty()
+            }
         }
     }
 }

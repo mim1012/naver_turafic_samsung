@@ -34,6 +34,7 @@ function createState(options = {}) {
     taskLeases: new Map(),
     groups: new Map(),
     cookieStore: new Map(),
+    accountReports: [],
     policy: { ...DEFAULT_POLICY, ...(options.policy || {}) },
   };
 }
@@ -397,9 +398,21 @@ function inferGroupId(deviceName) {
 
 function reportAccount(state, body) {
   const lease = body.leaseId ? state.leases.get(String(body.leaseId)) : null;
+  const result = String(body.result || "");
+  const signals = Array.isArray(body.signals) ? body.signals : [];
+  const deviceName = String(body.deviceName || lease?.deviceName || "");
+  state.accountReports.unshift({
+    leaseId: body.leaseId || null,
+    accountAlias: lease?.account?.alias || null,
+    deviceName,
+    result,
+    signals,
+    lastUrl: body.lastUrl || null,
+    message: body.message || null,
+    createdAt: new Date().toISOString(),
+  });
   if (lease) {
     lease.status = "reported";
-    const result = String(body.result || "");
     if (result === "protected") {
       lease.account.status = "protected";
       lease.account.protectionDetectedAt = new Date().toISOString();
@@ -408,6 +421,16 @@ function reportAccount(state, body) {
     } else if (result === "success") {
       lease.account.status = "available";
       lease.account.lastSuccessAt = new Date().toISOString();
+    }
+  }
+  if (deviceName && isLoginBlockedReport(result, signals)) {
+    for (const group of state.groups.values()) {
+      const device = group.devices.get(deviceName);
+      if (device) {
+        device.state = "ERROR";
+        device.lastError = body.message || signals.join(",") || result;
+        device.updatedAt = Date.now();
+      }
     }
   }
   return { ok: true };
@@ -671,6 +694,17 @@ function safeEqual(expected, actual) {
 
 function adminSnapshot(state) {
   const now = Date.now();
+  const latestReportByDevice = new Map();
+  state.accountReports.forEach((report) => {
+    if (report.deviceName && !latestReportByDevice.has(report.deviceName)) {
+      latestReportByDevice.set(report.deviceName, report);
+    }
+  });
+  const accountByDevice = new Map(
+    state.accounts
+      .filter((account) => account.assignedDeviceName)
+      .map((account) => [account.assignedDeviceName, account]),
+  );
   const groups = Array.from(state.groups.values())
     .sort((a, b) => a.groupId.localeCompare(b.groupId))
     .map((group) => {
@@ -692,12 +726,20 @@ function adminSnapshot(state) {
     });
 
   const devices = Array.from(state.groups.values())
-    .flatMap((group) => Array.from(group.devices.values()).map((device) => ({
-      ...device,
-      online: now - device.updatedAt <= 120_000,
-      updatedAtIso: new Date(device.updatedAt).toISOString(),
-      lastSeenSec: Math.floor((now - device.updatedAt) / 1000),
-    })))
+    .flatMap((group) => Array.from(group.devices.values()).map((device) => {
+      const report = latestReportByDevice.get(device.deviceName) || null;
+      const account = accountByDevice.get(device.deviceName) || null;
+      return {
+        ...device,
+        accountAlias: account?.alias || report?.accountAlias || null,
+        accountStatus: account?.status || null,
+        latestAccountReport: report,
+        accountAlert: deviceAccountAlert(account, report),
+        online: now - device.updatedAt <= 120_000,
+        updatedAtIso: new Date(device.updatedAt).toISOString(),
+        lastSeenSec: Math.floor((now - device.updatedAt) / 1000),
+      };
+    }))
     .sort((a, b) => a.groupId.localeCompare(b.groupId) || a.deviceName.localeCompare(b.deviceName));
 
   return {
@@ -715,6 +757,7 @@ function adminSnapshot(state) {
       groups: groups.length,
       devices: devices.length,
       onlineDevices: devices.filter((device) => device.online).length,
+      protectedDevices: devices.filter((device) => device.accountAlert?.active).length,
       bosses: devices.filter((device) => device.role === "boss").length,
       soldiers: devices.filter((device) => device.role === "soldier").length,
       runningDevices: devices.filter((device) => device.state === "RUNNING_TASK").length,
@@ -729,6 +772,40 @@ function adminSnapshot(state) {
     accounts: state.accounts.map((account) => publicAccountInfo(account, state)),
     products: state.products.slice(0, 100).map(publicProductInfo),
     taskLeases: Array.from(state.taskLeases.values()).slice(-50).map(publicTaskLeaseInfo),
+    accountReports: state.accountReports.slice(0, 100),
+  };
+}
+
+function isLoginBlockedReport(result, signals) {
+  return ["protected", "manual_check_required", "invalid", "session_expired"].includes(result) ||
+    signals.some((signal) => [
+      "PROTECTION_TEXT",
+      "CAPTCHA_OR_SECURITY_PAGE",
+      "PHONE_VERIFICATION_REQUIRED",
+      "EMAIL_VERIFICATION_REQUIRED",
+      "PASSWORD_RETRY_REQUIRED",
+      "LOGIN_STILL_REQUIRED",
+      "SESSION_EXPIRED",
+      "UNEXPECTED_LOGOUT",
+      "SAMSUNG_INTERNET_MISSING",
+    ].includes(signal));
+}
+
+function deviceAccountAlert(account, report) {
+  const accountStatus = String(account?.status || "");
+  const reportResult = String(report?.result || "");
+  const signals = Array.isArray(report?.signals) ? report.signals : [];
+  const active = ["protected", "manual_check_required", "invalid"].includes(accountStatus) ||
+    isLoginBlockedReport(reportResult, signals);
+  if (!active) return null;
+  return {
+    active: true,
+    accountAlias: account?.alias || report?.accountAlias || null,
+    accountStatus: account?.status || null,
+    result: report?.result || null,
+    signals,
+    message: report?.message || null,
+    detectedAt: report?.createdAt || account?.protectionDetectedAt || account?.updatedAt || null,
   };
 }
 

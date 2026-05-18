@@ -10,7 +10,8 @@ class ExternalSamsungBrowserSession(
     private val context: Context,
     private val log: (String) -> Unit,
 ) : BrowserSession {
-    override val supportsPageInspection: Boolean = false
+    override val supportsPageInspection: Boolean
+        get() = BrowserAccessibilityService.isReady()
 
     private var lastUrl: String? = null
 
@@ -30,7 +31,7 @@ class ExternalSamsungBrowserSession(
     }
 
     override suspend fun visibleText(): String {
-        return ""
+        return BrowserAccessibilityService.visibleText()
     }
 
     override fun currentUrl(): String? {

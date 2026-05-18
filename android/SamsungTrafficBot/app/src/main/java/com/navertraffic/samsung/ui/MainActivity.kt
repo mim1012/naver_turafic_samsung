@@ -16,6 +16,8 @@ import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.R
 import com.navertraffic.samsung.boss.BossController
 import com.navertraffic.samsung.data.AccountLease
+import com.navertraffic.samsung.data.AccountLeaseReport
+import com.navertraffic.samsung.data.AccountLeaseResult
 import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AndroidServerApiClient
 import com.navertraffic.samsung.data.DeviceIdentity
@@ -26,6 +28,7 @@ import com.navertraffic.samsung.data.CookieStorageClient
 import com.navertraffic.samsung.data.NoopCookieStorageClient
 import com.navertraffic.samsung.data.NoopStrategyTaskLeaseClient
 import com.navertraffic.samsung.data.SupabaseApiClient
+import com.navertraffic.samsung.data.ProtectionSignal
 import com.navertraffic.samsung.data.StrategyTaskLeaseClient
 import com.navertraffic.samsung.data.StrategyTaskReport
 import com.navertraffic.samsung.data.StrategyTaskResult
@@ -39,6 +42,7 @@ import com.navertraffic.samsung.strategy.SamsungBrowserStrategyA
 import com.navertraffic.samsung.strategy.SamsungBrowserStrategyG
 import com.navertraffic.samsung.strategy.StrategyVariant
 import com.navertraffic.samsung.strategy.SamsungWebViewManager
+import com.navertraffic.samsung.strategy.ProtectionDetector
 import com.navertraffic.samsung.strategy.SecondKeywordStore
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private val logLines = ArrayDeque<String>()
     private val validatedCookieSessions = mutableSetOf<String>()
+    private val protectionDetector = ProtectionDetector()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -245,12 +250,17 @@ class MainActivity : AppCompatActivity() {
             tailKeyword = tailKeyword,
         )
 
+        val externalSession = if (!dryRun && externalBrowser) {
+            ExternalSamsungBrowserSession(applicationContext, ::appendLog)
+        } else {
+            null
+        }
         val strategyImpl = if (dryRun) {
             appendLog("DRY_RUN 모드: URL 흐름만 검증")
             SamsungBrowserStrategyA(DryRunBrowserSession(::appendLog), stepDelayMs = 0, productDelayMs = 0, useMidClick = false)
-        } else if (externalBrowser) {
+        } else if (externalSession != null) {
             appendLog("외부 Samsung Internet 모드")
-            SamsungBrowserStrategyA(ExternalSamsungBrowserSession(applicationContext, ::appendLog), stepDelayMs = 1_200, productDelayMs = 2_500)
+            SamsungBrowserStrategyA(externalSession, stepDelayMs = 1_200, productDelayMs = 2_500)
         } else {
             SamsungBrowserStrategyA(WebViewBrowserSession(webViewManager), variant = variant)
         }
@@ -324,11 +334,10 @@ class MainActivity : AppCompatActivity() {
                         val credential = resolveNaverLogin(serverClient, identity, "A")
                         if (credential == null ||
                             !ensureNaverLogin(
-                                credential.loginId,
-                                credential.password,
-                                credential.accountAlias,
-                                serverClient.cookieClient,
-                                identity.rawName,
+                                credential,
+                                serverClient,
+                                identity,
+                                externalSession,
                             )
                         ) {
                             exitRunningMode()
@@ -347,11 +356,10 @@ class MainActivity : AppCompatActivity() {
                         val credential = resolveNaverLogin(serverClient, identity, "A")
                         if (credential == null ||
                             !ensureNaverLogin(
-                                credential.loginId,
-                                credential.password,
-                                credential.accountAlias,
-                                serverClient.cookieClient,
-                                identity.rawName,
+                                credential,
+                                serverClient,
+                                identity,
+                                externalSession,
                             )
                         ) {
                             exitRunningMode()
@@ -382,11 +390,10 @@ class MainActivity : AppCompatActivity() {
                         val credential = resolveNaverLogin(serverClient, identity, "A")
                         if (credential == null ||
                             !ensureNaverLogin(
-                                credential.loginId,
-                                credential.password,
-                                credential.accountAlias,
-                                serverClient.cookieClient,
-                                identity.rawName,
+                                credential,
+                                serverClient,
+                                identity,
+                                externalSession,
                             )
                         ) {
                             exitRunningMode()
@@ -497,11 +504,9 @@ class MainActivity : AppCompatActivity() {
                         val credential = resolveNaverLogin(serverClient, identity, "G")
                         if (credential == null ||
                             !ensureNaverLogin(
-                                credential.loginId,
-                                credential.password,
-                                credential.accountAlias,
-                                serverClient.cookieClient,
-                                identity.rawName,
+                                credential,
+                                serverClient,
+                                identity,
                             )
                         ) {
                             exitRunningMode()
@@ -528,11 +533,9 @@ class MainActivity : AppCompatActivity() {
                         val credential = resolveNaverLogin(serverClient, identity, "G")
                         if (credential == null ||
                             !ensureNaverLogin(
-                                credential.loginId,
-                                credential.password,
-                                credential.accountAlias,
-                                serverClient.cookieClient,
-                                identity.rawName,
+                                credential,
+                                serverClient,
+                                identity,
                             )
                         ) {
                             exitRunningMode()
@@ -564,12 +567,17 @@ class MainActivity : AppCompatActivity() {
     // ── 공통 헬퍼 ───────────────────────────────────────────────────────────
 
     private suspend fun ensureNaverLogin(
-        naverId: String,
-        naverPw: String,
-        accountAlias: String?,
-        cookieClient: CookieStorageClient,
-        deviceName: String,
+        credential: NaverLoginCredential,
+        serverClient: ServerClients,
+        identity: DeviceIdentity,
+        externalSession: ExternalSamsungBrowserSession? = null,
     ): Boolean {
+        if (externalSession != null) {
+            return ensureExternalNaverLogin(credential, serverClient, identity, externalSession)
+        }
+
+        val deviceName = identity.rawName
+        val accountAlias = credential.accountAlias
         val sessionKey = cookieSessionKey(deviceName, accountAlias)
         if (!webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
             if (webViewManager.hasCookieSession()) {
@@ -593,7 +601,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // IP 로테이션 이후: 서버 저장 쿠키 복원 시도
-        val saved = runCatching { cookieClient.loadCookies(deviceName, accountAlias) }.getOrNull()
+        val saved = runCatching { serverClient.cookieClient.loadCookies(deviceName, accountAlias) }.getOrNull()
         if (!saved.isNullOrBlank()) {
             appendLog("서버 저장 쿠키 복원 시도: ${accountAlias ?: "수동 입력 계정"}")
             webViewManager.setNaverCookie(saved)
@@ -608,8 +616,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 전체 로그인
-        val loginOk = webViewManager.loginNaver(loginId = naverId, password = naverPw)
+        val loginOk = webViewManager.loginNaver(
+            loginId = credential.loginId,
+            password = credential.password,
+        )
         if (!loginOk) {
+            reportLoginBlocked(
+                serverClient = serverClient,
+                credential = credential,
+                identity = identity,
+                signals = loginFailureSignals(webViewManager.visibleText()),
+                message = "naver_login_failed",
+            )
             appendLog("네이버 로그인 실패: 작업 중단")
             return false
         }
@@ -619,11 +637,100 @@ class MainActivity : AppCompatActivity() {
         if (cookies.isNotBlank()) {
             webViewManager.saveSessionAccount(this, deviceName, accountAlias)
             validatedCookieSessions.add(sessionKey)
-            runCatching { cookieClient.saveCookies(deviceName, accountAlias, cookies) }
+            runCatching { serverClient.cookieClient.saveCookies(deviceName, accountAlias, cookies) }
                 .onSuccess { appendLog("네이버 쿠키 서버 저장 완료") }
                 .onFailure { appendLog("쿠키 서버 저장 실패: ${it.message}") }
         }
         return true
+    }
+
+    private suspend fun ensureExternalNaverLogin(
+        credential: NaverLoginCredential,
+        serverClient: ServerClients,
+        identity: DeviceIdentity,
+        externalSession: ExternalSamsungBrowserSession,
+    ): Boolean {
+        if (!externalSession.supportsPageInspection) {
+            reportLoginBlocked(
+                serverClient = serverClient,
+                credential = credential,
+                identity = identity,
+                signals = listOf(ProtectionSignal.SAMSUNG_INTERNET_MISSING, ProtectionSignal.LOGIN_STILL_REQUIRED),
+                message = "samsung_internet_accessibility_required_for_login_check",
+            )
+            appendLog("외부 삼성브라우저 로그인 확인 불가: 접근성 서비스를 켜야 작업을 시작합니다")
+            return false
+        }
+
+        externalSession.loadAndWait(SamsungBrowserStrategyA.NAVER_HOME_URL, 15_000)
+        kotlinx.coroutines.delay(1_500)
+        val text = externalSession.visibleText()
+        val signals = protectionDetector.detectFromText(text)
+        if (signals.isNotEmpty()) {
+            reportLoginBlocked(serverClient, credential, identity, signals, "external_browser_protection_detected")
+            appendLog("외부 삼성브라우저 보호/재인증 감지: 작업 중단")
+            return false
+        }
+        if (!looksLoggedIn(text)) {
+            reportLoginBlocked(
+                serverClient = serverClient,
+                credential = credential,
+                identity = identity,
+                signals = listOf(ProtectionSignal.LOGIN_STILL_REQUIRED),
+                message = "external_browser_not_logged_in",
+            )
+            appendLog("외부 삼성브라우저 비로그인 감지: 작업 중단")
+            return false
+        }
+        appendLog("외부 삼성브라우저 로그인 확인 완료")
+        return true
+    }
+
+    private fun looksLoggedIn(text: String): Boolean {
+        if (text.isBlank()) return false
+        if (text.contains("로그아웃")) return true
+        if (text.contains("로그인") || text.contains("로그인이 필요")) return false
+        return true
+    }
+
+    private fun loginFailureSignals(text: String): List<ProtectionSignal> {
+        val signals = protectionDetector.detectFromText(text)
+        return signals.ifEmpty { listOf(ProtectionSignal.LOGIN_STILL_REQUIRED) }
+    }
+
+    private suspend fun reportLoginBlocked(
+        serverClient: ServerClients,
+        credential: NaverLoginCredential,
+        identity: DeviceIdentity,
+        signals: List<ProtectionSignal>,
+        message: String,
+    ) {
+        val result = if (signals.any { it != ProtectionSignal.LOGIN_STILL_REQUIRED }) {
+            AccountLeaseResult.PROTECTED
+        } else {
+            AccountLeaseResult.SESSION_EXPIRED
+        }
+        runCatching {
+            serverClient.accountLeaseClient.report(
+                AccountLeaseReport(
+                    leaseId = credential.leaseId,
+                    deviceName = identity.rawName,
+                    result = result,
+                    signals = signals,
+                    lastUrl = webViewManager.currentUrl(),
+                    message = message,
+                ),
+            )
+        }.onFailure { appendLog("로그인 차단 report 실패: ${it.message}") }
+        credential.leaseId?.let { leaseId ->
+            runCatching {
+                serverClient.accountLeaseClient.release(
+                    leaseId = leaseId,
+                    deviceName = identity.rawName,
+                    reason = message,
+                )
+            }.onFailure { appendLog("로그인 차단 lease release 실패: ${it.message}") }
+        }
     }
 
     private fun cookieSessionKey(deviceName: String, accountAlias: String?): String {
@@ -647,6 +754,7 @@ class MainActivity : AppCompatActivity() {
         if (lease != null && lease.loginId.isNotBlank() && lease.password.isNotBlank()) {
             appendLog("네이버 계정 lease 사용: ${lease.accountAlias}")
             return NaverLoginCredential(
+                leaseId = lease.leaseId,
                 loginId = lease.loginId,
                 password = lease.password,
                 accountAlias = lease.accountAlias,
@@ -658,6 +766,7 @@ class MainActivity : AppCompatActivity() {
         if (fallbackId.isNotBlank() && fallbackPassword.isNotBlank()) {
             appendLog("서버 배정 계정 없음: 기기 입력 계정 사용")
             return NaverLoginCredential(
+                leaseId = null,
                 loginId = fallbackId,
                 password = fallbackPassword,
                 accountAlias = null,
@@ -723,6 +832,7 @@ class MainActivity : AppCompatActivity() {
     )
 
     private data class NaverLoginCredential(
+        val leaseId: String?,
         val loginId: String,
         val password: String,
         val accountAlias: String?,
