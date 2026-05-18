@@ -50,7 +50,11 @@ class AppUpdateManager(
         return if (exitCode == 0 && (stdout.endsWith("Success") || stderr.endsWith("Success"))) {
             log("업데이트 완료 (${latest.versionName}) — 재시작")
             Runtime.getRuntime().exec(
-                arrayOf("su", "-c", "am start -n com.navertraffic.samsung/.ui.MainActivity")
+                arrayOf(
+                    "su",
+                    "-c",
+                    "sh -c 'sleep 1; am force-stop com.navertraffic.samsung; sleep 1; am start -n com.navertraffic.samsung/.ui.MainActivity' >/dev/null 2>&1 &",
+                )
             )
             true
         } else {
