@@ -117,16 +117,12 @@ class SamsungWebViewManager(
         }
     }
 
-    // Fast session check: reads NID_AUT/NID_SES cookies without loading any page.
+    // Fast session check: reads Naver session cookies without loading any page.
     // CookieManager persists cookies to disk across app restarts automatically.
     fun hasCookieSession(): Boolean {
-        val cm = CookieManager.getInstance()
-        // Check both nid.naver.com (login origin) and www.naver.com (shared cookie domain)
-        val raw = cm.getCookie("https://nid.naver.com")
-            ?.takeIf { it.contains("NID_AUT=") }
-            ?: cm.getCookie("https://www.naver.com")
-            ?: return false
-        return raw.contains("NID_AUT=") && raw.contains("NID_SES=")
+        val cookies = currentNaverCookieItems()
+        return cookies.any { it.startsWith("NID_AUT=") } &&
+            cookies.any { it.startsWith("NID_SES=") }
     }
 
     fun saveCredentials(context: Context, id: String, pw: String) {
@@ -168,29 +164,27 @@ class SamsungWebViewManager(
         val manager = CookieManager.getInstance()
         cookie.split(";")
             .map { it.trim() }
-            .filter { it.isNotEmpty() && it.contains("=") }
+            .filter { isReusableNaverCookie(it) }
             .forEach { item ->
-                val maxAge = when {
-                    item.startsWith("NID_AUT=") -> "; Max-Age=2592000"  // 30일
-                    item.startsWith("NID_SES=") -> "; Max-Age=86400"    // 24시간
-                    else -> ""
+                val cookieWithAttrs = "$item; Domain=.naver.com; Path=/; Max-Age=${naverCookieMaxAge(item)}"
+                NAVER_COOKIE_URLS.forEach { url ->
+                    manager.setCookie(url, cookieWithAttrs)
                 }
-                manager.setCookie(".naver.com", "$item; domain=.naver.com; path=/$maxAge")
             }
         manager.flush()
-        log("네이버 쿠키 주입 완료")
+        log("네이버 쿠키 주입 완료: ${currentNaverCookieItems().map { it.substringBefore("=") }}")
     }
 
     fun clearNaverCookies() {
         val manager = CookieManager.getInstance()
-        val expiredCookies = listOf("NID_AUT", "NID_SES").flatMap { name ->
+        val expiredCookies = NAVER_REUSABLE_COOKIE_NAMES.flatMap { name ->
             listOf(
-                "$name=; domain=.naver.com; path=/; Max-Age=0",
-                "$name=; domain=naver.com; path=/; Max-Age=0",
-                "$name=; path=/; Max-Age=0",
+                "$name=; Domain=.naver.com; Path=/; Max-Age=0",
+                "$name=; Domain=naver.com; Path=/; Max-Age=0",
+                "$name=; Path=/; Max-Age=0",
             )
         }
-        listOf("https://nid.naver.com", "https://www.naver.com", "https://m.naver.com", "https://naver.com").forEach { url ->
+        NAVER_COOKIE_URLS.forEach { url ->
             expiredCookies.forEach { manager.setCookie(url, it) }
         }
         manager.flush()
@@ -199,20 +193,43 @@ class SamsungWebViewManager(
 
     private fun persistNaverSessionCookies() {
         val manager = CookieManager.getInstance()
-        listOf("https://nid.naver.com", "https://www.naver.com", "https://m.naver.com")
+        currentNaverCookieItems().forEach { item ->
+            val cookieWithAttrs = "$item; Domain=.naver.com; Path=/; Max-Age=${naverCookieMaxAge(item)}"
+            NAVER_COOKIE_URLS.forEach { url ->
+                manager.setCookie(url, cookieWithAttrs)
+            }
+        }
+        manager.flush()
+    }
+
+    private fun currentNaverCookieItems(): List<String> {
+        val manager = CookieManager.getInstance()
+        val byName = linkedMapOf<String, String>()
+        NAVER_COOKIE_URLS
             .mapNotNull { manager.getCookie(it) }
             .flatMap { it.split(";") }
             .map { it.trim() }
-            .filter { it.contains("=") }
+            .filter { isReusableNaverCookie(it) }
             .forEach { item ->
-                val maxAge = when {
-                    item.startsWith("NID_AUT=") -> "; Max-Age=2592000"
-                    item.startsWith("NID_SES=") -> "; Max-Age=86400"
-                    else -> return@forEach
+                val name = item.substringBefore("=")
+                if (!byName.containsKey(name)) {
+                    byName[name] = item
                 }
-                manager.setCookie(".naver.com", "$item; domain=.naver.com; path=/$maxAge")
             }
-        manager.flush()
+        return byName.values.toList()
+    }
+
+    private fun isReusableNaverCookie(item: String): Boolean {
+        val name = item.substringBefore("=", missingDelimiterValue = "")
+        return name in NAVER_REUSABLE_COOKIE_NAMES && item.contains("=")
+    }
+
+    private fun naverCookieMaxAge(item: String): Int {
+        val name = item.substringBefore("=")
+        return when (name) {
+            "NID_SES" -> 86_400
+            else -> 2_592_000
+        }
     }
 
     suspend fun visibleText(): String {
@@ -543,16 +560,7 @@ class SamsungWebViewManager(
     }
 
     fun extractNaverCookies(): String {
-        val manager = CookieManager.getInstance()
-        return listOf(
-            manager.getCookie("https://nid.naver.com"),
-            manager.getCookie("https://www.naver.com"),
-            manager.getCookie("https://m.naver.com"),
-        ).filterNotNull()
-            .flatMap { it.split(";") }
-            .map { it.trim() }
-            .filter { it.startsWith("NID_AUT=") || it.startsWith("NID_SES=") }
-            .distinct()
+        return currentNaverCookieItems()
             .joinToString("; ")
     }
 
@@ -866,6 +874,18 @@ class SamsungWebViewManager(
         private const val PREF_PW = "naver_pw"
         private const val PREF_SESSION_ACCOUNT_PREFIX = "session_account:"
         private const val MANUAL_SESSION_ACCOUNT = "__manual__"
+        private val NAVER_COOKIE_URLS = listOf(
+            "https://nid.naver.com",
+            "https://www.naver.com",
+            "https://m.naver.com",
+            "https://naver.com",
+        )
+        private val NAVER_REUSABLE_COOKIE_NAMES = setOf(
+            "NID_AUT",
+            "NID_SES",
+            "NID-JKL",
+            "NID_JKL",
+        )
 
         private fun sessionAccountKey(deviceName: String) = PREF_SESSION_ACCOUNT_PREFIX + deviceName
 
