@@ -29,6 +29,22 @@ class AndroidServerApiClient(
         return AndroidServerApiJson.parseAccountLease(post("/android/accounts/lease", body))
     }
 
+    suspend fun currentAccount(
+        deviceName: String,
+        role: DeviceIdentity.Role,
+        strategy: String,
+        appVersion: String,
+    ): AccountLease? {
+        val body = jsonBody(
+            "deviceName" to deviceName,
+            "role" to role.apiName(),
+            "strategy" to strategy,
+            "appVersion" to appVersion,
+        )
+
+        return AndroidServerApiJson.parseCurrentAccount(post("/android/accounts/current", body))
+    }
+
     override suspend fun report(report: AccountLeaseReport) {
         post("/android/accounts/report", AndroidServerApiJson.accountReportBody(report))
     }
@@ -115,6 +131,18 @@ object AndroidServerApiJson {
             accountAlias = readString(raw, "accountAlias").orEmpty(),
             loginId = readString(raw, "loginId").orEmpty(),
             password = readString(raw, "password").orEmpty(),
+            expiresAt = readString(raw, "expiresAt").orEmpty(),
+        )
+    }
+
+    fun parseCurrentAccount(raw: String): AccountLease? {
+        val loginId = readString(raw, "loginId")?.takeIf { it.isNotBlank() } ?: return null
+        val password = readString(raw, "password")?.takeIf { it.isNotBlank() } ?: return null
+        return AccountLease(
+            leaseId = readString(raw, "leaseId").orEmpty(),
+            accountAlias = readString(raw, "accountAlias").orEmpty(),
+            loginId = loginId,
+            password = password,
             expiresAt = readString(raw, "expiresAt").orEmpty(),
         )
     }

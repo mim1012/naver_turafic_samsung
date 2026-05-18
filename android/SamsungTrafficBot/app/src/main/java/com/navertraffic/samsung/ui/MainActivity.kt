@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         loadSavedConfig()
         applyLaunchExtras()
         applyDebugDefaults()
+        refreshServerAccountFromServer()
 
         findViewById<Button>(R.id.btnRunA).setOnClickListener {
             runBot()
@@ -126,6 +127,11 @@ class MainActivity : AppCompatActivity() {
         if (etDeviceName.text.isBlank()) {
             etDeviceName.setText(BuildConfig.DEBUG_DEVICE_NAME)
         }
+        if (resolveServerUrl(ConfigStore(this)).isNotBlank()) {
+            etNaverId.text.clear()
+            etNaverPassword.text.clear()
+            return
+        }
         if (etNaverId.text.isBlank() && etNaverPassword.text.isBlank()) {
             val saved = webViewManager.loadCredentials(this)
             if (saved != null) {
@@ -138,6 +144,36 @@ class MainActivity : AppCompatActivity() {
                 appendLog("네이버 계정 빌드 기본값 적용됨")
             }
         }
+    }
+
+    private fun refreshServerAccountFromServer() {
+        val config = ConfigStore(this)
+        val serverUrl = resolveServerUrl(config)
+        if (serverUrl.isBlank()) return
+
+        val identity = DeviceIdentity.parse(etDeviceName.text.toString().trim()) ?: return
+        val apiKey = resolveApiKey(config)
+        lifecycleScope.launch {
+            val account = runCatching {
+                AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
+                    .currentAccount(identity.rawName, identity.role, "G", APP_VERSION)
+            }.onFailure {
+                appendLog("서버 저장 계정 조회 실패: ${it.message}")
+            }.getOrNull()
+
+            if (account != null) {
+                applyNaverCredentialToUi(account.loginId, account.password)
+                appendLog("서버 저장 계정 복원됨: ${account.accountAlias.ifBlank { account.loginId }}")
+                return@launch
+            }
+
+            appendLog("서버 저장 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
+        }
+    }
+
+    private fun applyNaverCredentialToUi(loginId: String, password: String) {
+        etNaverId.setText(loginId)
+        etNaverPassword.setText(password)
     }
 
     private fun applyLaunchExtras() {
@@ -756,12 +792,18 @@ class MainActivity : AppCompatActivity() {
 
         if (lease != null && lease.loginId.isNotBlank() && lease.password.isNotBlank()) {
             appendLog("네이버 계정 lease 사용: ${lease.accountAlias}")
+            applyNaverCredentialToUi(lease.loginId, lease.password)
             return NaverLoginCredential(
                 leaseId = lease.leaseId,
                 loginId = lease.loginId,
                 password = lease.password,
                 accountAlias = lease.accountAlias,
             )
+        }
+
+        if (serverClient.accountLeaseClient !is NoopAccountLeaseClient) {
+            appendLog("서버 배정 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
+            return null
         }
 
         val fallbackId = etNaverId.text.toString().trim()

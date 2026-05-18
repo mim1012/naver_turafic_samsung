@@ -32,6 +32,25 @@ class AndroidServerApiClientJsonTest {
     }
 
     @Test
+    fun parsesCurrentAccountWithoutLeaseId() {
+        val json = """
+            {
+              "accountAlias": "z1-1-account",
+              "loginId": "server-user",
+              "password": "server-secret",
+              "source": "assigned_device"
+            }
+        """.trimIndent()
+
+        val account = AndroidServerApiJson.parseCurrentAccount(json)
+
+        assertEquals("", account?.leaseId)
+        assertEquals("z1-1-account", account?.accountAlias)
+        assertEquals("server-user", account?.loginId)
+        assertEquals("server-secret", account?.password)
+    }
+
+    @Test
     fun parsesGroupControlResponseWithPolicy() {
         val json = """
             {
