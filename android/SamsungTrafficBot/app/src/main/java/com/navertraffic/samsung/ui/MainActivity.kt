@@ -154,9 +154,10 @@ class MainActivity : AppCompatActivity() {
         val identity = DeviceIdentity.parse(etDeviceName.text.toString().trim()) ?: return
         val apiKey = resolveApiKey(config)
         lifecycleScope.launch {
+            val client = AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
+            syncCurrentManualCookieSession(client, identity.rawName)
             val account = runCatching {
-                AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
-                    .currentAccount(identity.rawName, identity.role, "G", APP_VERSION)
+                client.currentAccount(identity.rawName, identity.role, "G", APP_VERSION)
             }.onFailure {
                 appendLog("서버 저장 계정 조회 실패: ${it.message}")
             }.getOrNull()
@@ -169,6 +170,23 @@ class MainActivity : AppCompatActivity() {
 
             appendLog("서버 저장 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
         }
+    }
+
+    private suspend fun syncCurrentManualCookieSession(
+        cookieClient: CookieStorageClient,
+        deviceName: String,
+    ) {
+        if (!webViewManager.hasCookieSession()) return
+        if (!webViewManager.isNaverLoggedIn()) return
+
+        saveCurrentCookiesToServer(
+            serverClient = cookieClient,
+            deviceName = deviceName,
+            accountAlias = null,
+            successLog = "기기 수동 로그인 쿠키 서버 저장 완료",
+        )
+        webViewManager.saveSessionAccount(this, deviceName, null)
+        validatedCookieSessions.add(cookieSessionKey(deviceName, null))
     }
 
     private fun applyNaverCredentialToUi(loginId: String, password: String) {
@@ -618,7 +636,7 @@ class MainActivity : AppCompatActivity() {
         val deviceName = identity.rawName
         val accountAlias = credential.accountAlias
         val sessionKey = cookieSessionKey(deviceName, accountAlias)
-        if (!webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
+        if (!credential.cookieOnly && !webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
             if (webViewManager.hasCookieSession()) {
                 appendLog("배정 계정 변경 감지: 기존 네이버 쿠키 삭제")
                 webViewManager.clearNaverCookies()
@@ -631,6 +649,14 @@ class MainActivity : AppCompatActivity() {
             if (sessionKey in validatedCookieSessions || webViewManager.isNaverLoggedIn()) {
                 webViewManager.saveSessionAccount(this, deviceName, accountAlias)
                 validatedCookieSessions.add(sessionKey)
+                if (credential.cookieOnly) {
+                    saveCurrentCookiesToServer(
+                        serverClient = serverClient.cookieClient,
+                        deviceName = deviceName,
+                        accountAlias = accountAlias,
+                        successLog = "기기 수동 로그인 쿠키 서버 저장 완료",
+                    )
+                }
                 return true
             }
             appendLog("기존 네이버 쿠키 세션 만료: 재로그인 진행")
@@ -654,6 +680,18 @@ class MainActivity : AppCompatActivity() {
             appendLog("쿠키 복원 실패 — 재로그인 진행")
         }
 
+        if (credential.cookieOnly) {
+            reportLoginBlocked(
+                serverClient = serverClient,
+                credential = credential,
+                identity = identity,
+                signals = listOf(ProtectionSignal.LOGIN_STILL_REQUIRED),
+                message = "manual_cookie_session_missing",
+            )
+            appendLog("기기 쿠키 세션 없음: 앱 WebView에서 네이버 수동 로그인 후 다시 시작하세요")
+            return false
+        }
+
         // 전체 로그인
         val loginOk = webViewManager.loginNaver(
             loginId = credential.loginId,
@@ -672,15 +710,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 로그인 성공 → 쿠키 서버 저장
-        val cookies = webViewManager.extractNaverCookies()
-        if (cookies.isNotBlank()) {
-            webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-            validatedCookieSessions.add(sessionKey)
-            runCatching { serverClient.cookieClient.saveCookies(deviceName, accountAlias, cookies) }
-                .onSuccess { appendLog("네이버 쿠키 서버 저장 완료") }
-                .onFailure { appendLog("쿠키 서버 저장 실패: ${it.message}") }
-        }
+        webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+        validatedCookieSessions.add(sessionKey)
+        saveCurrentCookiesToServer(
+            serverClient = serverClient.cookieClient,
+            deviceName = deviceName,
+            accountAlias = accountAlias,
+            successLog = "네이버 쿠키 서버 저장 완료",
+        )
         return true
+    }
+
+    private suspend fun saveCurrentCookiesToServer(
+        serverClient: CookieStorageClient,
+        deviceName: String,
+        accountAlias: String?,
+        successLog: String,
+    ) {
+        val cookies = webViewManager.extractNaverCookies()
+        if (cookies.isBlank()) return
+
+        runCatching { serverClient.saveCookies(deviceName, accountAlias, cookies) }
+            .onSuccess { appendLog(successLog) }
+            .onFailure { appendLog("쿠키 서버 저장 실패: ${it.message}") }
     }
 
     private suspend fun ensureExternalNaverLogin(
@@ -802,8 +854,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (serverClient.accountLeaseClient !is NoopAccountLeaseClient) {
-            appendLog("서버 배정 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
-            return null
+            appendLog("서버 배정 계정 없음: ${identity.rawName} 기기 쿠키 세션 사용")
+            return NaverLoginCredential(
+                leaseId = null,
+                loginId = "",
+                password = "",
+                accountAlias = null,
+                cookieOnly = true,
+            )
         }
 
         val fallbackId = etNaverId.text.toString().trim()
@@ -815,6 +873,7 @@ class MainActivity : AppCompatActivity() {
                 loginId = fallbackId,
                 password = fallbackPassword,
                 accountAlias = null,
+                cookieOnly = false,
             )
         }
 
@@ -900,6 +959,7 @@ class MainActivity : AppCompatActivity() {
         val loginId: String,
         val password: String,
         val accountAlias: String?,
+        val cookieOnly: Boolean = false,
     )
 
     private fun getBoolExtra(key: String): Boolean {
