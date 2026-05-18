@@ -54,6 +54,12 @@
             android:hint="Naver password"
             android:inputType="textPassword" />
 
+        <CheckBox
+            android:id="@+id/cbShowNaverPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비밀번호 표시" />
+
         <Button
             android:id="@+id/btnRunA"
             android:layout_width="match_parent"

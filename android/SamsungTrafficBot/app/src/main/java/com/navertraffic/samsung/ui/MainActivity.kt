@@ -2,10 +2,12 @@ package com.navertraffic.samsung.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.view.WindowManager
@@ -75,6 +77,9 @@ class MainActivity : AppCompatActivity() {
         etServerUrl = findViewById(R.id.etServerUrl)
         etNaverId = findViewById(R.id.etNaverId)
         etNaverPassword = findViewById(R.id.etNaverPassword)
+        findViewById<CheckBox>(R.id.cbShowNaverPassword).setOnCheckedChangeListener { _, checked ->
+            setNaverPasswordVisible(checked)
+        }
         tvLog = findViewById(R.id.tvLog)
         configPanel = findViewById(R.id.configPanel)
         statusBar = findViewById(R.id.statusBar)
@@ -823,6 +828,14 @@ class MainActivity : AppCompatActivity() {
             ?.takeIf { it.isNotBlank() }
             ?: config.apiKey.takeIf { it.isNotBlank() }
             ?: BuildConfig.DEVICE_API_TOKEN.trim()
+    }
+
+    private fun setNaverPasswordVisible(visible: Boolean) {
+        val selection = etNaverPassword.selectionEnd.coerceIn(0, etNaverPassword.text.length)
+        etNaverPassword.inputType =
+            InputType.TYPE_CLASS_TEXT or
+                if (visible) InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD else InputType.TYPE_TEXT_VARIATION_PASSWORD
+        etNaverPassword.setSelection(selection)
     }
 
     private fun appendLog(message: String) {
