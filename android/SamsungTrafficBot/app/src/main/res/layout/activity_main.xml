@@ -29,8 +29,17 @@
             android:id="@+id/etDeviceName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="z1 or z1-1"
+            android:hint="기기명 예: z1 또는 z1-1"
             android:inputType="text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp"
+            android:text="네이버 계정은 관리자 페이지에서 기기별로 할당됩니다."
+            android:textColor="#FF666666"
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/etServerUrl"
@@ -45,26 +54,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Naver ID"
-            android:inputType="text" />
+            android:inputType="text"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/etNaverPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Naver password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:visibility="gone" />
 
         <CheckBox
             android:id="@+id/cbShowNaverPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="비밀번호 표시" />
+            android:text="비밀번호 표시"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnRunA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="저장 후 시작" />
+            android:text="기기명 저장 후 시작" />
 
     </LinearLayout>
 

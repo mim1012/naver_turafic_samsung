@@ -117,14 +117,13 @@ class MainActivity : AppCompatActivity() {
 
         if (!getBoolExtra(EXTRA_AUTO_RUN)) {
             val config = ConfigStore(this)
-            val hasCredentials = etNaverId.text.isNotBlank() && etNaverPassword.text.isNotBlank()
             val hasSession = webViewManager.hasCookieSession()
             val hasServer = resolveServerUrl(config).isNotBlank()
-            if (config.isConfigured() && (hasServer || hasCredentials || hasSession)) {
+            if (config.isConfigured() && (hasServer || hasSession)) {
                 appendLog("저장된 설정 확인 → 자동 시작")
                 etDeviceName.post { checkUpdateAndRun() }
-            } else if (hasCredentials || hasSession) {
-                appendLog("크레덴셜 준비됨 — 버튼을 눌러 시작")
+            } else if (hasSession) {
+                appendLog("쿠키 세션 준비됨 — 버튼을 눌러 시작")
             }
         }
     }
@@ -133,25 +132,9 @@ class MainActivity : AppCompatActivity() {
         if (etDeviceName.text.isBlank()) {
             etDeviceName.setText(BuildConfig.DEBUG_DEVICE_NAME)
         }
-        if (resolveServerUrl(ConfigStore(this)).isNotBlank()) {
-            etNaverId.text.clear()
-            etNaverPassword.text.clear()
-            setNaverCredentialInputsVisible(false)
-            return
-        }
-        setNaverCredentialInputsVisible(true)
-        if (etNaverId.text.isBlank() && etNaverPassword.text.isBlank()) {
-            val saved = webViewManager.loadCredentials(this)
-            if (saved != null) {
-                etNaverId.setText(saved.first)
-                etNaverPassword.setText(saved.second)
-                appendLog("네이버 계정 자동 복원됨")
-            } else if (BuildConfig.DEBUG_NAVER_ID.isNotBlank()) {
-                etNaverId.setText(BuildConfig.DEBUG_NAVER_ID)
-                etNaverPassword.setText(BuildConfig.DEBUG_NAVER_PW)
-                appendLog("네이버 계정 빌드 기본값 적용됨")
-            }
-        }
+        etNaverId.text.clear()
+        etNaverPassword.text.clear()
+        setNaverCredentialInputsVisible(false)
     }
 
     private fun refreshServerAccountFromServer() {
@@ -163,7 +146,6 @@ class MainActivity : AppCompatActivity() {
         val apiKey = resolveApiKey(config)
         lifecycleScope.launch {
             val client = AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
-            syncCurrentManualCookieSession(client, identity.rawName)
             val account = runCatching {
                 client.currentAccount(identity.rawName, identity.role, "G", APP_VERSION)
             }.onFailure {
@@ -178,23 +160,6 @@ class MainActivity : AppCompatActivity() {
 
             appendLog("서버 저장 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
         }
-    }
-
-    private suspend fun syncCurrentManualCookieSession(
-        cookieClient: CookieStorageClient,
-        deviceName: String,
-    ) {
-        if (!webViewManager.hasCookieSession()) return
-        if (!webViewManager.isNaverLoggedIn()) return
-
-        saveCurrentCookiesToServer(
-            serverClient = cookieClient,
-            deviceName = deviceName,
-            accountAlias = null,
-            successLog = "기기 수동 로그인 쿠키 서버 저장 완료",
-        )
-        webViewManager.saveSessionAccount(this, deviceName, null)
-        validatedCookieSessions.add(cookieSessionKey(deviceName, null))
     }
 
     private fun applyNaverCredentialToUi(loginId: String, password: String) {
@@ -212,8 +177,6 @@ class MainActivity : AppCompatActivity() {
     private fun applyLaunchExtras() {
         val config = ConfigStore(this)
         intent.getStringExtra(EXTRA_DEVICE_NAME)?.let { etDeviceName.setText(it) }
-        intent.getStringExtra(EXTRA_NAVER_ID)?.let { etNaverId.setText(it) }
-        intent.getStringExtra(EXTRA_NAVER_PASSWORD)?.let { etNaverPassword.setText(it) }
         intent.getStringExtra(EXTRA_SERVER_URL)?.takeIf { it.isNotBlank() }?.let {
             etServerUrl.setText(it)
             config.serverUrl = it
@@ -643,7 +606,7 @@ class MainActivity : AppCompatActivity() {
         val deviceName = identity.rawName
         val accountAlias = credential.accountAlias
         val sessionKey = cookieSessionKey(deviceName, accountAlias)
-        if (!credential.cookieOnly && !webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
+        if (!webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
             if (webViewManager.hasCookieSession()) {
                 appendLog("배정 계정 변경 감지: 기존 네이버 쿠키 삭제")
                 webViewManager.clearNaverCookies()
@@ -656,14 +619,6 @@ class MainActivity : AppCompatActivity() {
             if (sessionKey in validatedCookieSessions || webViewManager.isNaverLoggedIn()) {
                 webViewManager.saveSessionAccount(this, deviceName, accountAlias)
                 validatedCookieSessions.add(sessionKey)
-                if (credential.cookieOnly) {
-                    saveCurrentCookiesToServer(
-                        serverClient = serverClient.cookieClient,
-                        deviceName = deviceName,
-                        accountAlias = accountAlias,
-                        successLog = "기기 수동 로그인 쿠키 서버 저장 완료",
-                    )
-                }
                 return true
             }
             appendLog("기존 네이버 쿠키 세션 만료: 재로그인 진행")
@@ -675,7 +630,7 @@ class MainActivity : AppCompatActivity() {
         // IP 로테이션 이후: 서버 저장 쿠키 복원 시도
         val saved = runCatching { serverClient.cookieClient.loadCookies(deviceName, accountAlias) }.getOrNull()
         if (!saved.isNullOrBlank()) {
-            appendLog("서버 저장 쿠키 복원 시도: ${accountAlias ?: "수동 입력 계정"}")
+            appendLog("서버 저장 쿠키 복원 시도: ${accountAlias ?: "배정 계정"}")
             webViewManager.setNaverCookie(saved)
             kotlinx.coroutines.delay(500)
             if (webViewManager.hasCookieSession() && webViewManager.isNaverLoggedIn()) {
@@ -685,18 +640,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             appendLog("쿠키 복원 실패 — 재로그인 진행")
-        }
-
-        if (credential.cookieOnly) {
-            reportLoginBlocked(
-                serverClient = serverClient,
-                credential = credential,
-                identity = identity,
-                signals = listOf(ProtectionSignal.LOGIN_STILL_REQUIRED),
-                message = "manual_cookie_session_missing",
-            )
-            appendLog("기기 쿠키 세션 없음: 앱 WebView에서 네이버 수동 로그인 후 다시 시작하세요")
-            return false
         }
 
         // 전체 로그인
@@ -876,31 +819,12 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        if (serverClient.accountLeaseClient !is NoopAccountLeaseClient) {
-            appendLog("서버 배정 계정 없음: ${identity.rawName} 기기 쿠키 세션 사용")
-            return NaverLoginCredential(
-                leaseId = null,
-                loginId = "",
-                password = "",
-                accountAlias = null,
-                cookieOnly = true,
-            )
+        if (serverClient.accountLeaseClient is NoopAccountLeaseClient) {
+            appendLog("서버 URL 없음: 관리자 배정 계정을 받을 수 없습니다")
+        } else {
+            appendLog("서버 배정 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
         }
 
-        val fallbackId = etNaverId.text.toString().trim()
-        val fallbackPassword = etNaverPassword.text.toString()
-        if (fallbackId.isNotBlank() && fallbackPassword.isNotBlank()) {
-            appendLog("서버 배정 계정 없음: 기기 입력 계정 사용")
-            return NaverLoginCredential(
-                leaseId = null,
-                loginId = fallbackId,
-                password = fallbackPassword,
-                accountAlias = null,
-                cookieOnly = false,
-            )
-        }
-
-        appendLog("네이버 계정 없음: 관리자에서 ${identity.rawName} 계정을 배정하세요")
         return null
     }
 
@@ -982,7 +906,6 @@ class MainActivity : AppCompatActivity() {
         val loginId: String,
         val password: String,
         val accountAlias: String?,
-        val cookieOnly: Boolean = false,
     )
 
     private fun getBoolExtra(key: String): Boolean {
@@ -1013,8 +936,6 @@ class MainActivity : AppCompatActivity() {
         private const val EXTRA_LOOP_COUNT = "loopCount"
         private const val EXTRA_DRY_RUN = "dryRun"
         private const val EXTRA_EXTERNAL_BROWSER = "externalBrowser"
-        private const val EXTRA_NAVER_ID = "naverId"
-        private const val EXTRA_NAVER_PASSWORD = "naverPassword"
         private const val EXTRA_KEYWORD = "keyword"
         private const val EXTRA_SECOND_KEYWORD = "secondKeyword"
         private const val EXTRA_KEYWORD_NAME = "keywordName"
