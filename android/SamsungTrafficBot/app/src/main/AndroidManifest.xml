@@ -39,6 +39,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".AppUpdatedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".strategy.SamsungBrowserLaunchActivity"
             android:excludeFromRecents="true"
