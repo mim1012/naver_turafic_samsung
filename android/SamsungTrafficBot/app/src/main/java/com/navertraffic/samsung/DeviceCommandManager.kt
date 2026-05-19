@@ -110,7 +110,7 @@ class DeviceCommandManager(
             )
             val success = result.success
             completeAndReport(command, success, result.message)
-            if (success && result.installed) {
+            if (success && result.installed && !result.message.startsWith("install scheduled")) {
                 val (_, restartMessage) = restartApp()
                 log("업데이트 보고 완료 후 재시작: $restartMessage")
             }

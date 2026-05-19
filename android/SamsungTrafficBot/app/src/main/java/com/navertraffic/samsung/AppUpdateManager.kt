@@ -113,36 +113,20 @@ class AppUpdateManager(
             log("APK sha256 검증 완료")
         }
 
-        log("APK 설치 중 (루트 pm install)...")
-        val proc = Runtime.getRuntime().exec(
-            arrayOf("su", "-c", "pm install -r \"${apkFile.absolutePath}\"")
-        )
-        val stdout = proc.inputStream.bufferedReader().readText().trim()
-        val stderr = proc.errorStream.bufferedReader().readText().trim()
-        val exitCode = proc.waitFor()
+        val installMode = if (restartAfterInstall) "startup" else "command"
+        log("APK 설치 예약 중 ($installMode, 루트 pm install → 앱 재실행)")
+        val installScheduled = scheduleRootInstall(apkFile)
 
-        return if (exitCode == 0 && (stdout.endsWith("Success") || stderr.endsWith("Success"))) {
-            if (restartAfterInstall) {
-                log("업데이트 완료 (${latest.versionName}) — 재시작")
-                Runtime.getRuntime().exec(
-                    arrayOf(
-                        "su",
-                        "-c",
-                        "sh -c 'sleep 1; am force-stop com.navertraffic.samsung; sleep 1; am start -n com.navertraffic.samsung/.ui.MainActivity' >/dev/null 2>&1 &",
-                    )
-                )
-            } else {
-                log("업데이트 설치 완료 (${latest.versionName}) — 명령 보고 후 재시작")
-            }
+        return if (installScheduled) {
             UpdateResult(
                 installed = true,
                 success = true,
-                message = "installed ${latest.versionName} (${latest.versionCode})",
+                message = "install scheduled ${latest.versionName} (${latest.versionCode})",
                 release = latest,
             )
         } else {
-            val message = "pm install failed exit=$exitCode stdout=$stdout stderr=$stderr"
-            log("APK 설치 실패 ($message)")
+            val message = "pm install schedule failed"
+            log("APK 설치 예약 실패 ($message)")
             UpdateResult(
                 installed = false,
                 success = false,
@@ -150,6 +134,19 @@ class AppUpdateManager(
                 release = latest,
             )
         }
+    }
+
+    private fun scheduleRootInstall(apkFile: File): Boolean {
+        val component = "${context.packageName}/.ui.MainActivity"
+        val command = "sh -c 'sleep 3; pm install -r ${apkFile.absolutePath}; sleep 1; am start -n $component' >/dev/null 2>&1 &"
+        val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
+        val stdout = proc.inputStream.bufferedReader().readText().trim()
+        val stderr = proc.errorStream.bufferedReader().readText().trim()
+        val exitCode = proc.waitFor()
+        if (exitCode != 0) {
+            log("APK 설치 예약 shell 실패: exit=$exitCode stdout=$stdout stderr=$stderr")
+        }
+        return exitCode == 0
     }
 
     private fun fetchLatestRelease(supabaseUrl: String, anonKey: String): ReleaseInfo? =
