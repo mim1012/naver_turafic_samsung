@@ -582,6 +582,13 @@ class MainActivity : AppCompatActivity() {
                 reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                 while (taskIndex < loopCount || continuousServerMode) {
                     reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
+
+                    if (!dryRun) {
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
+                                reportRuntimeState(state, message)
+                            }) continue
+                    }
+
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
                     val taskLease = runCatching {
                         serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
@@ -610,12 +617,6 @@ class MainActivity : AppCompatActivity() {
                         continue
                     }
                     appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
-
-                    if (!dryRun) {
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
-                                reportRuntimeState(state, message)
-                            }) continue
-                    }
 
                     val loopLabel = if (continuousServerMode) {
                         "${taskIndex + 1}/연속"
