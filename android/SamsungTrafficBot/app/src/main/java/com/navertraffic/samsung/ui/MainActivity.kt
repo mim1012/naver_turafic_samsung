@@ -456,14 +456,16 @@ class MainActivity : AppCompatActivity() {
         val rotateEvery = BuildConfig.ROTATE_EVERY
         val drainWaitMs = BuildConfig.ROTATION_DRAIN_WAIT_SEC * 1000L
         val config = ConfigStore(this)
+        val serverUrl = resolveServerUrl(config)
         val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
 
         config.save(
             deviceName = deviceName,
             loopCount = loopCount,
-            serverUrl = resolveServerUrl(config),
+            serverUrl = serverUrl,
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
+        val continuousServerMode = !dryRun && serverUrl.isNotBlank()
 
         // G전략: Chrome 137 UA 적용
         if (!dryRun) {
@@ -533,7 +535,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 var successCount = 0
                 var taskIndex = 0
-                while (taskIndex < loopCount) {
+                while (taskIndex < loopCount || continuousServerMode) {
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
                     val taskLease = runCatching {
                         serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
@@ -551,7 +553,12 @@ class MainActivity : AppCompatActivity() {
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G")) continue
                     }
 
-                    appendLog("G전략 반복 ${taskIndex + 1}/$loopCount")
+                    val loopLabel = if (continuousServerMode) {
+                        "${taskIndex + 1}/연속"
+                    } else {
+                        "${taskIndex + 1}/$loopCount"
+                    }
+                    appendLog("G전략 반복 $loopLabel")
                     val result: StrategyAResult = bossController?.runOnce(task)
                         ?: soldierController?.runOnce(task)
                         ?: StrategyAResult(success = false, message = "no_controller")

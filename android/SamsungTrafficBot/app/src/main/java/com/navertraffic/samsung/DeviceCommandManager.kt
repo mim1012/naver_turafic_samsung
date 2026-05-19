@@ -1,6 +1,7 @@
 package com.navertraffic.samsung
 
 import android.content.Context
+import android.content.Intent
 import com.navertraffic.samsung.data.DeviceCommand
 import com.navertraffic.samsung.data.DeviceCommandHandler
 import com.navertraffic.samsung.data.DeviceCommandReport
@@ -9,6 +10,7 @@ import com.navertraffic.samsung.data.DeviceIdentity
 import com.navertraffic.samsung.data.DeviceRuntimeState
 import com.navertraffic.samsung.data.GroupControlClient
 import com.navertraffic.samsung.data.GroupControlResponse
+import com.navertraffic.samsung.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -35,6 +37,11 @@ class DeviceCommandManager(
         if (isCompleted(pending.localId)) return pending.type == DeviceCommandType.STOP || pending.type == DeviceCommandType.PAUSE
 
         return when (pending.type) {
+            DeviceCommandType.START_BOT -> {
+                completeAndReport(command = pending, success = true, message = "start command accepted")
+                launchAutoRun()
+                false
+            }
             DeviceCommandType.UPDATE_APP -> {
                 if (!state.canRunDeferredCommand()) {
                     log("업데이트 명령 pending: 현재 상태 $state")
@@ -122,6 +129,21 @@ class DeviceCommandManager(
     private suspend fun runDeviceReboot(command: PendingCommand) {
         val (success, message) = scheduleDeviceReboot()
         completeAndReport(command, success = success, message = message)
+    }
+
+    private fun launchAutoRun() {
+        runCatching {
+            appContext.startActivity(
+                Intent(appContext, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra("autoRun", true)
+                },
+            )
+        }.onSuccess {
+            log("작업 시작/재개 명령: autoRun 시작 요청")
+        }.onFailure {
+            log("작업 시작/재개 명령 실패: ${it.message ?: it::class.java.simpleName}")
+        }
     }
 
     private suspend fun restartApp(): Pair<Boolean, String> {

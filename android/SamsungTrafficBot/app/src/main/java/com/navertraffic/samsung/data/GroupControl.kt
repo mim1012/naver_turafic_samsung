@@ -38,6 +38,7 @@ data class DeviceHeartbeat(
 )
 
 enum class DeviceCommandType {
+    START_BOT,
     UPDATE_APP,
     RESTART_APP,
     REBOOT_DEVICE,

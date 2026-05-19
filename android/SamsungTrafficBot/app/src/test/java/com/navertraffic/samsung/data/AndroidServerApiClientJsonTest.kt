@@ -147,6 +147,29 @@ class AndroidServerApiClientJsonTest {
     }
 
     @Test
+    fun parsesGroupControlResponseWithStartBotCommand() {
+        val json = """
+            {
+              "groupState": "READY",
+              "command": "NONE",
+              "deviceCommand": {
+                "id": "cmd_start_1",
+                "type": "START_BOT"
+              },
+              "policy": {
+                "rotateOwner": "z1",
+                "rotateEveryGroupTasks": 10
+              }
+            }
+        """.trimIndent()
+
+        val response = AndroidServerApiJson.parseGroupControlResponse(json)
+
+        assertEquals(DeviceCommandType.START_BOT, response.deviceCommand?.type)
+        assertEquals("cmd_start_1", response.deviceCommand?.commandId)
+    }
+
+    @Test
     fun serializesHeartbeatWithLowercaseRoleAndUppercaseState() {
         val body = AndroidServerApiJson.deviceHeartbeatBody(
             DeviceHeartbeat(
