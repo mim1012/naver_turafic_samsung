@@ -47,6 +47,8 @@ class BossController(
     private var lastError: String? = null
     @Volatile
     private var lastDeviceCommandBlocked = false
+    @Volatile
+    private var rotationInProgress = false
 
     fun startHeartbeatMonitor(
         scope: CoroutineScope,
@@ -54,7 +56,8 @@ class BossController(
     ): Job = scope.launch {
         log("대장봇 heartbeat 모니터 시작: ${intervalMs / 1000}초 주기")
         while (isActive) {
-            heartbeat(runtimeState)
+            val response = heartbeat(runtimeState)
+            handleControl(response)
             delay(intervalMs)
         }
     }
@@ -153,40 +156,63 @@ class BossController(
     }
 
     suspend fun rotateGroupIp(commandId: String? = null) {
-        log("대장봇 IP 로테이션: DRAINING 신호 (쫄병 ${rotationDrainWaitMs / 1000}초 대기)")
-        runtimeState = DeviceRuntimeState.ROTATING
-        heartbeat(DeviceRuntimeState.ROTATING)
-        runCatching { groupControlClient.startRotation(identity.groupId) }
-            .onFailure { log("rotation 시작 신호 실패: ${it.message}") }
-        val drainStepMs = 10_000L
-        var remaining = rotationDrainWaitMs
-        while (remaining > 0) {
-            val step = minOf(drainStepMs, remaining)
-            delay(step)
-            remaining -= step
-            if (remaining > 0) log("대장봇 DRAINING 대기 중: ${remaining / 1000}초 남음")
+        if (rotationInProgress) {
+            log("대장봇 IP 로테이션 이미 진행 중: 중복 명령 무시")
+            return
         }
-        beforeRotate?.invoke()
-        val (beforeIp, afterIp) = runCatching { ipRotationManager.rotate(log) }
-            .onFailure { log("대장봇 그룹 IP 로테이션 실패: ${it.message}") }
-            .getOrDefault(Pair(null, null))
-        val success = beforeIp != null && afterIp != null && beforeIp != afterIp
-
-        runCatching {
-            groupControlClient.reportRotation(
-                RotationReport(
-                    commandId = commandId,
-                    deviceName = identity.rawName,
-                    groupId = identity.groupId,
-                    beforeIp = beforeIp,
-                    afterIp = afterIp,
-                    success = success,
-                    message = if (success) null else "ip unchanged or fetch failed",
-                ),
+        rotationInProgress = true
+        try {
+            log("대장봇 IP 로테이션: DRAINING 신호 (쫄병 ${rotationDrainWaitMs / 1000}초 대기)")
+            runtimeState = DeviceRuntimeState.ROTATING
+            heartbeat(DeviceRuntimeState.ROTATING)
+            runCatching { groupControlClient.startRotation(identity.groupId) }
+                .onFailure { log("rotation 시작 신호 실패: ${it.message}") }
+            val drainStepMs = 10_000L
+            var remaining = rotationDrainWaitMs
+            while (remaining > 0) {
+                val step = minOf(drainStepMs, remaining)
+                delay(step)
+                remaining -= step
+                if (remaining > 0) log("대장봇 DRAINING 대기 중: ${remaining / 1000}초 남음")
+            }
+            beforeRotate?.invoke()
+            val (beforeIp, afterIp) = runCatching { ipRotationManager.rotate(log) }
+                .onFailure { log("대장봇 그룹 IP 로테이션 실패: ${it.message}") }
+                .getOrDefault(Pair(null, null))
+            val success = beforeIp != null && afterIp != null && beforeIp != afterIp
+            val report = RotationReport(
+                commandId = commandId,
+                deviceName = identity.rawName,
+                groupId = identity.groupId,
+                beforeIp = beforeIp,
+                afterIp = afterIp,
+                success = success,
+                message = if (success) null else "ip unchanged or fetch failed",
             )
-        }.onFailure { log("로테이션 report 실패: ${it.message}") }
-        runtimeState = DeviceRuntimeState.IDLE
-        heartbeat(DeviceRuntimeState.IDLE)
+            var reported = false
+            for (attempt in 1..3) {
+                if (reported) break
+                try {
+                    groupControlClient.reportRotation(report)
+                    reported = true
+                } catch (error: Throwable) {
+                    log("로테이션 report 실패($attempt/3): ${error.message}")
+                    delay(3_000L * attempt)
+                }
+            }
+            if (!reported) {
+                lastError = "rotation_report_failed"
+                runtimeState = DeviceRuntimeState.ROTATING
+                heartbeat(DeviceRuntimeState.ROTATING)
+                return
+            }
+            lastError = null
+            runtimeState = DeviceRuntimeState.IDLE
+            val response = heartbeat(DeviceRuntimeState.IDLE)
+            handleControl(response)
+        } finally {
+            rotationInProgress = false
+        }
     }
 
     private suspend fun heartbeat(state: DeviceRuntimeState): GroupControlResponse? {

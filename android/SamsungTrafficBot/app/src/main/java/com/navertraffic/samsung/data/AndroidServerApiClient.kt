@@ -73,6 +73,10 @@ class AndroidServerApiClient(
         post("/android/group/rotation-report", AndroidServerApiJson.rotationReportBody(report))
     }
 
+    override suspend fun startRotation(groupId: String) {
+        post("/android/group/rotation-start", AndroidServerApiJson.rotationStartBody(groupId))
+    }
+
     override suspend fun reportDeviceCommand(report: DeviceCommandReport) {
         post("/android/commands/report", AndroidServerApiJson.deviceCommandReportBody(report))
     }
@@ -250,6 +254,10 @@ object AndroidServerApiJson {
             "success" to report.success,
             "message" to report.message,
         )
+    }
+
+    fun rotationStartBody(groupId: String): JsonBody {
+        return jsonBody("groupId" to groupId)
     }
 
     fun deviceCommandReportBody(report: DeviceCommandReport): JsonBody {

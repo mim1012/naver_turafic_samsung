@@ -379,7 +379,10 @@ class MainActivity : AppCompatActivity() {
                 beforeRotate = if (!dryRun && !externalBrowser) ({
                     webViewManager.clearPage()
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                        runCatching { Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser")).waitFor() }
+                        runCatching {
+                            val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser"))
+                            if (!proc.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) proc.destroy()
+                        }
                     }
                     appendLog("삼성 인터넷 강제 종료 완료")
                 }) else null,
@@ -550,7 +553,10 @@ class MainActivity : AppCompatActivity() {
                 beforeRotate = if (!dryRun) ({
                     webViewManager.clearPage()
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                        runCatching { Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser")).waitFor() }
+                        runCatching {
+                            val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser"))
+                            if (!proc.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) proc.destroy()
+                        }
                     }
                     appendLog("삼성 인터넷 강제 종료 완료")
                 }) else null,
