@@ -86,6 +86,7 @@ class AndroidServerApiClientJsonTest {
                 role = DeviceIdentity.Role.SOLDIER,
                 state = DeviceRuntimeState.RUNNING_TASK,
                 taskCount = 3,
+                appVersion = "0.1.7",
                 currentIp = null,
                 lastError = null,
             ),
@@ -93,6 +94,7 @@ class AndroidServerApiClientJsonTest {
 
         assertEquals("soldier", body.getString("role"))
         assertEquals("RUNNING_TASK", body.getString("state"))
+        assertEquals("0.1.7", body.getString("appVersion"))
         assertEquals("z1-1", body.getString("deviceName"))
     }
 

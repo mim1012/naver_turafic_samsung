@@ -1,7 +1,9 @@
 package com.navertraffic.samsung.ui
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.text.InputType
 import android.util.Log
 import android.view.View
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     private val logLines = ArrayDeque<String>()
     private val validatedCookieSessions = mutableSetOf<String>()
     private val protectionDetector = ProtectionDetector()
+    private var runWakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,6 +231,8 @@ class MainActivity : AppCompatActivity() {
     private fun enterRunningMode(label: String = "전략 실행 중") {
         configPanel.visibility = android.view.View.GONE
         statusBar.visibility = android.view.View.VISIBLE
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        acquireRunWakeLock()
         startForegroundService(
             android.content.Intent(this, BotKeepAliveService::class.java).apply {
                 putExtra(BotKeepAliveService.EXTRA_MESSAGE, label)
@@ -237,8 +242,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun exitRunningMode() {
         stopService(android.content.Intent(this, BotKeepAliveService::class.java))
+        releaseRunWakeLock()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         configPanel.visibility = android.view.View.VISIBLE
         statusBar.visibility = android.view.View.GONE
+    }
+
+    @SuppressLint("WakelockTimeout")
+    private fun acquireRunWakeLock() {
+        if (runWakeLock?.isHeld == true) return
+        runWakeLock = getSystemService(PowerManager::class.java)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SamsungTrafficBot:run")
+            .apply {
+                setReferenceCounted(false)
+                acquire()
+            }
+    }
+
+    private fun releaseRunWakeLock() {
+        runWakeLock?.takeIf { it.isHeld }?.release()
+        runWakeLock = null
     }
 
     override fun onPause() {
@@ -249,6 +272,11 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         webViewManager.resumeTimers()
+    }
+
+    override fun onDestroy() {
+        releaseRunWakeLock()
+        super.onDestroy()
     }
 
     private fun checkUpdateAndRun() {
@@ -399,18 +427,7 @@ class MainActivity : AppCompatActivity() {
                     val currentTask = task.copy(secondKeyword = secondKeywordNow)
 
                     if (!dryRun && !externalBrowser) {
-                        val credential = resolveNaverLogin(serverClient, identity, "A")
-                        if (credential == null ||
-                            !ensureNaverLogin(
-                                credential,
-                                serverClient,
-                                identity,
-                                externalSession,
-                            )
-                        ) {
-                            exitRunningMode()
-                            return@launch
-                        }
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
                     }
 
                     appendLog("A전략 반복 ${index + 1}/$loopCount [${available.indexOf(secondKeywordNow) + 1}/${available.size}번 조합]")
@@ -421,18 +438,7 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && !externalBrowser && webViewManager.rendererGone) {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
-                        val credential = resolveNaverLogin(serverClient, identity, "A")
-                        if (credential == null ||
-                            !ensureNaverLogin(
-                                credential,
-                                serverClient,
-                                identity,
-                                externalSession,
-                            )
-                        ) {
-                            exitRunningMode()
-                            return@launch
-                        }
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
                     }
 
                     if (result.success) successCount += 1
@@ -455,18 +461,7 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && !externalBrowser && (index + 1) % 30 == 0 && index + 1 < loopCount) {
                         appendLog("주기적 WebView 재생성 (${index + 1}회차 이후)")
                         webViewManager.rebuildWebView(webViewContainer)
-                        val credential = resolveNaverLogin(serverClient, identity, "A")
-                        if (credential == null ||
-                            !ensureNaverLogin(
-                                credential,
-                                serverClient,
-                                identity,
-                                externalSession,
-                            )
-                        ) {
-                            exitRunningMode()
-                            return@launch
-                        }
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
                     }
                 }
                 appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
@@ -569,17 +564,7 @@ class MainActivity : AppCompatActivity() {
                     appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
 
                     if (!dryRun) {
-                        val credential = resolveNaverLogin(serverClient, identity, "G")
-                        if (credential == null ||
-                            !ensureNaverLogin(
-                                credential,
-                                serverClient,
-                                identity,
-                            )
-                        ) {
-                            exitRunningMode()
-                            return@launch
-                        }
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G")) continue
                     }
 
                     appendLog("G전략 반복 ${taskIndex + 1}/$loopCount")
@@ -598,17 +583,7 @@ class MainActivity : AppCompatActivity() {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
                         webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
-                        val credential = resolveNaverLogin(serverClient, identity, "G")
-                        if (credential == null ||
-                            !ensureNaverLogin(
-                                credential,
-                                serverClient,
-                                identity,
-                            )
-                        ) {
-                            exitRunningMode()
-                            return@launch
-                        }
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G")) continue
                     }
 
                     if (result.success) successCount += 1
@@ -730,6 +705,22 @@ class MainActivity : AppCompatActivity() {
             successLog = "네이버 쿠키 서버 저장 완료",
         )
         return true
+    }
+
+    private suspend fun ensureNaverLoginOrBackoff(
+        serverClient: ServerClients,
+        identity: DeviceIdentity,
+        strategyName: String,
+        externalSession: ExternalSamsungBrowserSession? = null,
+    ): Boolean {
+        val credential = resolveNaverLogin(serverClient, identity, strategyName)
+        if (credential != null && ensureNaverLogin(credential, serverClient, identity, externalSession)) {
+            return true
+        }
+
+        appendLog("네이버 로그인/쿠키 준비 안됨: 비로그인 작업 없이 ${LOGIN_RETRY_DELAY_MS / 1000}초 후 재시도")
+        kotlinx.coroutines.delay(LOGIN_RETRY_DELAY_MS)
+        return false
     }
 
     private suspend fun saveCurrentCookiesToServer(
@@ -991,7 +982,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "SamsungTrafficBot"
-        private const val APP_VERSION = "0.1.0"
+        private val APP_VERSION = BuildConfig.VERSION_NAME
+        private const val LOGIN_RETRY_DELAY_MS = 60_000L
         private const val EXTRA_AUTO_RUN = "autoRun"
         private const val EXTRA_DEVICE_NAME = "deviceName"
         private const val EXTRA_ROTATE_EVERY = "rotateEvery"

@@ -1,5 +1,6 @@
 package com.navertraffic.samsung.boss
 
+import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AccountLeaseReport
 import com.navertraffic.samsung.data.AccountLeaseResult
@@ -176,6 +177,7 @@ class BossController(
                     role = identity.role,
                     state = state,
                     taskCount = taskCount,
+                    appVersion = BuildConfig.VERSION_NAME,
                     lastError = lastError,
                 ),
             )

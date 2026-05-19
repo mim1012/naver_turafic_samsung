@@ -31,6 +31,7 @@ data class DeviceHeartbeat(
     val role: DeviceIdentity.Role,
     val state: DeviceRuntimeState,
     val taskCount: Int,
+    val appVersion: String,
     val currentIp: String? = null,
     val lastError: String? = null,
 )

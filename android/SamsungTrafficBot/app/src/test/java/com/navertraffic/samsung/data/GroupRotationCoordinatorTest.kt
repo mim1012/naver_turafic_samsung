@@ -119,6 +119,7 @@ class GroupRotationCoordinatorTest {
             role = role,
             state = state,
             taskCount = 0,
+            appVersion = "test",
         )
     }
 }

@@ -200,6 +200,7 @@ object AndroidServerApiJson {
             "role" to heartbeat.role.apiName(),
             "state" to heartbeat.state.name,
             "taskCount" to heartbeat.taskCount,
+            "appVersion" to heartbeat.appVersion,
             "currentIp" to heartbeat.currentIp,
             "lastError" to heartbeat.lastError,
         )

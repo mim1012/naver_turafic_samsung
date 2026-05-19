@@ -1,5 +1,6 @@
 package com.navertraffic.samsung.soldier
 
+import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AccountLeaseReport
 import com.navertraffic.samsung.data.AccountLeaseResult
@@ -130,6 +131,7 @@ class SoldierController(
                     role = identity.role,
                     state = state,
                     taskCount = taskCount,
+                    appVersion = BuildConfig.VERSION_NAME,
                     lastError = lastError,
                 ),
             )
