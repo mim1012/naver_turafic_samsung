@@ -32,8 +32,22 @@ data class DeviceHeartbeat(
     val state: DeviceRuntimeState,
     val taskCount: Int,
     val appVersion: String,
+    val appVersionCode: Int? = null,
     val currentIp: String? = null,
     val lastError: String? = null,
+)
+
+enum class DeviceCommandType {
+    UPDATE_APP,
+    RESTART_APP,
+    STOP,
+    PAUSE,
+}
+
+data class DeviceCommand(
+    val type: DeviceCommandType,
+    val commandId: String? = null,
+    val payload: String? = null,
 )
 
 data class GroupPolicy(
@@ -48,7 +62,17 @@ data class GroupControlResponse(
     val groupState: GroupState,
     val command: GroupCommand = GroupCommand.NONE,
     val commandId: String? = null,
+    val deviceCommand: DeviceCommand? = null,
     val policy: GroupPolicy,
+)
+
+data class DeviceCommandReport(
+    val commandId: String?,
+    val deviceName: String,
+    val groupId: String,
+    val command: DeviceCommandType,
+    val success: Boolean,
+    val message: String? = null,
 )
 
 data class RotationReport(

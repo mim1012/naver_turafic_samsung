@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.navertraffic.samsung.AppUpdateManager
 import com.navertraffic.samsung.BuildConfig
+import com.navertraffic.samsung.DeviceCommandManager
 import com.navertraffic.samsung.R
 import com.navertraffic.samsung.boss.BossController
 import com.navertraffic.samsung.data.AccountLease
@@ -366,6 +367,14 @@ class MainActivity : AppCompatActivity() {
         enterRunningMode("전략 A 실행 중")
 
         lifecycleScope.launch {
+            val deviceCommandManager = DeviceCommandManager(
+                context = this@MainActivity,
+                identity = identity,
+                groupControlClient = serverClient.groupControlClient,
+                serverUrl = resolveServerUrl(config),
+                apiKey = resolveApiKey(config).takeIf { it.isNotBlank() },
+                log = ::appendLog,
+            )
             val taskLease = runCatching {
                 serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "A", APP_VERSION)
             }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
@@ -379,6 +388,7 @@ class MainActivity : AppCompatActivity() {
                 ipRotationManager = IpRotationManager(),
                 accountLeaseClient = serverClient.accountLeaseClient,
                 groupControlClient = serverClient.groupControlClient,
+                deviceCommandHandler = deviceCommandManager,
                 rotateEveryGroupTasks = rotateEvery,
                 rotationDrainWaitMs = drainWaitMs,
                 log = ::appendLog,
@@ -396,6 +406,7 @@ class MainActivity : AppCompatActivity() {
                 botStrategy = botStrategy,
                 accountLeaseClient = serverClient.accountLeaseClient,
                 groupControlClient = serverClient.groupControlClient,
+                deviceCommandHandler = deviceCommandManager,
                 log = ::appendLog,
             ) else null
 
@@ -517,12 +528,21 @@ class MainActivity : AppCompatActivity() {
         enterRunningMode("전략 G 실행 중")
 
         lifecycleScope.launch {
+            val deviceCommandManager = DeviceCommandManager(
+                context = this@MainActivity,
+                identity = identity,
+                groupControlClient = serverClient.groupControlClient,
+                serverUrl = resolveServerUrl(config),
+                apiKey = resolveApiKey(config).takeIf { it.isNotBlank() },
+                log = ::appendLog,
+            )
             val bossController = if (identity.isBoss) BossController(
                 identity = identity,
                 botStrategy = botStrategy,
                 ipRotationManager = IpRotationManager(),
                 accountLeaseClient = serverClient.accountLeaseClient,
                 groupControlClient = serverClient.groupControlClient,
+                deviceCommandHandler = deviceCommandManager,
                 rotateEveryGroupTasks = rotateEvery,
                 rotationDrainWaitMs = drainWaitMs,
                 log = ::appendLog,
@@ -540,6 +560,7 @@ class MainActivity : AppCompatActivity() {
                 botStrategy = botStrategy,
                 accountLeaseClient = serverClient.accountLeaseClient,
                 groupControlClient = serverClient.groupControlClient,
+                deviceCommandHandler = deviceCommandManager,
                 log = ::appendLog,
             ) else null
 

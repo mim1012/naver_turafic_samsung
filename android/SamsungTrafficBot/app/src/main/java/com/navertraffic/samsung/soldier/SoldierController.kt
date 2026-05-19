@@ -5,12 +5,14 @@ import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AccountLeaseReport
 import com.navertraffic.samsung.data.AccountLeaseResult
 import com.navertraffic.samsung.data.DeviceHeartbeat
+import com.navertraffic.samsung.data.DeviceCommandHandler
 import com.navertraffic.samsung.data.DeviceIdentity
 import com.navertraffic.samsung.data.DeviceRuntimeState
 import com.navertraffic.samsung.data.GroupCommand
 import com.navertraffic.samsung.data.GroupControlClient
 import com.navertraffic.samsung.data.GroupControlResponse
 import com.navertraffic.samsung.data.GroupState
+import com.navertraffic.samsung.data.NoopDeviceCommandHandler
 import com.navertraffic.samsung.data.NoopAccountLeaseClient
 import com.navertraffic.samsung.data.NoopGroupControlClient
 import com.navertraffic.samsung.strategy.BotStrategy
@@ -28,6 +30,7 @@ class SoldierController(
     private val botStrategy: BotStrategy,
     private val accountLeaseClient: AccountLeaseClient = NoopAccountLeaseClient(),
     private val groupControlClient: GroupControlClient = NoopGroupControlClient(),
+    private val deviceCommandHandler: DeviceCommandHandler = NoopDeviceCommandHandler,
     private val log: (String) -> Unit,
 ) {
     private var taskCount = 0
@@ -35,6 +38,8 @@ class SoldierController(
     private var runtimeState = DeviceRuntimeState.IDLE
     @Volatile
     private var lastError: String? = null
+    @Volatile
+    private var lastDeviceCommandBlocked = false
 
     fun startHeartbeatMonitor(
         scope: CoroutineScope,
@@ -123,8 +128,8 @@ class SoldierController(
     }
 
     private suspend fun heartbeat(state: DeviceRuntimeState): GroupControlResponse? {
-        return runCatching {
-            groupControlClient.heartbeat(
+        return try {
+            val response = groupControlClient.heartbeat(
                 DeviceHeartbeat(
                     deviceName = identity.rawName,
                     groupId = identity.groupId,
@@ -132,13 +137,20 @@ class SoldierController(
                     state = state,
                     taskCount = taskCount,
                     appVersion = BuildConfig.VERSION_NAME,
+                    appVersionCode = BuildConfig.VERSION_CODE,
                     lastError = lastError,
                 ),
             )
-        }.onFailure { log("heartbeat 실패: ${it.message}") }.getOrNull()
+            lastDeviceCommandBlocked = deviceCommandHandler.handleDeviceCommand(response, state)
+            response
+        } catch (error: Throwable) {
+            log("heartbeat 실패: ${error.message}")
+            null
+        }
     }
 
     private suspend fun handleControl(response: GroupControlResponse?): Boolean {
+        if (lastDeviceCommandBlocked) return true
         if (response == null) return false
         return when {
             response.command == GroupCommand.PAUSE_FOR_ROTATION ||

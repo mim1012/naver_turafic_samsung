@@ -73,6 +73,10 @@ class AndroidServerApiClient(
         post("/android/group/rotation-report", AndroidServerApiJson.rotationReportBody(report))
     }
 
+    override suspend fun reportDeviceCommand(report: DeviceCommandReport) {
+        post("/android/commands/report", AndroidServerApiJson.deviceCommandReportBody(report))
+    }
+
     override suspend fun leaseTask(
         deviceName: String,
         role: DeviceIdentity.Role,
@@ -153,6 +157,7 @@ object AndroidServerApiJson {
             groupState = readEnum(raw, "groupState", GroupState.READY),
             command = readEnum(raw, "command", GroupCommand.NONE),
             commandId = readString(raw, "commandId")?.takeIf { it.isNotBlank() },
+            deviceCommand = parseDeviceCommand(raw),
             policy = GroupPolicy(
                 rotateOwner = readString(policy, "rotateOwner").orEmpty(),
                 rotateEveryGroupTasks = readInt(policy, "rotateEveryGroupTasks", 1),
@@ -201,6 +206,8 @@ object AndroidServerApiJson {
             "state" to heartbeat.state.name,
             "taskCount" to heartbeat.taskCount,
             "appVersion" to heartbeat.appVersion,
+            "versionName" to heartbeat.appVersion,
+            "versionCode" to heartbeat.appVersionCode,
             "currentIp" to heartbeat.currentIp,
             "lastError" to heartbeat.lastError,
         )
@@ -244,12 +251,51 @@ object AndroidServerApiJson {
         )
     }
 
+    fun deviceCommandReportBody(report: DeviceCommandReport): JsonBody {
+        return jsonBody(
+            "commandId" to report.commandId,
+            "deviceName" to report.deviceName,
+            "groupId" to report.groupId,
+            "command" to report.command.name,
+            "result" to if (report.success) "succeeded" else "failed",
+            "success" to report.success,
+            "message" to report.message,
+        )
+    }
+
     fun strategyTaskReportBody(report: StrategyTaskReport): JsonBody {
         return jsonBody(
             "taskLeaseId" to report.taskLeaseId,
             "deviceName" to report.deviceName,
             "result" to report.result.apiName(),
             "message" to report.message,
+        )
+    }
+
+    private fun parseDeviceCommand(raw: String): DeviceCommand? {
+        val direct = readObject(raw, "deviceCommand")
+            ?: readObject(raw, "adminCommand")
+            ?: readObject(raw, "commandPayload")
+        val source = direct ?: raw
+        val typeText = if (direct != null) {
+            readString(source, "type")
+                ?: readString(source, "commandType")
+                ?: readString(source, "command")
+                ?: readString(source, "action")
+        } else {
+            readString(raw, "deviceCommand")
+                ?: readString(raw, "commandPayload")
+        }?.takeIf { it.isNotBlank() } ?: return null
+        val type = enumValues<DeviceCommandType>().firstOrNull {
+            it.name.equals(typeText, ignoreCase = true)
+        } ?: return null
+        val commandId = readString(source, "commandId")
+            ?: readString(source, "id")
+            ?: readString(raw, "deviceCommandId")
+        return DeviceCommand(
+            type = type,
+            commandId = commandId?.takeIf { it.isNotBlank() },
+            payload = direct,
         )
     }
 }

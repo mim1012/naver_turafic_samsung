@@ -78,6 +78,52 @@ class AndroidServerApiClientJsonTest {
     }
 
     @Test
+    fun parsesGroupControlResponseWithDeviceCommandObject() {
+        val json = """
+            {
+              "groupState": "READY",
+              "command": "NONE",
+              "deviceCommand": {
+                "id": "cmd_update_1",
+                "type": "UPDATE_APP"
+              },
+              "policy": {
+                "rotateOwner": "z1",
+                "rotateEveryGroupTasks": 10
+              }
+            }
+        """.trimIndent()
+
+        val response = AndroidServerApiJson.parseGroupControlResponse(json)
+
+        assertEquals(DeviceCommandType.UPDATE_APP, response.deviceCommand?.type)
+        assertEquals("cmd_update_1", response.deviceCommand?.commandId)
+    }
+
+    @Test
+    fun parsesGroupControlResponseWithCommandPayloadObject() {
+        val json = """
+            {
+              "groupState": "READY",
+              "command": "NONE",
+              "commandPayload": {
+                "commandId": "cmd_restart_1",
+                "command": "RESTART_APP"
+              },
+              "policy": {
+                "rotateOwner": "z1",
+                "rotateEveryGroupTasks": 10
+              }
+            }
+        """.trimIndent()
+
+        val response = AndroidServerApiJson.parseGroupControlResponse(json)
+
+        assertEquals(DeviceCommandType.RESTART_APP, response.deviceCommand?.type)
+        assertEquals("cmd_restart_1", response.deviceCommand?.commandId)
+    }
+
+    @Test
     fun serializesHeartbeatWithLowercaseRoleAndUppercaseState() {
         val body = AndroidServerApiJson.deviceHeartbeatBody(
             DeviceHeartbeat(
@@ -86,7 +132,8 @@ class AndroidServerApiClientJsonTest {
                 role = DeviceIdentity.Role.SOLDIER,
                 state = DeviceRuntimeState.RUNNING_TASK,
                 taskCount = 3,
-                appVersion = "0.1.7",
+                appVersion = "0.1.8",
+                appVersionCode = 9,
                 currentIp = null,
                 lastError = null,
             ),
@@ -94,8 +141,31 @@ class AndroidServerApiClientJsonTest {
 
         assertEquals("soldier", body.getString("role"))
         assertEquals("RUNNING_TASK", body.getString("state"))
-        assertEquals("0.1.7", body.getString("appVersion"))
+        assertEquals("0.1.8", body.getString("appVersion"))
+        assertEquals(9, readInt(body.text, "versionCode", -1))
+        assertEquals("0.1.8", body.getString("versionName"))
         assertEquals("z1-1", body.getString("deviceName"))
+    }
+
+    @Test
+    fun serializesDeviceCommandReport() {
+        val body = AndroidServerApiJson.deviceCommandReportBody(
+            DeviceCommandReport(
+                commandId = "cmd_1",
+                deviceName = "z1-1",
+                groupId = "z1",
+                command = DeviceCommandType.UPDATE_APP,
+                success = false,
+                message = "sha256 mismatch",
+            ),
+        )
+
+        assertEquals("cmd_1", body.getString("commandId"))
+        assertEquals("z1-1", body.getString("deviceName"))
+        assertEquals("z1", body.getString("groupId"))
+        assertEquals("UPDATE_APP", body.getString("command"))
+        assertEquals(true, body.text.contains(""""success":false"""))
+        assertEquals("sha256 mismatch", body.getString("message"))
     }
 
     @Test
