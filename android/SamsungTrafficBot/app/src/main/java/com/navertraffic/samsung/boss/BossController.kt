@@ -21,6 +21,7 @@ import com.navertraffic.samsung.strategy.BotStrategy
 import com.navertraffic.samsung.strategy.StrategyAResult
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
+import com.navertraffic.samsung.strategy.isRecoverableTaskFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -58,6 +59,17 @@ class BossController(
         }
     }
 
+    suspend fun reportRuntimeState(
+        state: DeviceRuntimeState,
+        message: String? = null,
+    ): GroupControlResponse? {
+        runtimeState = state
+        lastError = message
+        val response = heartbeat(state)
+        handleControl(response)
+        return response
+    }
+
     suspend fun runOnce(task: StrategyATask): StrategyAResult {
         val strategy = (botStrategy as? BotStrategy.A)?.strategy
             ?: return StrategyAResult(success = false, message = "wrong_strategy_for_A")
@@ -75,8 +87,8 @@ class BossController(
         run: suspend () -> StrategyAResult,
     ): StrategyAResult {
         log("대장봇 실행: 그룹 IP owner (${rotateEveryGroupTasks}건마다 회전)")
-        runtimeState = DeviceRuntimeState.IDLE
-        val control = heartbeat(DeviceRuntimeState.IDLE)
+        runtimeState = DeviceRuntimeState.WAITING_TASK
+        val control = heartbeat(DeviceRuntimeState.WAITING_TASK)
         if (handleControl(control)) return StrategyAResult(success = false, message = "group_paused")
 
         val lease = runCatching {
@@ -131,7 +143,11 @@ class BossController(
                 rotateGroupIp()
             }
         }
-        runtimeState = if (result.success) DeviceRuntimeState.IDLE else DeviceRuntimeState.ERROR
+        runtimeState = when {
+            result.success -> DeviceRuntimeState.IDLE
+            result.isRecoverableTaskFailure() -> DeviceRuntimeState.WAITING_TASK
+            else -> DeviceRuntimeState.ERROR
+        }
         heartbeat(runtimeState)
         return result
     }
@@ -225,7 +241,8 @@ class BossController(
     }
 
     companion object {
-        private const val APP_VERSION = "0.1.0"
+        private val APP_VERSION: String
+            get() = BuildConfig.VERSION_NAME
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
     }
 }

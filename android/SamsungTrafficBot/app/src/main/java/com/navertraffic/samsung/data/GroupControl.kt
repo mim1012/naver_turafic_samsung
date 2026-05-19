@@ -2,6 +2,8 @@ package com.navertraffic.samsung.data
 
 enum class DeviceRuntimeState {
     IDLE,
+    WAITING_TASK,
+    WAITING_LOGIN,
     RUNNING_TASK,
     ROTATING,
     PAUSED,

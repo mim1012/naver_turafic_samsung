@@ -170,10 +170,11 @@ object AndroidServerApiJson {
 
     fun parseStrategyTaskLease(raw: String): StrategyTaskLease? {
         val taskLeaseId = readString(raw, "taskLeaseId")?.takeIf { it.isNotBlank() } ?: return null
-        val keywordName = readString(raw, "keywordName")?.takeIf { it.isNotBlank() }
-        val mid = readString(raw, "mid")?.takeIf { it.isNotBlank() }
+        val hasStrategyGShape = raw.contains(""""keywordName"""")
+        val keywordName = readString(raw, "keywordName").orEmpty()
+        val mid = readString(raw, "mid").orEmpty()
 
-        return if (keywordName != null && mid != null) {
+        return if (hasStrategyGShape) {
             StrategyTaskLease(
                 taskLeaseId = taskLeaseId,
                 taskG = StrategyGTask(

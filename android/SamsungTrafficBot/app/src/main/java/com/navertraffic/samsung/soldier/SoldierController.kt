@@ -19,6 +19,7 @@ import com.navertraffic.samsung.strategy.BotStrategy
 import com.navertraffic.samsung.strategy.StrategyAResult
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
+import com.navertraffic.samsung.strategy.isRecoverableTaskFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -52,6 +53,17 @@ class SoldierController(
         }
     }
 
+    suspend fun reportRuntimeState(
+        state: DeviceRuntimeState,
+        message: String? = null,
+    ): GroupControlResponse? {
+        runtimeState = state
+        lastError = message
+        val response = heartbeat(state)
+        handleControl(response)
+        return response
+    }
+
     suspend fun runOnce(task: StrategyATask): StrategyAResult {
         val strategy = (botStrategy as? BotStrategy.A)?.strategy
             ?: return StrategyAResult(success = false, message = "wrong_strategy_for_A")
@@ -69,8 +81,8 @@ class SoldierController(
         run: suspend () -> StrategyAResult,
     ): StrategyAResult {
         log("쫄병봇 실행: IP 로테이션은 대장봇 그룹 owner가 수행")
-        runtimeState = DeviceRuntimeState.IDLE
-        val control = heartbeat(DeviceRuntimeState.IDLE)
+        runtimeState = DeviceRuntimeState.WAITING_TASK
+        val control = heartbeat(DeviceRuntimeState.WAITING_TASK)
         if (handleControl(control)) return StrategyAResult(success = false, message = "group_paused")
 
         val lease = runCatching {
@@ -122,7 +134,11 @@ class SoldierController(
             taskCount += 1
             log("쫄병봇 완료: ${taskCount}건")
         }
-        runtimeState = if (result.success) DeviceRuntimeState.IDLE else DeviceRuntimeState.ERROR
+        runtimeState = when {
+            result.success -> DeviceRuntimeState.IDLE
+            result.isRecoverableTaskFailure() -> DeviceRuntimeState.WAITING_TASK
+            else -> DeviceRuntimeState.ERROR
+        }
         heartbeat(runtimeState)
         return result
     }
@@ -175,7 +191,8 @@ class SoldierController(
     }
 
     companion object {
-        private const val APP_VERSION = "0.1.0"
+        private val APP_VERSION: String
+            get() = BuildConfig.VERSION_NAME
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
     }
 }

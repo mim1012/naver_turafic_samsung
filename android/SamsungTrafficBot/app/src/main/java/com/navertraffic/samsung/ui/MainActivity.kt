@@ -1,6 +1,7 @@
 package com.navertraffic.samsung.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -26,6 +27,7 @@ import com.navertraffic.samsung.data.AccountLeaseResult
 import com.navertraffic.samsung.data.AccountLeaseClient
 import com.navertraffic.samsung.data.AndroidServerApiClient
 import com.navertraffic.samsung.data.DeviceIdentity
+import com.navertraffic.samsung.data.DeviceRuntimeState
 import com.navertraffic.samsung.data.GroupControlClient
 import com.navertraffic.samsung.data.NoopAccountLeaseClient
 import com.navertraffic.samsung.data.NoopGroupControlClient
@@ -73,6 +75,8 @@ class MainActivity : AppCompatActivity() {
     private val validatedCookieSessions = mutableSetOf<String>()
     private val protectionDetector = ProtectionDetector()
     private var runWakeLock: PowerManager.WakeLock? = null
+    @Volatile
+    private var botRunActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,6 +130,13 @@ class MainActivity : AppCompatActivity() {
                 appendLog("쿠키 세션 준비됨 — 버튼을 눌러 시작")
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        applyLaunchExtras()
+        refreshServerAccountFromServer()
     }
 
     private fun applyDebugDefaults() {
@@ -193,6 +204,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun enterRunningMode(label: String = "전략 실행 중") {
+        botRunActive = true
         configPanel.visibility = android.view.View.GONE
         statusBar.visibility = android.view.View.VISIBLE
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -205,6 +217,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun exitRunningMode() {
+        botRunActive = false
         stopService(android.content.Intent(this, BotKeepAliveService::class.java))
         releaseRunWakeLock()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -244,6 +257,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkUpdateAndRun() {
+        if (botRunActive) {
+            appendLog("작업 시작 요청 수신: 이미 실행/대기 중")
+            return
+        }
         lifecycleScope.launch {
             val config = ConfigStore(this@MainActivity)
             val serverUrl = resolveServerUrl(config)
@@ -259,6 +276,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun runBot() {
+        if (botRunActive) {
+            appendLog("작업 시작 요청 무시: 이미 실행/대기 중")
+            return
+        }
         runStrategyG()
     }
 
@@ -373,10 +394,19 @@ class MainActivity : AppCompatActivity() {
                 log = ::appendLog,
             ) else null
 
+            suspend fun reportRuntimeState(state: DeviceRuntimeState, message: String? = null) {
+                if (bossController != null) {
+                    bossController.reportRuntimeState(state, message)
+                } else {
+                    soldierController?.reportRuntimeState(state, message)
+                }
+            }
+
             val heartbeatJob = bossController?.startHeartbeatMonitor(this)
                 ?: soldierController?.startHeartbeatMonitor(this)
 
             try {
+                reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                 val keywordCombos = SecondKeywordStore.generateCombinations(
                     source = task.secondKeyword,
                     requiredWord = task.keyword,
@@ -401,7 +431,9 @@ class MainActivity : AppCompatActivity() {
                     val currentTask = task.copy(secondKeyword = secondKeywordNow)
 
                     if (!dryRun && !externalBrowser) {
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
+                                reportRuntimeState(state, message)
+                            }) return@repeat
                     }
 
                     appendLog("A전략 반복 ${index + 1}/$loopCount [${available.indexOf(secondKeywordNow) + 1}/${available.size}번 조합]")
@@ -412,7 +444,9 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && !externalBrowser && webViewManager.rendererGone) {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
+                                reportRuntimeState(state, message)
+                            }) return@repeat
                     }
 
                     if (result.success) successCount += 1
@@ -435,7 +469,9 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && !externalBrowser && (index + 1) % 30 == 0 && index + 1 < loopCount) {
                         appendLog("주기적 WebView 재생성 (${index + 1}회차 이후)")
                         webViewManager.rebuildWebView(webViewContainer)
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession)) return@repeat
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
+                                reportRuntimeState(state, message)
+                            }) return@repeat
                     }
                 }
                 appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
@@ -529,28 +565,56 @@ class MainActivity : AppCompatActivity() {
                 log = ::appendLog,
             ) else null
 
+            suspend fun reportRuntimeState(state: DeviceRuntimeState, message: String? = null) {
+                if (bossController != null) {
+                    bossController.reportRuntimeState(state, message)
+                } else {
+                    soldierController?.reportRuntimeState(state, message)
+                }
+            }
+
             val heartbeatJob = bossController?.startHeartbeatMonitor(this)
                 ?: soldierController?.startHeartbeatMonitor(this)
 
             try {
                 var successCount = 0
                 var taskIndex = 0
+                reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                 while (taskIndex < loopCount || continuousServerMode) {
+                    reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
                     val taskLease = runCatching {
                         serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
                     }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
+                    if (taskLease != null && taskLease.taskG == null) {
+                        appendLog("G전략 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
+                        runCatching {
+                            serverClient.taskLeaseClient.reportTask(
+                                StrategyTaskReport(
+                                    taskLeaseId = taskLease.taskLeaseId,
+                                    deviceName = identity.rawName,
+                                    result = StrategyTaskResult.FAILED,
+                                    message = "invalid_g_task_payload",
+                                ),
+                            )
+                        }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+                        taskIndex++
+                        continue
+                    }
                     val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
 
                     if (task == null) {
                         appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
+                        reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                         kotlinx.coroutines.delay(30_000)
                         continue
                     }
                     appendLog("상품 task 획득: ${task.productTitle ?: task.linkUrl}")
 
                     if (!dryRun) {
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G")) continue
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
+                                reportRuntimeState(state, message)
+                            }) continue
                     }
 
                     val loopLabel = if (continuousServerMode) {
@@ -574,7 +638,9 @@ class MainActivity : AppCompatActivity() {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
                         webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
-                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G")) continue
+                        if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
+                                reportRuntimeState(state, message)
+                            }) continue
                     }
 
                     if (result.success) successCount += 1
@@ -683,12 +749,22 @@ class MainActivity : AppCompatActivity() {
         identity: DeviceIdentity,
         strategyName: String,
         externalSession: ExternalSamsungBrowserSession? = null,
+        onWaiting: suspend (DeviceRuntimeState, String?) -> Unit = { _, _ -> },
     ): Boolean {
         val credential = resolveNaverLogin(serverClient, identity, strategyName)
-        if (credential != null && ensureNaverLogin(credential, serverClient, identity, externalSession)) {
+        if (credential == null) {
+            onWaiting(DeviceRuntimeState.WAITING_LOGIN, "naver_account_missing")
+            appendLog("네이버 로그인/쿠키 준비 안됨: 비로그인 작업 없이 ${LOGIN_RETRY_DELAY_MS / 1000}초 후 재시도")
+            kotlinx.coroutines.delay(LOGIN_RETRY_DELAY_MS)
+            return false
+        }
+
+        onWaiting(DeviceRuntimeState.WAITING_LOGIN, "naver_login_checking")
+        if (ensureNaverLogin(credential, serverClient, identity, externalSession)) {
             return true
         }
 
+        onWaiting(DeviceRuntimeState.WAITING_LOGIN, "naver_login_failed")
         appendLog("네이버 로그인/쿠키 준비 안됨: 비로그인 작업 없이 ${LOGIN_RETRY_DELAY_MS / 1000}초 후 재시도")
         kotlinx.coroutines.delay(LOGIN_RETRY_DELAY_MS)
         return false

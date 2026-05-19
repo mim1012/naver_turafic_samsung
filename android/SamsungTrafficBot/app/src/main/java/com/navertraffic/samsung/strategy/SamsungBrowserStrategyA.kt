@@ -3,6 +3,7 @@ package com.navertraffic.samsung.strategy
 import com.navertraffic.samsung.data.ProtectionSignal
 import kotlin.random.Random
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import java.net.URLEncoder
 
 data class StrategyAResult(
@@ -11,6 +12,14 @@ data class StrategyAResult(
     val lastUrl: String? = null,
     val message: String? = null,
 )
+
+fun StrategyAResult.isRecoverableTaskFailure(): Boolean {
+    if (success || signals.isNotEmpty()) return false
+    val text = message.orEmpty()
+    return text.startsWith("MID product not found") ||
+        text.endsWith("is required for Strategy A") ||
+        text.endsWith("is required for Strategy G")
+}
 
 enum class StrategyVariant {
     /** A: 검색창탭 + fetch autocomplete + URL 직접 로드 (기준선) */
@@ -28,6 +37,7 @@ class SamsungBrowserStrategyA(
     private val productDelayMs: Long = 5_000,
     private val useMidClick: Boolean = true,
     private val detailSwipeMs: Long = 2_000,
+    private val midClickTimeoutMs: Long = 30_000,
     val variant: StrategyVariant = StrategyVariant.A,
 ) {
     constructor(
@@ -117,12 +127,16 @@ class SamsungBrowserStrategyA(
         val mid = task.mid.orEmpty()
         if (useMidClick && mid.isNotBlank()) {
             log("MID 상품 터치 진입: $mid")
-            val clicked = browserSession.clickMidLink(mid, task.productTitle ?: task.secondKeyword)
+            val clickResult = withTimeoutOrNull(midClickTimeoutMs) {
+                browserSession.clickMidLink(mid, task.productTitle ?: task.secondKeyword)
+            }
+            val clicked = clickResult == true
             if (!clicked) {
+                val reason = if (clickResult == null) "timeout" else "carousel scan"
                 return StrategyAResult(
                     success = false,
                     lastUrl = browserSession.currentUrl(),
-                    message = "MID product not found after carousel scan: $mid",
+                    message = "MID product not found after $reason: $mid",
                 )
             }
             log("추적 리다이렉트 대기 중 → 상품 상세")

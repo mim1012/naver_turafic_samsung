@@ -170,6 +170,26 @@ class AndroidServerApiClientJsonTest {
     }
 
     @Test
+    fun parsesMalformedStrategyGLeaseAsGTaskForValidation() {
+        val json = """
+            {
+              "taskLeaseId": "sb_10_20_lease",
+              "keyword": "검색어",
+              "keywordName": "상품명",
+              "linkUrl": "https://smartstore.naver.com/main/products/",
+              "mid": ""
+            }
+        """.trimIndent()
+
+        val lease = AndroidServerApiJson.parseStrategyTaskLease(json)
+
+        assertEquals("sb_10_20_lease", lease?.taskLeaseId)
+        assertEquals("상품명", lease?.taskG?.keywordName)
+        assertEquals("", lease?.taskG?.mid)
+        assertEquals("mid is required for Strategy G", lease?.taskG?.validate())
+    }
+
+    @Test
     fun serializesHeartbeatWithLowercaseRoleAndUppercaseState() {
         val body = AndroidServerApiJson.deviceHeartbeatBody(
             DeviceHeartbeat(
@@ -191,6 +211,25 @@ class AndroidServerApiClientJsonTest {
         assertEquals(9, readInt(body.text, "versionCode", -1))
         assertEquals("0.1.8", body.getString("versionName"))
         assertEquals("z1-1", body.getString("deviceName"))
+    }
+
+    @Test
+    fun serializesWaitingLoginHeartbeat() {
+        val body = AndroidServerApiJson.deviceHeartbeatBody(
+            DeviceHeartbeat(
+                deviceName = "z1-1",
+                groupId = "z1",
+                role = DeviceIdentity.Role.SOLDIER,
+                state = DeviceRuntimeState.WAITING_LOGIN,
+                taskCount = 0,
+                appVersion = "0.1.11",
+                appVersionCode = 12,
+                lastError = "naver_login_checking",
+            ),
+        )
+
+        assertEquals("WAITING_LOGIN", body.getString("state"))
+        assertEquals("naver_login_checking", body.getString("lastError"))
     }
 
     @Test

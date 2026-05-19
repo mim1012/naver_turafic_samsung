@@ -264,6 +264,8 @@ class DeviceCommandManager(
 
     private fun DeviceRuntimeState.canRunDeferredCommand(): Boolean {
         return this == DeviceRuntimeState.IDLE ||
+            this == DeviceRuntimeState.WAITING_TASK ||
+            this == DeviceRuntimeState.WAITING_LOGIN ||
             this == DeviceRuntimeState.PAUSED ||
             this == DeviceRuntimeState.ERROR
     }

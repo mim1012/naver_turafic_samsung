@@ -71,6 +71,25 @@ class GroupRotationCoordinatorTest {
     }
 
     @Test
+    fun waitingDevicesDoNotBlockRotationDrain() {
+        val decision = GroupRotationCoordinator.decide(
+            groupState = GroupState.DRAINING,
+            groupCompletedTasksSinceRotation = 10,
+            devices = listOf(
+                heartbeat("z1", DeviceIdentity.Role.BOSS, DeviceRuntimeState.WAITING_TASK),
+                heartbeat("z1-1", DeviceIdentity.Role.SOLDIER, DeviceRuntimeState.WAITING_LOGIN),
+            ),
+            policy = policy,
+            drainingElapsedSec = 45,
+        )
+
+        assertEquals(GroupState.ROTATING, decision.nextGroupState)
+        assertEquals(GroupCommand.ROTATE_GROUP_IP, decision.bossCommand)
+        assertEquals(GroupCommand.PAUSE_FOR_ROTATION, decision.soldierCommand)
+        assertFalse(decision.allowNewTaskLeases)
+    }
+
+    @Test
     fun failsRotationWhenDrainTimeoutExpires() {
         val decision = GroupRotationCoordinator.decide(
             groupState = GroupState.DRAINING,

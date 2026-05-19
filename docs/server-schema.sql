@@ -18,7 +18,7 @@ create table if not exists android_devices (
   updated_at timestamptz not null default now(),
   constraint android_devices_role_check check (role in ('boss', 'soldier')),
   constraint android_devices_state_check check (
-    state in ('IDLE', 'RUNNING_TASK', 'ROTATING', 'PAUSED', 'ERROR')
+    state in ('IDLE', 'WAITING_TASK', 'WAITING_LOGIN', 'RUNNING_TASK', 'ROTATING', 'PAUSED', 'ERROR')
   )
 );
 

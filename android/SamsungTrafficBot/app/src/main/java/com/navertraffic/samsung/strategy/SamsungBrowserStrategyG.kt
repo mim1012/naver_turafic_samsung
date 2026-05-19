@@ -3,6 +3,7 @@ package com.navertraffic.samsung.strategy
 import java.net.URLEncoder
 import kotlin.random.Random
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 
 class SamsungBrowserStrategyG(
     private val browserSession: BrowserSession,
@@ -10,6 +11,7 @@ class SamsungBrowserStrategyG(
     private val protectionDetector: ProtectionDetector = ProtectionDetector(),
     private val explorationScrollCount: Int = 4,
     private val explorationScrollPixels: Int = 500,
+    private val midExplorationTimeoutMs: Long = 30_000,
 ) {
     constructor(
         webViewManager: SamsungWebViewManager,
@@ -64,26 +66,32 @@ class SamsungBrowserStrategyG(
 
         // 탐색 스크롤하며 MID 탐색
         log("2차 MID 탐색: ${task.mid}")
-        var clicked = false
-        repeat(explorationScrollCount) {
+        val midExplorationResult = withTimeoutOrNull(midExplorationTimeoutMs) {
+            var clicked = false
+            repeat(explorationScrollCount) {
+                if (!clicked) {
+                    clicked = browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)
+                }
+                if (!clicked) {
+                    browserSession.scrollBy(explorationScrollPixels)
+                    delay(Random.nextLong(350, 700))
+                }
+            }
             if (!clicked) {
                 clicked = browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)
             }
-            if (!clicked) {
-                browserSession.scrollBy(explorationScrollPixels)
-                delay(Random.nextLong(350, 700))
-            }
+            clicked
         }
-        if (!clicked) {
-            clicked = browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)
-        }
+        val clicked = midExplorationResult == true
 
         if (!clicked) {
+            val reason = if (midExplorationResult == null) "timeout" else "exploration"
+            log("MID 미탐색: ${reason}, 다음 작업으로 이동")
             webViewManager?.setBrowserMode(isChrome = false)
             return StrategyAResult(
                 success = false,
                 lastUrl = browserSession.currentUrl(),
-                message = "MID product not found after exploration: ${task.mid}",
+                message = "MID product not found after $reason: ${task.mid}",
             )
         }
 
