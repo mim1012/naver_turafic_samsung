@@ -53,6 +53,15 @@ class DeviceCommandManager(
                     false
                 }
             }
+            DeviceCommandType.REBOOT_DEVICE -> {
+                if (!state.canRunDeferredCommand()) {
+                    log("휴대폰 재부팅 명령 pending: 현재 상태 $state")
+                    false
+                } else {
+                    runDeviceReboot(pending)
+                    false
+                }
+            }
             DeviceCommandType.STOP,
             DeviceCommandType.PAUSE -> {
                 completeAndReport(
@@ -110,6 +119,11 @@ class DeviceCommandManager(
         completeAndReport(command, success = success, message = message)
     }
 
+    private suspend fun runDeviceReboot(command: PendingCommand) {
+        val (success, message) = scheduleDeviceReboot()
+        completeAndReport(command, success = success, message = message)
+    }
+
     private suspend fun restartApp(): Pair<Boolean, String> {
         val result = withContext(Dispatchers.IO) {
             runCatching {
@@ -138,6 +152,38 @@ class DeviceCommandManager(
             },
             onFailure = { error ->
                 false to "root restart failed: ${error.message ?: error::class.java.simpleName}"
+            },
+        )
+    }
+
+    private suspend fun scheduleDeviceReboot(): Pair<Boolean, String> {
+        val result = withContext(Dispatchers.IO) {
+            runCatching {
+                val proc = Runtime.getRuntime().exec(
+                    arrayOf(
+                        "su",
+                        "-c",
+                        "sh -c 'sleep 8; reboot || svc power reboot || setprop sys.powerctl reboot' >/dev/null 2>&1 &",
+                    ),
+                )
+                val stdout = proc.inputStream.bufferedReader().readText().trim()
+                val stderr = proc.errorStream.bufferedReader().readText().trim()
+                val exit = proc.waitFor()
+                Triple(exit, stdout, stderr)
+            }
+        }
+        return result.fold(
+            onSuccess = { (exit, stdout, stderr) ->
+                val success = exit == 0
+                val message = if (success) {
+                    "device reboot scheduled"
+                } else {
+                    "root reboot failed exit=$exit stdout=$stdout stderr=$stderr"
+                }
+                success to message
+            },
+            onFailure = { error ->
+                false to "root reboot failed: ${error.message ?: error::class.java.simpleName}"
             },
         )
     }

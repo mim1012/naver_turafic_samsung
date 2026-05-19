@@ -40,6 +40,7 @@ data class DeviceHeartbeat(
 enum class DeviceCommandType {
     UPDATE_APP,
     RESTART_APP,
+    REBOOT_DEVICE,
     STOP,
     PAUSE,
 }
