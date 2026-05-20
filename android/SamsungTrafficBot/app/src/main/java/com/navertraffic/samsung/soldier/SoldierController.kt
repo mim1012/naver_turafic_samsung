@@ -41,6 +41,12 @@ class SoldierController(
     private var lastError: String? = null
     @Volatile
     private var lastDeviceCommandBlocked = false
+    @Volatile
+    private var lastHeartbeatSentAtMs = 0L
+    @Volatile
+    private var lastHeartbeatSentState: DeviceRuntimeState? = null
+    @Volatile
+    private var lastHeartbeatSentError: String? = null
 
     fun startHeartbeatMonitor(
         scope: CoroutineScope,
@@ -59,6 +65,7 @@ class SoldierController(
     ): GroupControlResponse? {
         runtimeState = state
         lastError = message
+        if (shouldSuppressDuplicateHeartbeat(state, message)) return null
         val response = heartbeat(state)
         handleControl(response)
         return response
@@ -157,12 +164,30 @@ class SoldierController(
                     lastError = lastError,
                 ),
             )
+            recordHeartbeatSent(state)
             lastDeviceCommandBlocked = deviceCommandHandler.handleDeviceCommand(response, state)
             response
         } catch (error: Throwable) {
             log("heartbeat 실패: ${error.message}")
             null
         }
+    }
+
+    private fun shouldSuppressDuplicateHeartbeat(
+        state: DeviceRuntimeState,
+        message: String?,
+    ): Boolean {
+        if (state !in DUPLICATE_SUPPRESSIBLE_STATES) return false
+        val now = System.currentTimeMillis()
+        return lastHeartbeatSentState == state &&
+            lastHeartbeatSentError == message &&
+            now - lastHeartbeatSentAtMs < DUPLICATE_STATE_HEARTBEAT_MIN_INTERVAL_MS
+    }
+
+    private fun recordHeartbeatSent(state: DeviceRuntimeState) {
+        lastHeartbeatSentAtMs = System.currentTimeMillis()
+        lastHeartbeatSentState = state
+        lastHeartbeatSentError = lastError
     }
 
     private suspend fun handleControl(response: GroupControlResponse?): Boolean {
@@ -193,6 +218,12 @@ class SoldierController(
     companion object {
         private val APP_VERSION: String
             get() = BuildConfig.VERSION_NAME
-        private const val HEARTBEAT_INTERVAL_MS = 30_000L
+        private const val HEARTBEAT_INTERVAL_MS = 60_000L
+        private const val DUPLICATE_STATE_HEARTBEAT_MIN_INTERVAL_MS = 60_000L
+        private val DUPLICATE_SUPPRESSIBLE_STATES = setOf(
+            DeviceRuntimeState.IDLE,
+            DeviceRuntimeState.WAITING_TASK,
+            DeviceRuntimeState.PAUSED,
+        )
     }
 }
