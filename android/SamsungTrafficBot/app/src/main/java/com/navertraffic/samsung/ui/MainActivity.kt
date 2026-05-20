@@ -730,7 +730,10 @@ class MainActivity : AppCompatActivity() {
         val deviceName = identity.rawName
         val accountAlias = credential.accountAlias
         val sessionKey = cookieSessionKey(deviceName, accountAlias)
-        if (!webViewManager.sessionAccountMatches(this, deviceName, accountAlias)) {
+        if (
+            webViewManager.hasSavedSessionAccount(this, deviceName) &&
+            !webViewManager.sessionAccountMatches(this, deviceName, accountAlias)
+        ) {
             if (webViewManager.hasCookieSession()) {
                 appendLog("배정 계정 변경 감지: 기존 네이버 쿠키 삭제")
                 webViewManager.clearNaverCookies()
@@ -739,15 +742,14 @@ class MainActivity : AppCompatActivity() {
             validatedCookieSessions.removeAll { it.startsWith("$deviceName|") }
         }
 
-        if (webViewManager.hasCookieSession()) {
+        val hadCookieSession = webViewManager.hasCookieSession()
+        if (hadCookieSession) {
             if (sessionKey in validatedCookieSessions || webViewManager.isNaverLoggedIn()) {
                 webViewManager.saveSessionAccount(this, deviceName, accountAlias)
                 validatedCookieSessions.add(sessionKey)
                 return true
             }
-            appendLog("기존 네이버 쿠키 세션 만료: 재로그인 진행")
-            webViewManager.clearNaverCookies()
-            webViewManager.clearSessionAccount(this, deviceName)
+            appendLog("기존 NID 쿠키 세션 로그인 판별 실패: 쿠키 유지 후 서버 쿠키 복원 확인")
             validatedCookieSessions.remove(sessionKey)
         }
 
@@ -763,7 +765,20 @@ class MainActivity : AppCompatActivity() {
                 appendLog("쿠키 복원 성공 — 로그인 생략")
                 return true
             }
-            appendLog("쿠키 복원 실패 — 재로그인 진행")
+            if (webViewManager.hasCookieSession()) {
+                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+                validatedCookieSessions.add(sessionKey)
+                appendLog("쿠키 복원 후 로그인 판별 불확실: NID 쿠키 유지하고 폼 로그인 생략")
+                return true
+            }
+            appendLog("쿠키 복원 실패: NID 쿠키 없음")
+        }
+
+        if (hadCookieSession && webViewManager.hasCookieSession()) {
+            webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+            validatedCookieSessions.add(sessionKey)
+            appendLog("로컬 NID 쿠키 유지: 폼 로그인 생략")
+            return true
         }
 
         // 전체 로그인

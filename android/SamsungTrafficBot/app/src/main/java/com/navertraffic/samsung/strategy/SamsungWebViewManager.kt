@@ -147,6 +147,11 @@ class SamsungWebViewManager(
         return saved == normalizeSessionAccount(accountAlias)
     }
 
+    fun hasSavedSessionAccount(context: Context, deviceName: String): Boolean {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .contains(sessionAccountKey(deviceName))
+    }
+
     fun saveSessionAccount(context: Context, deviceName: String, accountAlias: String?) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
             .putString(sessionAccountKey(deviceName), normalizeSessionAccount(accountAlias))
