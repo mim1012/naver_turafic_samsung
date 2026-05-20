@@ -485,6 +485,46 @@ test("maps supabase traffic queue into strategy G without strategy query filter"
   );
 });
 
+test("defaults omitted task strategy to strategy G", async () => {
+  const upstream = await startSupabaseRest({
+    trafficRows: [
+      {
+        id: 90,
+        slot_id: 46,
+        keyword: "뉴발란스 운동화",
+        keyword_name: "뉴발란스 574 스니커즈",
+        link_url: "https://smartstore.naver.com/sunsaem/products/987654321",
+      },
+    ],
+    slotRows: [
+      {
+        id: 46,
+        mid: "987654321",
+        keyword_name: "뉴발란스 574 스니커즈",
+        success_count: 0,
+        fail_count: 0,
+      },
+    ],
+  });
+  const state = createState({
+    supabaseRestUrl: upstream.baseUrl,
+    supabaseAnonKey: "test-key",
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/tasks/lease", {
+    deviceName: "z1-2",
+    role: "soldier",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.taskLeaseId, "sb_90_46");
+  assert.equal(lease.keyword, "뉴발란스 운동화");
+  assert.equal(lease.keywordName, "뉴발란스 574 스니커즈");
+  assert.equal(lease.secondKeyword, null);
+  assert.equal(lease.mid, "987654321");
+});
+
 async function start(state) {
   const server = createServer(state);
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));

@@ -13,6 +13,7 @@ const DEFAULT_POLICY = {
 
 const DEFAULT_SUPABASE_TRAFFIC_TABLE = "sellermate_traffic_navershopping";
 const DEFAULT_SUPABASE_SLOT_TABLE = "sellermate_slot_naver";
+const DEFAULT_STRATEGY = "G";
 
 function createState(options = {}) {
   return {
@@ -151,7 +152,7 @@ async function leaseTask(state, body) {
   }
 
   const deviceName = String(body.deviceName || "");
-  const strategy = String(body.strategy || "A");
+  const strategy = normalizeStrategy(body.strategy);
   const now = Date.now();
   const existing = Array.from(state.taskLeases.values()).find(
     (lease) => lease.deviceName === deviceName && lease.status === "active",
@@ -161,7 +162,7 @@ async function leaseTask(state, body) {
   const product = state.products.find(
     (item) =>
       (item.status || "available") === "available" &&
-      (item.strategy || "A") === strategy &&
+      normalizeStrategy(item.strategy) === strategy &&
       (!item.assignedDeviceName || item.assignedDeviceName === deviceName),
   );
   if (!product) return {};
@@ -210,7 +211,7 @@ async function reportTask(state, body) {
 }
 
 async function leaseTaskFromSupabase(state, body) {
-  const strategy = String(body.strategy || "A");
+  const strategy = normalizeStrategy(body.strategy);
   const deviceName = String(body.deviceName || "");
 
   // 1. 트래픽 큐에서 1건 가져오기 (id 오름차순)
@@ -315,7 +316,7 @@ async function leaseTaskFromZero(state, body) {
   const claimed = await postJson(`${state.zeroTrafficApiUrl.replace(/\/$/, "")}/claim-work`, payload);
   if (!claimed || !claimed.traffic_id) return null;
 
-  const zeroStrategy = String(body.strategy || "A");
+  const zeroStrategy = normalizeStrategy(body.strategy);
   const zeroKeywordName = claimed.keyword_name || "";
   const lease = {
     id: `zero_${claimed.traffic_id}`,
@@ -402,7 +403,7 @@ function leaseAccount(state, body) {
     account,
     deviceName,
     role: String(body.role || ""),
-    strategy: String(body.strategy || ""),
+    strategy: normalizeStrategy(body.strategy),
     status: "active",
     expiresAtMs: now + 15 * 60 * 1000,
   };
@@ -637,14 +638,23 @@ function getGroup(state, groupId) {
 }
 
 function taskLeaseResponse(product, lease) {
-  return {
+  const base = {
     taskLeaseId: lease.id,
     keyword: product.keyword,
-    secondKeyword: product.secondKeyword || null,
-    keywordName: product.keywordName || null,
     linkUrl: product.linkUrl,
     mid: product.mid || null,
     productTitle: product.productTitle || null,
+  };
+  if (normalizeStrategy(lease.strategy) === "G") {
+    return {
+      ...base,
+      keywordName: product.keywordName || product.secondKeyword || "",
+      secondKeyword: null,
+    };
+  }
+  return {
+    ...base,
+    secondKeyword: product.secondKeyword || product.keywordName || "",
   };
 }
 
@@ -988,13 +998,18 @@ function publicProductInfo(product) {
     linkUrl: product.linkUrl || "",
     mid: product.mid || null,
     productTitle: product.productTitle || null,
-    strategy: product.strategy || "A",
+    strategy: normalizeStrategy(product.strategy),
     status: product.status || "available",
     successCount: Number(product.successCount || 0),
     failCount: Number(product.failCount || 0),
     assignedDeviceName: product.assignedDeviceName || null,
     lastUsedAt: product.lastUsedAt || null,
   };
+}
+
+function normalizeStrategy(strategy) {
+  const normalized = String(strategy || DEFAULT_STRATEGY).trim().toUpperCase();
+  return normalized || DEFAULT_STRATEGY;
 }
 
 function publicTaskLeaseInfo(lease) {

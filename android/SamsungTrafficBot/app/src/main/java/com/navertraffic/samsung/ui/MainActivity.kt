@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Strategy A ───────────────────────────────────────────────────────────
+    // ── Legacy Strategy A (not used by default) ──────────────────────────────
 
     private fun runStrategyA() {
         val deviceName = etDeviceName.text.toString().trim()
@@ -501,7 +501,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Strategy G ───────────────────────────────────────────────────────────
+    // ── 기본 전략 (G) ────────────────────────────────────────────────────────
 
     private fun runStrategyG() {
         val deviceName = etDeviceName.text.toString().trim()
@@ -522,10 +522,10 @@ class MainActivity : AppCompatActivity() {
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val continuousServerMode = !dryRun && serverUrl.isNotBlank()
 
-        // G전략: Chrome 137 UA 적용
+        // 기본 전략(G): Chrome 137 UA 적용
         if (!dryRun) {
             webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
-            appendLog("G전략 UA 적용: Chrome 137 Mobile")
+            appendLog("기본 전략(G) UA 적용: Chrome 137 Mobile")
         }
 
         val fallbackTask = StrategyGTask(
@@ -551,7 +551,7 @@ class MainActivity : AppCompatActivity() {
         }
         val botStrategy = BotStrategy.G(strategyImpl)
         logServerMode(serverClient)
-        enterRunningMode("전략 G 실행 중")
+        enterRunningMode("기본 전략(G) 실행 중")
 
         lifecycleScope.launch {
             val deviceCommandManager = DeviceCommandManager(
@@ -644,7 +644,7 @@ class MainActivity : AppCompatActivity() {
                         continue
                     }
                     if (taskLease != null && taskLease.taskG == null) {
-                        appendLog("G전략 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
+                        appendLog("기본 전략(G) 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
                         runCatching {
                             serverClient.taskLeaseClient.reportTask(
                                 StrategyTaskReport(
@@ -673,7 +673,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         "${taskIndex + 1}/$loopCount"
                     }
-                    appendLog("G전략 반복 $loopLabel")
+                    appendLog("기본 전략(G) 반복 $loopLabel")
                     val result: StrategyAResult = bossController?.runOnce(task)
                         ?: soldierController?.runOnce(task)
                         ?: StrategyAResult(success = false, message = "no_controller")
@@ -707,7 +707,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
                 }
-                appendLog("G전략 반복 완료: ${successCount}/$loopCount 성공")
+                appendLog("기본 전략(G) 반복 완료: ${successCount}/$loopCount 성공")
             } finally {
                 heartbeatJob?.cancel()
             }
