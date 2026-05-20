@@ -1,5 +1,7 @@
 package com.navertraffic.samsung.strategy
 
+import com.navertraffic.samsung.data.CaptchaChallengeClient
+import com.navertraffic.samsung.data.CaptchaChallengeRequest
 import com.navertraffic.samsung.data.ProtectionSignal
 import kotlin.random.Random
 import kotlinx.coroutines.delay
@@ -39,6 +41,9 @@ class SamsungBrowserStrategyA(
     private val detailSwipeMs: Long = 2_000,
     private val midClickTimeoutMs: Long = 30_000,
     val variant: StrategyVariant = StrategyVariant.A,
+    private val captchaChallengeClient: CaptchaChallengeClient? = null,
+    private val screenshotCapture: ScreenshotCapture? = null,
+    private val captchaChallengeTimeoutMs: Long = 5 * 60 * 1_000,
 ) {
     constructor(
         webViewManager: SamsungWebViewManager,
@@ -180,16 +185,101 @@ class SamsungBrowserStrategyA(
         const val AI_REWARD_LANDING_URL = "https://snsz.kr"
     }
 
-    private suspend fun detectProtection(log: (String) -> Unit): StrategyAResult? {
+    private suspend fun detectProtection(
+        log: (String) -> Unit,
+        leaseId: String? = null,
+        accountAlias: String = "",
+    ): StrategyAResult? {
         if (!browserSession.supportsPageInspection) return null
         val signals = protectionDetector.detectFromText(browserSession.visibleText())
         if (signals.isEmpty()) return null
         log("보호/재인증 신호 감지: ${signals.joinToString()}")
+
+        if (signals.contains(ProtectionSignal.CAPTCHA_OR_SECURITY_PAGE) &&
+            captchaChallengeClient != null &&
+            screenshotCapture != null
+        ) {
+            val solved = tryCaptchaChallenge(signals, leaseId, accountAlias, log)
+            if (solved) return null
+        }
+
         return StrategyAResult(
             success = false,
             signals = signals,
             lastUrl = browserSession.currentUrl(),
             message = "protection or re-authentication signal detected",
         )
+    }
+
+    private suspend fun tryCaptchaChallenge(
+        signals: List<ProtectionSignal>,
+        leaseId: String?,
+        accountAlias: String,
+        log: (String) -> Unit,
+    ): Boolean {
+        val challengeClient = captchaChallengeClient ?: return false
+        val capture = screenshotCapture ?: return false
+        log("영수증 캡챠 감지: 스크린샷 캡처 중...")
+        val screenshot = capture.captureBase64() ?: run {
+            log("스크린샷 캡처 실패")
+            return false
+        }
+        val challengeId = try {
+            challengeClient.submitChallenge(
+                CaptchaChallengeRequest(
+                    deviceName = "",
+                    leaseId = leaseId,
+                    accountAlias = accountAlias,
+                    screenshotBase64 = screenshot,
+                    signalType = signals.first { it == ProtectionSignal.CAPTCHA_OR_SECURITY_PAGE }.name,
+                    pageUrl = browserSession.currentUrl(),
+                ),
+            )
+        } catch (e: Exception) {
+            log("챌린지 제출 실패: ${e.message}")
+            return false
+        }
+        log("챌린지 제출 완료: $challengeId — 관리자 응답 대기 중 (최대 ${captchaChallengeTimeoutMs / 1000}초)")
+
+        val deadline = System.currentTimeMillis() + captchaChallengeTimeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            delay(10_000)
+            val poll = try {
+                challengeClient.pollAnswer(challengeId)
+            } catch (e: Exception) {
+                log("폴링 실패: ${e.message}")
+                continue
+            }
+            when (poll?.status) {
+                "answered" -> {
+                    val answer = poll.answer ?: run {
+                        log("응답값 비어있음")
+                        return false
+                    }
+                    log("관리자 응답 수신: $answer — 캡챠 입력 중")
+                    val submitted = browserSession.fillCaptchaAndSubmit(answer)
+                    runCatching { challengeClient.completeChallenge(challengeId, submitted) }
+                    if (submitted) {
+                        log("캡챠 제출 완료: 전략 계속")
+                        delay(3_000)
+                        return true
+                    } else {
+                        log("캡챠 입력 실패")
+                        return false
+                    }
+                }
+                "expired" -> {
+                    log("챌린지 만료됨")
+                    return false
+                }
+                else -> {
+                    val remaining = (deadline - System.currentTimeMillis()) / 1000
+                    log("관리자 응답 대기 중... 남은 시간: ${remaining}초")
+                }
+            }
+        }
+        log("관리자 응답 시간 초과")
+        runCatching { challengeClient.completeChallenge(challengeId, false) }
+        return false
     }
 }

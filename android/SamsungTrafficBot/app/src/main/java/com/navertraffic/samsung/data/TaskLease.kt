@@ -11,6 +11,12 @@ data class StrategyTaskLease(
     val strategyName: String get() = if (taskG != null) "G" else "A"
 }
 
+class StrategyTaskLeaseBlockedException(
+    val reason: String,
+    val groupState: String,
+    message: String,
+) : RuntimeException(message)
+
 enum class StrategyTaskResult {
     SUCCESS,
     FAILED,

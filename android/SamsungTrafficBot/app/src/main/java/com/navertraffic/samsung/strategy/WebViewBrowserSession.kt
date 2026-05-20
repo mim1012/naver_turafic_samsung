@@ -48,4 +48,8 @@ class WebViewBrowserSession(
     override suspend fun scrollBy(dy: Int) {
         webViewManager.scrollByJs(dy)
     }
+
+    override suspend fun fillCaptchaAndSubmit(answer: String): Boolean {
+        return webViewManager.fillCaptchaAndSubmit(answer)
+    }
 }

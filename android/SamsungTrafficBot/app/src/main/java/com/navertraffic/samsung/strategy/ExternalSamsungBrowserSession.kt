@@ -68,4 +68,12 @@ class ExternalSamsungBrowserSession(
         if (dy > 0) BrowserAccessibilityService.swipeDetail(1_500)
         // 위로 스크롤(dy < 0)은 Accessibility 모드에서 미지원 — 생략
     }
+
+    override suspend fun fillCaptchaAndSubmit(answer: String): Boolean {
+        if (!BrowserAccessibilityService.isReady()) {
+            log("접근성 서비스 비활성: 캡챠 입력 불가")
+            return false
+        }
+        return BrowserAccessibilityService.fillCaptcha(answer)
+    }
 }

@@ -435,6 +435,56 @@ test("maps existing supabase traffic queue into strategy A lease", async () => {
   assert.equal(upstream.requests.some((item) => item.method === "PATCH" && item.url.startsWith("/sellermate_slot_naver")), true);
 });
 
+test("maps supabase traffic queue into strategy G without strategy query filter", async () => {
+  const upstream = await startSupabaseRest({
+    trafficRows: [
+      {
+        id: 89,
+        slot_id: 45,
+        keyword: "나이키 운동화",
+        keyword_name: "나이키 에어맥스 운동화 스니커즈",
+        link_url: "https://smartstore.naver.com/sunsaem/products/123456789",
+      },
+    ],
+    slotRows: [
+      {
+        id: 45,
+        mid: "123456789",
+        keyword_name: "나이키 에어맥스 운동화 스니커즈",
+        success_count: 0,
+        fail_count: 0,
+      },
+    ],
+  });
+  const state = createState({
+    supabaseRestUrl: upstream.baseUrl,
+    supabaseAnonKey: "test-key",
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/tasks/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "G",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.taskLeaseId, "sb_89_45");
+  assert.equal(lease.keyword, "나이키 운동화");
+  assert.equal(lease.keywordName, "나이키 에어맥스 운동화 스니커즈");
+  assert.equal(lease.secondKeyword, null);
+  assert.equal(lease.mid, "123456789");
+  assert.equal(
+    upstream.requests.some(
+      (item) =>
+        item.method === "GET" &&
+        item.url.startsWith("/sellermate_traffic_navershopping") &&
+        item.url.includes("strategy="),
+    ),
+    false,
+  );
+});
+
 async function start(state) {
   const server = createServer(state);
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));

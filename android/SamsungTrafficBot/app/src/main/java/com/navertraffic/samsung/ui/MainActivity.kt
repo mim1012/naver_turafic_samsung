@@ -36,6 +36,7 @@ import com.navertraffic.samsung.data.NoopCookieStorageClient
 import com.navertraffic.samsung.data.NoopStrategyTaskLeaseClient
 import com.navertraffic.samsung.data.SupabaseApiClient
 import com.navertraffic.samsung.data.ProtectionSignal
+import com.navertraffic.samsung.data.StrategyTaskLeaseBlockedException
 import com.navertraffic.samsung.data.StrategyTaskLeaseClient
 import com.navertraffic.samsung.data.StrategyTaskReport
 import com.navertraffic.samsung.data.StrategyTaskResult
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
     private val logLines = ArrayDeque<String>()
     private val validatedCookieSessions = mutableSetOf<String>()
     private val protectionDetector = ProtectionDetector()
+    private val screenshotCapture = com.navertraffic.samsung.strategy.RootedScreenshotCapture()
     private var runWakeLock: PowerManager.WakeLock? = null
     @Volatile
     private var botRunActive = false
@@ -359,11 +361,25 @@ class MainActivity : AppCompatActivity() {
                 apiKey = resolveApiKey(config).takeIf { it.isNotBlank() },
                 log = ::appendLog,
             )
+            var taskLeaseError: Throwable? = null
             val taskLease = runCatching {
                 serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "A", APP_VERSION)
-            }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
-            val task = taskLease?.task ?: fallbackTask
-            if (taskLease == null) appendLog("상품 task 없음: 하드코딩 smoke 상품 사용")
+            }.onFailure {
+                taskLeaseError = it
+                if (it is StrategyTaskLeaseBlockedException) {
+                    appendLog("그룹 상태 ${it.groupState}: 작업 lease 차단 (${it.reason})")
+                } else {
+                    appendLog("상품 task lease 실패: ${it.message}")
+                }
+            }.getOrNull()
+            val task = taskLease?.task ?: fallbackTask.takeIf { dryRun }
+            if (task == null) {
+                val reason = if (taskLeaseError == null) "트래픽 큐 비어있음" else "트래픽 큐 조회 실패"
+                appendLog("$reason — 운영 모드에서는 로컬 smoke 상품을 사용하지 않음")
+                exitRunningMode()
+                return@launch
+            }
+            if (taskLease == null) appendLog("DRY_RUN task 사용")
             else appendLog("상품 task lease 획득: ${task.productTitle ?: task.linkUrl}")
 
             val bossController = if (identity.isBoss) BossController(
@@ -520,14 +536,20 @@ class MainActivity : AppCompatActivity() {
             productTitle = intent.getStringExtra(EXTRA_PRODUCT_TITLE),
         )
 
+        val serverClient = buildServerClient()
         val strategyImpl = if (dryRun) {
             appendLog("DRY_RUN 모드: URL 흐름만 검증")
             SamsungBrowserStrategyG(DryRunBrowserSession(::appendLog))
         } else {
-            SamsungBrowserStrategyG(webViewManager)
+            SamsungBrowserStrategyG(
+                browserSession = WebViewBrowserSession(webViewManager),
+                webViewManager = webViewManager,
+                deviceName = deviceName,
+                captchaChallengeClient = serverClient.challengeClient,
+                screenshotCapture = screenshotCapture,
+            )
         }
         val botStrategy = BotStrategy.G(strategyImpl)
-        val serverClient = buildServerClient()
         logServerMode(serverClient)
         enterRunningMode("전략 G 실행 중")
 
@@ -596,9 +618,31 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
+                    var taskLeaseError: Throwable? = null
                     val taskLease = runCatching {
                         serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
-                    }.onFailure { appendLog("상품 task lease 실패: ${it.message}") }.getOrNull()
+                    }.onFailure {
+                        taskLeaseError = it
+                        if (it is StrategyTaskLeaseBlockedException) {
+                            appendLog("그룹 상태 ${it.groupState}: 작업 lease 차단 (${it.reason})")
+                        } else {
+                            appendLog("상품 task lease 실패: ${it.message}")
+                        }
+                    }.getOrNull()
+                    val blockedLease = taskLeaseError as? StrategyTaskLeaseBlockedException
+                    if (blockedLease != null) {
+                        reportRuntimeState(
+                            DeviceRuntimeState.PAUSED,
+                            "group_state_blocked:${blockedLease.groupState}",
+                        )
+                        kotlinx.coroutines.delay(30_000)
+                        continue
+                    }
+                    if (taskLeaseError != null) {
+                        reportRuntimeState(DeviceRuntimeState.ERROR, "task_lease_failed")
+                        kotlinx.coroutines.delay(30_000)
+                        continue
+                    }
                     if (taskLease != null && taskLease.taskG == null) {
                         appendLog("G전략 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
                         runCatching {
@@ -614,7 +658,7 @@ class MainActivity : AppCompatActivity() {
                         taskIndex++
                         continue
                     }
-                    val task = taskLease?.taskG ?: fallbackTask.takeIf { it.mid.isNotBlank() }
+                    val task = taskLease?.taskG ?: fallbackTask.takeIf { dryRun && it.mid.isNotBlank() }
 
                     if (task == null) {
                         appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
@@ -728,6 +772,22 @@ class MainActivity : AppCompatActivity() {
             password = credential.password,
         )
         if (!loginOk) {
+            val challengeClient = serverClient.challengeClient
+            if (challengeClient != null) {
+                appendLog("로그인 차단: 관리 페이지 챌린지 제출 중...")
+                val solved = tryLoginChallenge(challengeClient, credential, identity)
+                if (solved) {
+                    webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+                    validatedCookieSessions.add(sessionKey)
+                    saveCurrentCookiesToServer(
+                        serverClient = serverClient.cookieClient,
+                        deviceName = deviceName,
+                        accountAlias = accountAlias,
+                        successLog = "로그인 챌린지 해결 후 쿠키 저장 완료",
+                    )
+                    return true
+                }
+            }
             reportLoginBlocked(
                 serverClient = serverClient,
                 credential = credential,
@@ -749,6 +809,63 @@ class MainActivity : AppCompatActivity() {
             successLog = "네이버 쿠키 서버 저장 완료",
         )
         return true
+    }
+
+    private suspend fun tryLoginChallenge(
+        challengeClient: com.navertraffic.samsung.data.CaptchaChallengeClient,
+        credential: NaverLoginCredential,
+        identity: DeviceIdentity,
+    ): Boolean {
+        val screenshot = screenshotCapture.captureBase64() ?: run {
+            appendLog("로그인 챌린지 스크린샷 캡처 실패")
+            return false
+        }
+        val signalType = if (webViewManager.hasLoginCaptchaVisible()) "LOGIN_CAPTCHA" else "LOGIN_BLOCKED"
+        val challengeId = try {
+            challengeClient.submitChallenge(
+                com.navertraffic.samsung.data.CaptchaChallengeRequest(
+                    deviceName = identity.rawName,
+                    leaseId = credential.leaseId,
+                    accountAlias = credential.accountAlias ?: "",
+                    screenshotBase64 = screenshot,
+                    signalType = signalType,
+                    pageUrl = webViewManager.currentUrl(),
+                ),
+            )
+        } catch (e: Exception) {
+            appendLog("로그인 챌린지 제출 실패: ${e.message}")
+            return false
+        }
+        appendLog("로그인 챌린지 제출: $challengeId — 관리자 응답 대기 중 (최대 5분)")
+
+        val deadline = System.currentTimeMillis() + 5 * 60 * 1_000
+        while (System.currentTimeMillis() < deadline) {
+            kotlinx.coroutines.delay(10_000)
+            val poll = runCatching { challengeClient.pollAnswer(challengeId) }.getOrNull() ?: continue
+            when (poll.status) {
+                "answered" -> {
+                    val answer = poll.answer ?: run {
+                        appendLog("관리자 응답값 비어있음")
+                        runCatching { challengeClient.completeChallenge(challengeId, false) }
+                        return false
+                    }
+                    appendLog("관리자 응답 수신: $answer")
+                    val filled = webViewManager.fillLoginChallengeAndSubmit(answer)
+                    val loggedIn = filled && webViewManager.waitForLoginComplete()
+                    runCatching { challengeClient.completeChallenge(challengeId, loggedIn) }
+                    if (loggedIn) appendLog("로그인 챌린지 해결 완료") else appendLog("챌린지 응답 후 로그인 실패")
+                    return loggedIn
+                }
+                "expired" -> {
+                    appendLog("로그인 챌린지 만료")
+                    return false
+                }
+                else -> appendLog("관리자 응답 대기 중... (남은 ${(deadline - System.currentTimeMillis()) / 1000}초)")
+            }
+        }
+        appendLog("로그인 챌린지 응답 시간 초과")
+        runCatching { challengeClient.completeChallenge(challengeId, false) }
+        return false
     }
 
     private suspend fun ensureNaverLoginOrBackoff(
@@ -924,7 +1041,7 @@ class MainActivity : AppCompatActivity() {
         val apiKey = resolveApiKey(config)
         if (serverUrl.isNotBlank()) {
             val client = AndroidServerApiClient(serverUrl, apiKey.takeIf { it.isNotBlank() })
-            return ServerClients(client, client, client, client)
+            return ServerClients(client, client, client, client, client)
         }
 
         val supabaseUrl = BuildConfig.SUPABASE_URL
@@ -989,6 +1106,7 @@ class MainActivity : AppCompatActivity() {
         val groupControlClient: GroupControlClient,
         val taskLeaseClient: StrategyTaskLeaseClient,
         val cookieClient: CookieStorageClient,
+        val challengeClient: com.navertraffic.samsung.data.CaptchaChallengeClient? = null,
     )
 
     private data class NaverLoginCredential(

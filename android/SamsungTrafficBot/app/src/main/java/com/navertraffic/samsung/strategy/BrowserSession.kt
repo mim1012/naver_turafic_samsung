@@ -24,4 +24,6 @@ interface BrowserSession {
     suspend fun tapSearchSubmitAndWait(timeoutMs: Long = 30_000): Boolean = false
 
     suspend fun scrollBy(dy: Int) = Unit
+
+    suspend fun fillCaptchaAndSubmit(answer: String): Boolean = false
 }

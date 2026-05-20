@@ -2,6 +2,7 @@ package com.navertraffic.samsung.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class AndroidServerApiClientJsonTest {
@@ -29,6 +30,26 @@ class AndroidServerApiClientJsonTest {
     @Test
     fun parsesEmptyLeaseResponseAsNull() {
         assertNull(AndroidServerApiJson.parseAccountLease("{}"))
+    }
+
+    @Test
+    fun throwsBlockedExceptionForGroupBlockedTaskLease() {
+        val json = """
+            {
+              "blocked": true,
+              "reason": "group_state_blocked",
+              "groupState": "ROTATION_FAILED",
+              "message": "group z1 is ROTATION_FAILED; task lease blocked"
+            }
+        """.trimIndent()
+
+        val error = assertThrows(StrategyTaskLeaseBlockedException::class.java) {
+            AndroidServerApiJson.throwIfTaskLeaseBlocked(json)
+        }
+
+        assertEquals("group_state_blocked", error.reason)
+        assertEquals("ROTATION_FAILED", error.groupState)
+        assertEquals("group z1 is ROTATION_FAILED; task lease blocked", error.message)
     }
 
     @Test

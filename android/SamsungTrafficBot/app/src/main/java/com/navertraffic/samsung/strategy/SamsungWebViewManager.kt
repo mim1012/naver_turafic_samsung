@@ -310,6 +310,43 @@ class SamsungWebViewManager(
         )
     }
 
+    suspend fun hasLoginCaptchaVisible(): Boolean = hasLoginChallenge()
+
+    suspend fun fillLoginChallengeAndSubmit(answer: String): Boolean {
+        // 캡챠 입력 필드 우선 시도
+        val captchaSelector = "#captcha, #chptcha, input[name=\"captcha\"], input[name=\"chptcha\"]"
+        if (typeIntoSelector(captchaSelector, answer)) {
+            return tapLoginButton()
+        }
+        // OTP/인증번호 필드 시도
+        val otpSelector = "input[type=\"number\"][maxlength], input[name*=\"otp\"], input[name*=\"code\"], input[placeholder*=\"인증\"]"
+        if (typeIntoSelector(otpSelector, answer)) {
+            val submitted = evaluateText(
+                """
+                (function() {
+                  var btn = document.querySelector('button[type="submit"],input[type="submit"],button.btn_confirm,button');
+                  if (btn) { btn.click(); return "true"; }
+                  return "false";
+                })()
+                """.trimIndent(),
+            ) == "true"
+            return submitted
+        }
+        return false
+    }
+
+    suspend fun waitForLoginComplete(timeoutMs: Long = 30_000): Boolean {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            delay(1_000)
+            if (currentUrl()?.contains("nidlogin.login") != true) {
+                persistNaverSessionCookies()
+                return true
+            }
+        }
+        return false
+    }
+
     private suspend fun hasLoginChallenge(): Boolean {
         val js = """
             (function() {
@@ -553,6 +590,25 @@ class SamsungWebViewManager(
             webView.evaluateJavascript("window.scrollBy(0,$dy)", null)
         }
         delay(200)
+    }
+
+    suspend fun fillCaptchaAndSubmit(answer: String): Boolean {
+        val escaped = answer.replace("\\", "\\\\").replace("'", "\\'")
+        val js = """
+            (function() {
+              var inp = document.querySelector('input[type="text"],input[type="number"],input:not([type])');
+              if (!inp) return false;
+              var setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;
+              setter.call(inp, '$escaped');
+              inp.dispatchEvent(new Event('input',{bubbles:true}));
+              inp.dispatchEvent(new Event('change',{bubbles:true}));
+              var btn = document.querySelector('button[type="submit"],input[type="submit"],button.btn_confirm,button');
+              if (btn) btn.click();
+              return true;
+            })()
+        """.trimIndent()
+        val result = evaluateText(js)
+        return result.trim() == "true"
     }
 
     fun setUserAgent(ua: String) {

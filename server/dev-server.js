@@ -20,7 +20,7 @@ function createState(options = {}) {
     accountsFile: options.accountsFile || path.join(__dirname, "accounts.local.json"),
     accountCryptoKey: normalizeAccountCryptoKey(options.accountCryptoKey || process.env.ACCOUNT_ENCRYPTION_KEY || ""),
     accounts: options.accounts || loadAccounts(options.accountsFile),
-    products: options.products || loadProducts(),
+    products: options.products || [],
     appReleases: options.appReleases || [],
     zeroTrafficApiUrl: options.zeroTrafficApiUrl || process.env.ZERO_TRAFFIC_API_URL || "",
     supabaseRestUrl: options.supabaseRestUrl || process.env.SUPABASE_REST_URL || "",
@@ -35,6 +35,7 @@ function createState(options = {}) {
     groups: new Map(),
     cookieStore: new Map(),
     accountReports: [],
+    challenges: new Map(),
     policy: { ...DEFAULT_POLICY, ...(options.policy || {}) },
   };
 }
@@ -66,6 +67,13 @@ function createServer(state = createState()) {
         if (req.method === "GET" && pathname === "/admin/api/snapshot") {
           return sendJson(res, 200, adminSnapshot(state), corsHeaders);
         }
+        if (req.method === "GET" && pathname === "/admin/api/challenges") {
+          return sendJson(res, 200, adminChallengeList(state), corsHeaders);
+        }
+        if (req.method === "GET" && /^\/admin\/api\/challenges\/[^/]+\/screenshot$/.test(pathname)) {
+          const challengeId = pathname.split("/")[4];
+          return sendJson(res, 200, adminChallengeScreenshot(state, challengeId), corsHeaders);
+        }
         if (req.method === "POST") {
           const body = await readJson(req);
           switch (pathname) {
@@ -73,8 +81,13 @@ function createServer(state = createState()) {
               return sendJson(res, 200, addAdminAccount(state, body), corsHeaders);
             case "/admin/api/groups/state":
               return sendJson(res, 200, setAdminGroupState(state, body), corsHeaders);
-            default:
+            default: {
+              const answerMatch = pathname.match(/^\/admin\/api\/challenges\/([^/]+)\/answer$/);
+              if (answerMatch) {
+                return sendJson(res, 200, answerChallenge(state, answerMatch[1], body), corsHeaders);
+              }
               return sendJson(res, 404, { error: "not_found" }, corsHeaders);
+            }
           }
         }
         return sendJson(res, 405, { error: "method_not_allowed" }, corsHeaders);
@@ -112,6 +125,12 @@ function createServer(state = createState()) {
           return sendJson(res, 200, await saveCookies(state, body));
         case "/android/cookies/load":
           return sendJson(res, 200, await loadCookies(state, body));
+        case "/android/challenges/submit":
+          return sendJson(res, 200, submitChallenge(state, body));
+        case "/android/challenges/poll":
+          return sendJson(res, 200, pollChallenge(state, body));
+        case "/android/challenges/complete":
+          return sendJson(res, 200, completeChallenge(state, body));
         default:
           return sendJson(res, 404, { error: "not_found" });
       }
@@ -639,15 +658,6 @@ function leaseResponse(state, account, lease) {
   };
 }
 
-function loadProducts() {
-  const localPath = process.env.PRODUCTS_FILE
-    ? path.resolve(process.env.PRODUCTS_FILE)
-    : path.join(__dirname, "products.local.json");
-  if (!fs.existsSync(localPath)) return [];
-  const parsed = JSON.parse(fs.readFileSync(localPath, "utf8"));
-  return Array.isArray(parsed.products) ? parsed.products : [];
-}
-
 function loadAccounts(accountsFile) {
   const localPath = accountsFile || path.join(__dirname, "accounts.local.json");
   if (!fs.existsSync(localPath)) return [];
@@ -690,6 +700,95 @@ function safeEqual(expected, actual) {
   const actualBuffer = Buffer.from(String(actual));
   if (expectedBuffer.length !== actualBuffer.length) return false;
   return crypto.timingSafeEqual(expectedBuffer, actualBuffer);
+}
+
+const CHALLENGE_EXPIRE_MS = 10 * 60 * 1000; // 10분
+
+function submitChallenge(state, body) {
+  const id = `chal_${crypto.randomUUID()}`;
+  const now = Date.now();
+  state.challenges.set(id, {
+    id,
+    deviceName: String(body.deviceName || ""),
+    leaseId: body.leaseId || null,
+    accountAlias: String(body.accountAlias || ""),
+    screenshotBase64: String(body.screenshotBase64 || ""),
+    signalType: String(body.signalType || "CAPTCHA_OR_SECURITY_PAGE"),
+    pageUrl: body.pageUrl || null,
+    status: "pending",
+    answer: null,
+    createdAt: new Date(now).toISOString(),
+    answeredAt: null,
+    completedAt: null,
+    success: null,
+  });
+  // 오래된 완료 챌린지 정리 (최대 200개 유지)
+  if (state.challenges.size > 200) {
+    const sorted = Array.from(state.challenges.entries())
+      .sort((a, b) => a[1].createdAt.localeCompare(b[1].createdAt));
+    sorted.slice(0, state.challenges.size - 200).forEach(([key]) => state.challenges.delete(key));
+  }
+  return { challengeId: id };
+}
+
+function pollChallenge(state, body) {
+  const id = String(body.challengeId || "");
+  const challenge = state.challenges.get(id);
+  if (!challenge) return { status: "expired", answer: null };
+  // 만료 처리
+  if (challenge.status === "pending" && Date.now() - new Date(challenge.createdAt).getTime() > CHALLENGE_EXPIRE_MS) {
+    challenge.status = "expired";
+  }
+  return { status: challenge.status, answer: challenge.answer };
+}
+
+function completeChallenge(state, body) {
+  const id = String(body.challengeId || "");
+  const challenge = state.challenges.get(id);
+  if (challenge && challenge.status !== "completed") {
+    challenge.status = "completed";
+    challenge.success = Boolean(body.success);
+    challenge.completedAt = new Date().toISOString();
+  }
+  return { ok: true };
+}
+
+function answerChallenge(state, id, body) {
+  const challenge = state.challenges.get(id);
+  if (!challenge) return { ok: false, error: "not_found" };
+  if (challenge.status !== "pending") return { ok: false, error: "already_answered" };
+  challenge.status = "answered";
+  challenge.answer = String(body.answer || "");
+  challenge.answeredAt = new Date().toISOString();
+  return { ok: true };
+}
+
+function adminChallengeList(state) {
+  const now = Date.now();
+  return Array.from(state.challenges.values())
+    .filter((c) => c.status !== "completed" || now - new Date(c.completedAt || c.createdAt).getTime() < 60_000)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 50)
+    .map((c) => ({
+      id: c.id,
+      deviceName: c.deviceName,
+      accountAlias: c.accountAlias,
+      signalType: c.signalType,
+      pageUrl: c.pageUrl,
+      status: c.status,
+      answer: c.answer,
+      createdAt: c.createdAt,
+      answeredAt: c.answeredAt,
+      completedAt: c.completedAt,
+      success: c.success,
+      waitingSec: Math.floor((now - new Date(c.createdAt).getTime()) / 1000),
+    }));
+}
+
+function adminChallengeScreenshot(state, id) {
+  const challenge = state.challenges.get(id);
+  if (!challenge) return { error: "not_found" };
+  return { screenshotBase64: challenge.screenshotBase64 };
 }
 
 function adminSnapshot(state) {
@@ -766,6 +865,7 @@ function adminSnapshot(state) {
       protectedAccounts: state.accounts.filter((account) => ["protected", "manual_check_required"].includes(account.status)).length,
       products: state.products.length,
       activeTaskLeases: Array.from(state.taskLeases.values()).filter((lease) => lease.status === "active").length,
+      pendingChallenges: Array.from(state.challenges.values()).filter((c) => c.status === "pending").length,
     },
     groups,
     devices,

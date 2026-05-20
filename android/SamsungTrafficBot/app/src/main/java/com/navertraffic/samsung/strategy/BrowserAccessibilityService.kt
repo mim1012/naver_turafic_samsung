@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import kotlinx.coroutines.CompletableDeferred
@@ -111,6 +112,61 @@ class BrowserAccessibilityService : AccessibilityService() {
         return dispatch(Path().apply { moveTo(x, y) }, 0, 90)
     }
 
+    private fun findFirstEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
+        if (root == null) return null
+        if (root.isEditable) return AccessibilityNodeInfo.obtain(root)
+        for (i in 0 until root.childCount) {
+            val child = root.getChild(i) ?: continue
+            val found = findFirstEditableNode(child)
+            child.recycle()
+            if (found != null) return found
+        }
+        return null
+    }
+
+    private suspend fun fillTextInFirstInput(text: String): Boolean {
+        val node = withContext(Dispatchers.Main) {
+            findFirstEditableNode(rootInActiveWindow)
+        } ?: return false
+        return withContext(Dispatchers.Main) {
+            val bundle = Bundle()
+            bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
+            val ok = node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle)
+            node.recycle()
+            ok
+        }
+    }
+
+    private suspend fun clickSubmitButton(): Boolean {
+        val keywords = listOf("확인", "제출", "입력", "다음", "완료", "submit", "confirm", "인증")
+        return withContext(Dispatchers.Main) {
+            val root = rootInActiveWindow ?: return@withContext false
+            var found: AccessibilityNodeInfo? = null
+
+            fun visit(node: AccessibilityNodeInfo) {
+                if (found != null) return
+                val text = listOfNotNull(node.text, node.contentDescription).joinToString(" ")
+                if (keywords.any { text.contains(it, ignoreCase = true) } &&
+                    (node.isClickable || node.className?.contains("Button") == true)
+                ) {
+                    found = AccessibilityNodeInfo.obtain(node)
+                    return
+                }
+                for (i in 0 until node.childCount) {
+                    val child = node.getChild(i) ?: continue
+                    visit(child)
+                    child.recycle()
+                }
+            }
+
+            visit(root)
+            val target = found ?: return@withContext false
+            val clicked = clickNode(target)
+            target.recycle()
+            clicked
+        }
+    }
+
     private suspend fun swipeUp(durationMs: Long): Boolean {
         val metrics = resources.displayMetrics
         val x = metrics.widthPixels / 2f
@@ -164,6 +220,11 @@ class BrowserAccessibilityService : AccessibilityService() {
             return withContext(Dispatchers.Main) {
                 instance?.visibleTextSnapshot().orEmpty()
             }
+        }
+
+        suspend fun fillCaptcha(answer: String): Boolean {
+            val inst = instance ?: return false
+            return inst.fillTextInFirstInput(answer) && inst.clickSubmitButton()
         }
     }
 }

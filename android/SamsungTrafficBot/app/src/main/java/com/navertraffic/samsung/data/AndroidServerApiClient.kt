@@ -12,7 +12,7 @@ class AndroidServerApiClient(
     private val baseUrl: String,
     private val apiKey: String? = null,
     private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport(),
-) : AccountLeaseClient, GroupControlClient, StrategyTaskLeaseClient, CookieStorageClient {
+) : AccountLeaseClient, GroupControlClient, StrategyTaskLeaseClient, CookieStorageClient, CaptchaChallengeClient {
     override suspend fun leaseAccount(
         deviceName: String,
         role: DeviceIdentity.Role,
@@ -94,11 +94,42 @@ class AndroidServerApiClient(
             "appVersion" to appVersion,
         )
 
-        return AndroidServerApiJson.parseStrategyTaskLease(post("/android/tasks/lease", body))
+        val raw = post("/android/tasks/lease", body)
+        AndroidServerApiJson.throwIfTaskLeaseBlocked(raw)
+        return AndroidServerApiJson.parseStrategyTaskLease(raw)
     }
 
     override suspend fun reportTask(report: StrategyTaskReport) {
         post("/android/tasks/report", AndroidServerApiJson.strategyTaskReportBody(report))
+    }
+
+    override suspend fun submitChallenge(request: CaptchaChallengeRequest): String {
+        val body = jsonBody(
+            "deviceName" to request.deviceName,
+            "leaseId" to request.leaseId,
+            "accountAlias" to request.accountAlias,
+            "screenshotBase64" to request.screenshotBase64,
+            "signalType" to request.signalType,
+            "pageUrl" to request.pageUrl,
+        )
+        val raw = post("/android/challenges/submit", body)
+        return readString(raw, "challengeId").orEmpty()
+    }
+
+    override suspend fun pollAnswer(challengeId: String): CaptchaChallengeAnswer? {
+        val body = jsonBody("challengeId" to challengeId)
+        val raw = post("/android/challenges/poll", body)
+        val status = readString(raw, "status") ?: return null
+        return CaptchaChallengeAnswer(
+            challengeId = challengeId,
+            status = status,
+            answer = readString(raw, "answer"),
+        )
+    }
+
+    override suspend fun completeChallenge(challengeId: String, success: Boolean) {
+        val body = jsonBody("challengeId" to challengeId, "success" to success)
+        post("/android/challenges/complete", body)
     }
 
     override suspend fun saveCookies(deviceName: String, accountAlias: String?, cookies: String) {
@@ -201,6 +232,15 @@ object AndroidServerApiJson {
                 ),
             )
         }
+    }
+
+    fun throwIfTaskLeaseBlocked(raw: String) {
+        if (!readBoolean(raw, "blocked", false)) return
+        val reason = readString(raw, "reason").orEmpty().ifBlank { "task_lease_blocked" }
+        val groupState = readString(raw, "groupState").orEmpty().ifBlank { "UNKNOWN" }
+        val message = readString(raw, "message")
+            ?: "task lease blocked: reason=$reason groupState=$groupState"
+        throw StrategyTaskLeaseBlockedException(reason, groupState, message)
     }
 
     fun deviceHeartbeatBody(heartbeat: DeviceHeartbeat): JsonBody {
