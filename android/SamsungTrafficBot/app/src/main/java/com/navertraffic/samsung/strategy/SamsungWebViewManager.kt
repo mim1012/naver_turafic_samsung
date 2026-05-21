@@ -248,6 +248,55 @@ class SamsungWebViewManager(
 
     fun currentUrl(): String? = webView.url
 
+    suspend fun productDetailStatus(mid: String): ProductDetailStatus {
+        val js = """
+            (function(mid) {
+              var doc = document;
+              var body = doc.body ? doc.body.innerText : "";
+              var title = doc.title || "";
+              var url = location.href || "";
+              var combined = (title + "\n" + body).toLowerCase();
+              var rateLimited = combined.indexOf("429") >= 0 ||
+                combined.indexOf("too many requests") >= 0 ||
+                combined.indexOf("rate limit") >= 0 ||
+                body.indexOf("요청이 너무 많") >= 0 ||
+                body.indexOf("접속이 지연") >= 0;
+              if (rateLimited) return "RATE_LIMITED";
+
+              var ogUrl = (doc.querySelector('meta[property="og:url"]') || {}).content || "";
+              var canonical = (doc.querySelector('link[rel="canonical"]') || {}).href || "";
+              var productUrl = /\/products\/\d+/.test(url) ||
+                /\/products\/\d+/.test(ogUrl) ||
+                /\/products\/\d+/.test(canonical) ||
+                url.indexOf("nv_mid=" + mid) >= 0;
+              var urlMatchesMid = !mid || url.indexOf(mid) >= 0 || ogUrl.indexOf(mid) >= 0 || canonical.indexOf(mid) >= 0;
+              var productMeta = !!doc.querySelector('meta[property="og:type"][content*="product"], meta[property="product:retailer_item_id"]');
+              var productJson = Array.prototype.slice.call(doc.querySelectorAll('script[type="application/ld+json"]'))
+                .some(function(script) {
+                  var text = script.textContent || "";
+                  return text.indexOf("Product") >= 0 && (!mid || text.indexOf(mid) >= 0);
+                });
+              var actionText = Array.prototype.slice.call(doc.querySelectorAll("button,a,[role='button']"))
+                .map(function(el) { return (el.innerText || el.textContent || "").trim(); })
+                .join("\n");
+              var actionScore = ["구매하기", "바로구매", "장바구니", "찜하기", "톡톡"].reduce(function(count, word) {
+                return count + (actionText.indexOf(word) >= 0 ? 1 : 0);
+              }, 0);
+              var hasReview = body.indexOf("리뷰") >= 0 || body.indexOf("상품정보") >= 0 || body.indexOf("배송") >= 0;
+              var hasDetailDom = productMeta || productJson || (productUrl && actionScore >= 1) || (actionScore >= 2 && hasReview);
+              if (hasDetailDom && (urlMatchesMid || productUrl || productJson)) return "DETAIL";
+              if (body.trim().length > 0) return "NOT_DETAIL";
+              return "UNKNOWN";
+            })(${quoteJs(mid)});
+        """.trimIndent()
+        return when (evaluateText(js)) {
+            "DETAIL" -> ProductDetailStatus.DETAIL
+            "NOT_DETAIL" -> ProductDetailStatus.NOT_DETAIL
+            "RATE_LIMITED" -> ProductDetailStatus.RATE_LIMITED
+            else -> ProductDetailStatus.UNKNOWN
+        }
+    }
+
     suspend fun isNaverLoggedIn(): Boolean {
         loadAndWait("https://m.naver.com/", 30_000)
         delay(1_200)
@@ -687,7 +736,7 @@ class SamsungWebViewManager(
                 })(${quoteJs(sel)}, ${quoteJs(keyword)});
                 """.trimIndent()
             )
-            val len = result?.toIntOrNull() ?: -1
+            val len = result.toIntOrNull() ?: -1
             if (len == keyword.length) {
                 log("검색창 키워드 입력 완료: $keyword")
                 return true

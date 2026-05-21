@@ -1,5 +1,12 @@
 package com.navertraffic.samsung.strategy
 
+enum class ProductDetailStatus {
+    DETAIL,
+    NOT_DETAIL,
+    RATE_LIMITED,
+    UNKNOWN,
+}
+
 interface BrowserSession {
     val supportsPageInspection: Boolean
 
@@ -10,6 +17,8 @@ interface BrowserSession {
     fun currentUrl(): String?
 
     suspend fun clickMidLink(mid: String, titleHint: String? = null): Boolean = false
+
+    suspend fun productDetailStatus(mid: String): ProductDetailStatus = ProductDetailStatus.UNKNOWN
 
     suspend fun swipeDetail(durationMs: Long = 2_000) = Unit
 

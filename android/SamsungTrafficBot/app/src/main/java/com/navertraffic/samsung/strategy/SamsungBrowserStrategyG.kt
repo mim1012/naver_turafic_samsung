@@ -38,13 +38,17 @@ class SamsungBrowserStrategyG(
         webViewManager?.setBrowserMode(isChrome = true)
         log("UA: Chrome 137 모드 적용")
 
-        log("초기 랜딩: $AI_REWARD_LANDING_URL")
-        browserSession.loadAndWait(AI_REWARD_LANDING_URL, 8_000)
-        delay(Random.nextLong(800, 1_500))
-
         log("네이버 홈 진입")
         browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
         delay(Random.nextLong(800, 1_500))
+        detectProtection(log)?.let {
+            webViewManager?.setBrowserMode(isChrome = false)
+            return it
+        }
+        detectRateLimit(log)?.let {
+            webViewManager?.setBrowserMode(isChrome = false)
+            return it
+        }
 
         // 1차 검색 — 검색만, MID 클릭 없음
         // URL 직접 진입: 검색바 submit은 느린 기기에서 타이밍 불안정
@@ -63,6 +67,10 @@ class SamsungBrowserStrategyG(
             webViewManager?.setBrowserMode(isChrome = false)
             return it
         }
+        detectRateLimit(log)?.let {
+            webViewManager?.setBrowserMode(isChrome = false)
+            return it
+        }
 
         // 2차 검색 — keywordName으로 검색 후 MID 탐색
         log("2차 검색: ${task.keywordName}")
@@ -70,6 +78,14 @@ class SamsungBrowserStrategyG(
         delay(Random.nextLong(600, 1_200))
         browserSession.loadAndWait(buildNaverSearchUrl(task.keywordName), 30_000)
         delay(Random.nextLong(2_500, 4_000))
+        detectProtection(log)?.let {
+            webViewManager?.setBrowserMode(isChrome = false)
+            return it
+        }
+        detectRateLimit(log)?.let {
+            webViewManager?.setBrowserMode(isChrome = false)
+            return it
+        }
 
         // 탐색 스크롤하며 MID 탐색
         log("2차 MID 탐색: ${task.mid}")
@@ -108,6 +124,27 @@ class SamsungBrowserStrategyG(
             webViewManager?.setBrowserMode(isChrome = false)
             return it
         }
+        when (val detailStatus = browserSession.productDetailStatus(task.mid)) {
+            ProductDetailStatus.DETAIL -> log("상세페이지 DOM 확인: ${task.mid}")
+            ProductDetailStatus.RATE_LIMITED -> {
+                log("429/요청 제한 감지: 작업 실패")
+                webViewManager?.setBrowserMode(isChrome = false)
+                return StrategyAResult(
+                    success = false,
+                    lastUrl = browserSession.currentUrl(),
+                    message = "rate_limited_429",
+                )
+            }
+            ProductDetailStatus.NOT_DETAIL, ProductDetailStatus.UNKNOWN -> {
+                log("상세페이지 DOM 미확인: $detailStatus")
+                webViewManager?.setBrowserMode(isChrome = false)
+                return StrategyAResult(
+                    success = false,
+                    lastUrl = browserSession.currentUrl(),
+                    message = "detail_dom_not_confirmed:${detailStatus.name.lowercase()}",
+                )
+            }
+        }
 
         // 오실레이션 스크롤: 아래→위→아래
         log("오실레이션 스크롤")
@@ -135,13 +172,28 @@ class SamsungBrowserStrategyG(
         return "https://m.search.naver.com/search.naver?query=$encoded&where=m"
     }
 
+    private suspend fun detectRateLimit(log: (String) -> Unit): StrategyAResult? {
+        if (!browserSession.supportsPageInspection) return null
+        val text = browserSession.visibleText()
+        if (!looksRateLimited(text)) return null
+        log("429/요청 제한 감지: 작업 실패")
+        return StrategyAResult(
+            success = false,
+            lastUrl = browserSession.currentUrl(),
+            message = "rate_limited_429",
+        )
+    }
+
     private suspend fun detectProtection(
         log: (String) -> Unit,
         leaseId: String? = null,
         accountAlias: String = "",
     ): StrategyAResult? {
         if (!browserSession.supportsPageInspection) return null
-        val signals = protectionDetector.detectFromText(browserSession.visibleText())
+        val signals = protectionDetector.detectFromText(browserSession.visibleText()).toMutableList()
+        if (browserSession.currentUrl()?.contains("nidlogin.login", ignoreCase = true) == true) {
+            signals += ProtectionSignal.LOGIN_STILL_REQUIRED
+        }
         if (signals.isEmpty()) return null
         log("보호/재인증 신호 감지: ${signals.joinToString()}")
 
@@ -149,20 +201,28 @@ class SamsungBrowserStrategyG(
             captchaChallengeClient != null &&
             screenshotCapture != null
         ) {
-            val solved = tryCaptchaChallenge(signals, leaseId, accountAlias, log)
+            val solved = tryCaptchaChallenge(leaseId, accountAlias, log)
             if (solved) return null
         }
 
         return StrategyAResult(
             success = false,
-            signals = signals,
+            signals = signals.distinct(),
             lastUrl = browserSession.currentUrl(),
             message = "protection signal detected",
         )
     }
 
+    private fun looksRateLimited(text: String): Boolean {
+        val normalized = text.lowercase()
+        return normalized.contains("429") ||
+            normalized.contains("too many requests") ||
+            normalized.contains("rate limit") ||
+            text.contains("요청이 너무 많") ||
+            text.contains("접속이 지연")
+    }
+
     private suspend fun tryCaptchaChallenge(
-        signals: List<ProtectionSignal>,
         leaseId: String?,
         accountAlias: String,
         log: (String) -> Unit,
@@ -235,6 +295,5 @@ class SamsungBrowserStrategyG(
 
     companion object {
         const val NAVER_HOME_URL = "https://m.naver.com/"
-        const val AI_REWARD_LANDING_URL = "https://snsz.kr"
     }
 }

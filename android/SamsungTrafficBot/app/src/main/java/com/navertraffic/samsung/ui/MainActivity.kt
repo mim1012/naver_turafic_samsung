@@ -2,10 +2,15 @@ package com.navertraffic.samsung.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
@@ -72,11 +77,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webViewManager: SamsungWebViewManager
     private lateinit var webViewContainer: android.view.ViewGroup
 
-    private val logLines = ArrayDeque<String>()
+    private val logLines = ArrayDeque<LogLine>()
     private val validatedCookieSessions = mutableSetOf<String>()
     private val protectionDetector = ProtectionDetector()
     private val screenshotCapture = com.navertraffic.samsung.strategy.RootedScreenshotCapture()
     private var runWakeLock: PowerManager.WakeLock? = null
+    private var logDeviceName: String? = null
+    private var loginFailureStopRequested = false
     @Volatile
     private var botRunActive = false
 
@@ -189,7 +196,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun applyLaunchExtras() {
         val config = ConfigStore(this)
-        intent.getStringExtra(EXTRA_DEVICE_NAME)?.let { etDeviceName.setText(it) }
+        intent.getStringExtra(EXTRA_DEVICE_NAME)?.let {
+            etDeviceName.setText(it)
+            lockLogDeviceName(it)
+        }
         intent.getStringExtra(EXTRA_SERVER_URL)?.takeIf { it.isNotBlank() }?.let {
             etServerUrl.setText(it)
             config.serverUrl = it
@@ -298,6 +308,8 @@ class MainActivity : AppCompatActivity() {
     private fun runStrategyA() {
         val deviceName = etDeviceName.text.toString().trim()
         DeviceIdentity.validateInput(deviceName)?.let { appendLog(it); return }
+        lockLogDeviceName(deviceName)
+        loginFailureStopRequested = false
 
         val identity = DeviceIdentity.parse(deviceName) ?: return
         val config = ConfigStore(this)
@@ -437,8 +449,10 @@ class MainActivity : AppCompatActivity() {
                 val excludedCombos = mutableSetOf<String>()
                 var comboIndex = 0
                 var successCount = 0
+                var stopForLoginFailure = false
 
                 repeat(loopCount) { index ->
+                    if (stopForLoginFailure) return@repeat
                     val available = keywordCombos.filter { it !in excludedCombos }
                     if (available.isEmpty()) {
                         appendLog("모든 2차 검색어 조합 제외됨: 종료")
@@ -452,7 +466,10 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && !externalBrowser) {
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
                                 reportRuntimeState(state, message)
-                            }) return@repeat
+                            }) {
+                            if (loginFailureStopRequested) stopForLoginFailure = true
+                            return@repeat
+                        }
                     }
 
                     appendLog("A전략 반복 ${index + 1}/$loopCount [${available.indexOf(secondKeywordNow) + 1}/${available.size}번 조합]")
@@ -465,7 +482,10 @@ class MainActivity : AppCompatActivity() {
                         webViewManager.rebuildWebView(webViewContainer)
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
                                 reportRuntimeState(state, message)
-                            }) return@repeat
+                            }) {
+                            if (loginFailureStopRequested) stopForLoginFailure = true
+                            return@repeat
+                        }
                     }
 
                     if (result.success) successCount += 1
@@ -490,7 +510,10 @@ class MainActivity : AppCompatActivity() {
                         webViewManager.rebuildWebView(webViewContainer)
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "A", externalSession) { state, message ->
                                 reportRuntimeState(state, message)
-                            }) return@repeat
+                            }) {
+                            if (loginFailureStopRequested) stopForLoginFailure = true
+                            return@repeat
+                        }
                     }
                 }
                 appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
@@ -506,6 +529,8 @@ class MainActivity : AppCompatActivity() {
     private fun runStrategyG() {
         val deviceName = etDeviceName.text.toString().trim()
         DeviceIdentity.validateInput(deviceName)?.let { appendLog(it); return }
+        lockLogDeviceName(deviceName)
+        loginFailureStopRequested = false
 
         val identity = DeviceIdentity.parse(deviceName) ?: return
         val rotateEvery = BuildConfig.ROTATE_EVERY
@@ -614,7 +639,10 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun) {
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
                                 reportRuntimeState(state, message)
-                            }) continue
+                            }) {
+                            if (loginFailureStopRequested) break
+                            continue
+                        }
                     }
 
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
@@ -691,7 +719,10 @@ class MainActivity : AppCompatActivity() {
                         webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
                                 reportRuntimeState(state, message)
-                            }) continue
+                            }) {
+                            if (loginFailureStopRequested) break
+                            continue
+                        }
                     }
 
                     if (result.success) successCount += 1
@@ -706,6 +737,16 @@ class MainActivity : AppCompatActivity() {
                             ),
                         )
                     }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+
+                    if (result.signals.isNotEmpty()) {
+                        val signalText = result.signals.joinToString()
+                        appendLog("보호/재인증 신호로 작업 중지: $signalText")
+                        reportRuntimeState(
+                            DeviceRuntimeState.ERROR,
+                            result.message ?: "protection_signal_detected",
+                        )
+                        break
+                    }
                 }
                 appendLog("기본 전략(G) 반복 완료: ${successCount}/$loopCount 성공")
             } finally {
@@ -742,15 +783,15 @@ class MainActivity : AppCompatActivity() {
             validatedCookieSessions.removeAll { it.startsWith("$deviceName|") }
         }
 
-        val hadCookieSession = webViewManager.hasCookieSession()
-        if (hadCookieSession) {
-            if (sessionKey in validatedCookieSessions || webViewManager.isNaverLoggedIn()) {
-                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-                validatedCookieSessions.add(sessionKey)
-                return true
-            }
-            appendLog("기존 NID 쿠키 세션 로그인 판별 실패: 쿠키 유지 후 서버 쿠키 복원 확인")
-            validatedCookieSessions.remove(sessionKey)
+        if (webViewManager.hasCookieSession()) {
+            markCookieSessionReady(
+                serverClient = serverClient.cookieClient,
+                deviceName = deviceName,
+                accountAlias = accountAlias,
+                sessionKey = sessionKey,
+                successLog = "NID 쿠키 세션 재사용 — 폼 로그인 생략",
+            )
+            return true
         }
 
         // IP 로테이션 이후: 서버 저장 쿠키 복원 시도
@@ -759,26 +800,17 @@ class MainActivity : AppCompatActivity() {
             appendLog("서버 저장 쿠키 복원 시도: ${accountAlias ?: "배정 계정"}")
             webViewManager.setNaverCookie(saved)
             kotlinx.coroutines.delay(500)
-            if (webViewManager.hasCookieSession() && webViewManager.isNaverLoggedIn()) {
-                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-                validatedCookieSessions.add(sessionKey)
-                appendLog("쿠키 복원 성공 — 로그인 생략")
-                return true
-            }
             if (webViewManager.hasCookieSession()) {
-                webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-                validatedCookieSessions.add(sessionKey)
-                appendLog("쿠키 복원 후 로그인 판별 불확실: NID 쿠키 유지하고 폼 로그인 생략")
+                markCookieSessionReady(
+                    serverClient = serverClient.cookieClient,
+                    deviceName = deviceName,
+                    accountAlias = accountAlias,
+                    sessionKey = sessionKey,
+                    successLog = "서버 쿠키 복원 성공 — 폼 로그인 생략",
+                )
                 return true
             }
             appendLog("쿠키 복원 실패: NID 쿠키 없음")
-        }
-
-        if (hadCookieSession && webViewManager.hasCookieSession()) {
-            webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-            validatedCookieSessions.add(sessionKey)
-            appendLog("로컬 NID 쿠키 유지: 폼 로그인 생략")
-            return true
         }
 
         // 전체 로그인
@@ -792,22 +824,23 @@ class MainActivity : AppCompatActivity() {
                 appendLog("로그인 차단: 관리 페이지 챌린지 제출 중...")
                 val solved = tryLoginChallenge(challengeClient, credential, identity)
                 if (solved) {
-                    webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-                    validatedCookieSessions.add(sessionKey)
-                    saveCurrentCookiesToServer(
+                    markCookieSessionReady(
                         serverClient = serverClient.cookieClient,
                         deviceName = deviceName,
                         accountAlias = accountAlias,
+                        sessionKey = sessionKey,
                         successLog = "로그인 챌린지 해결 후 쿠키 저장 완료",
                     )
                     return true
                 }
             }
+            val signals = loginFailureSignals(webViewManager.visibleText())
+            loginFailureStopRequested = true
             reportLoginBlocked(
                 serverClient = serverClient,
                 credential = credential,
                 identity = identity,
-                signals = loginFailureSignals(webViewManager.visibleText()),
+                signals = signals,
                 message = "naver_login_failed",
             )
             appendLog("네이버 로그인 실패: 작업 중단")
@@ -815,15 +848,37 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 로그인 성공 → 쿠키 서버 저장
-        webViewManager.saveSessionAccount(this, deviceName, accountAlias)
-        validatedCookieSessions.add(sessionKey)
-        saveCurrentCookiesToServer(
+        markCookieSessionReady(
             serverClient = serverClient.cookieClient,
             deviceName = deviceName,
             accountAlias = accountAlias,
+            sessionKey = sessionKey,
             successLog = "네이버 쿠키 서버 저장 완료",
         )
         return true
+    }
+
+    private suspend fun markCookieSessionReady(
+        serverClient: CookieStorageClient,
+        deviceName: String,
+        accountAlias: String?,
+        sessionKey: String,
+        successLog: String,
+    ) {
+        val alreadyValidated = sessionKey in validatedCookieSessions
+        loginFailureStopRequested = false
+        webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+        validatedCookieSessions.add(sessionKey)
+        if (!alreadyValidated) {
+            saveCurrentCookiesToServer(
+                serverClient = serverClient,
+                deviceName = deviceName,
+                accountAlias = accountAlias,
+                successLog = successLog,
+            )
+        } else {
+            appendLog(successLog)
+        }
     }
 
     private suspend fun tryLoginChallenge(
@@ -901,6 +956,12 @@ class MainActivity : AppCompatActivity() {
         onWaiting(DeviceRuntimeState.WAITING_LOGIN, "naver_login_checking")
         if (ensureNaverLogin(credential, serverClient, identity, externalSession)) {
             return true
+        }
+
+        if (loginFailureStopRequested) {
+            onWaiting(DeviceRuntimeState.ERROR, "naver_login_failed")
+            appendLog("네이버 로그인 실패/보호조치 감지: 자동 재로그인 중지")
+            return false
         }
 
         onWaiting(DeviceRuntimeState.WAITING_LOGIN, "naver_login_failed")
@@ -1111,9 +1172,51 @@ class MainActivity : AppCompatActivity() {
     private fun appendLog(message: String) {
         Log.i(TAG, message)
         val time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-        logLines.addFirst("[$time] $message")
+        logLines.addFirst(LogLine(time, currentLogDeviceName(), message))
         while (logLines.size > 80) logLines.removeLast()
-        runOnUiThread { tvLog.text = logLines.joinToString("\n") }
+        runOnUiThread { tvLog.text = renderLogText() }
+    }
+
+    private fun currentLogDeviceName(): String? {
+        return logDeviceName
+            ?: etDeviceName.text.toString().trim().takeIf { it.isNotBlank() }
+    }
+
+    private fun lockLogDeviceName(deviceName: String) {
+        if (logDeviceName.isNullOrBlank() && deviceName.isNotBlank()) {
+            logDeviceName = deviceName
+        }
+    }
+
+    private fun renderLogText(): CharSequence {
+        val builder = SpannableStringBuilder()
+        logLines.forEachIndexed { index, line ->
+            if (index > 0) builder.append('\n')
+            builder.append("[${line.time}] ")
+            line.deviceName?.takeIf { it.isNotBlank() }?.let { deviceName ->
+                val start = builder.length
+                builder.append("[$deviceName] ")
+                builder.setSpan(
+                    ForegroundColorSpan(colorForDeviceName(deviceName)),
+                    start,
+                    builder.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+                builder.setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    start,
+                    builder.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
+            builder.append(line.message)
+        }
+        return builder
+    }
+
+    private fun colorForDeviceName(deviceName: String): Int {
+        val index = (deviceName.hashCode() and Int.MAX_VALUE) % LOG_DEVICE_COLORS.size
+        return LOG_DEVICE_COLORS[index]
     }
 
     private data class ServerClients(
@@ -1129,6 +1232,12 @@ class MainActivity : AppCompatActivity() {
         val loginId: String,
         val password: String,
         val accountAlias: String?,
+    )
+
+    private data class LogLine(
+        val time: String,
+        val deviceName: String?,
+        val message: String,
     )
 
     private fun getBoolExtra(key: String): Boolean {
@@ -1168,5 +1277,15 @@ class MainActivity : AppCompatActivity() {
         private const val EXTRA_TAIL_KEYWORD = "tailKeyword"
         private const val EXTRA_STRATEGY_VARIANT = "strategyVariant"
         private const val EXTRA_STRATEGY = "strategy"
+        private val LOG_DEVICE_COLORS = intArrayOf(
+            0xFF4FC3F7.toInt(),
+            0xFF81C784.toInt(),
+            0xFFFFB74D.toInt(),
+            0xFFE57373.toInt(),
+            0xFFBA68C8.toInt(),
+            0xFF4DB6AC.toInt(),
+            0xFFFFD54F.toInt(),
+            0xFFAED581.toInt(),
+        )
     }
 }

@@ -27,6 +27,22 @@ class StrategyAResultTest {
     }
 
     @Test
+    fun detailDomAndRateLimitFailuresAreRecoverableTaskFailures() {
+        assertTrue(
+            StrategyAResult(
+                success = false,
+                message = "detail_dom_not_confirmed:not_detail",
+            ).isRecoverableTaskFailure(),
+        )
+        assertTrue(
+            StrategyAResult(
+                success = false,
+                message = "rate_limited_429",
+            ).isRecoverableTaskFailure(),
+        )
+    }
+
+    @Test
     fun protectionSignalIsNotRecoverableTaskFailure() {
         val result = StrategyAResult(
             success = false,

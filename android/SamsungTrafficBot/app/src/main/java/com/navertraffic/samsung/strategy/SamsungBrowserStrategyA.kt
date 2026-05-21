@@ -19,6 +19,8 @@ fun StrategyAResult.isRecoverableTaskFailure(): Boolean {
     if (success || signals.isNotEmpty()) return false
     val text = message.orEmpty()
     return text.startsWith("MID product not found") ||
+        text == "rate_limited_429" ||
+        text.startsWith("detail_dom_not_confirmed") ||
         text.endsWith("is required for Strategy A") ||
         text.endsWith("is required for Strategy G")
 }
