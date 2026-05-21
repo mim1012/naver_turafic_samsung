@@ -674,6 +674,10 @@ class SamsungWebViewManager(
             .joinToString("; ")
     }
 
+    fun refreshNaverCookiePersistence() {
+        persistNaverSessionCookies()
+    }
+
     fun pauseTimers() {
         runCatching { webView.pauseTimers() }
     }

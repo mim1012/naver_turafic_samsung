@@ -1,6 +1,7 @@
 package com.navertraffic.samsung.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
@@ -868,8 +869,9 @@ class MainActivity : AppCompatActivity() {
         val alreadyValidated = sessionKey in validatedCookieSessions
         loginFailureStopRequested = false
         webViewManager.saveSessionAccount(this, deviceName, accountAlias)
+        webViewManager.refreshNaverCookiePersistence()
         validatedCookieSessions.add(sessionKey)
-        if (!alreadyValidated) {
+        if (!alreadyValidated || shouldRefreshCookieSession(deviceName, accountAlias)) {
             saveCurrentCookiesToServer(
                 serverClient = serverClient,
                 deviceName = deviceName,
@@ -879,6 +881,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             appendLog(successLog)
         }
+    }
+
+    private fun shouldRefreshCookieSession(deviceName: String, accountAlias: String?): Boolean {
+        val prefs = getSharedPreferences(PREF_COOKIE_SYNC, Context.MODE_PRIVATE)
+        val lastSyncedAt = prefs.getLong(cookieSyncKey(deviceName, accountAlias), 0L)
+        return System.currentTimeMillis() - lastSyncedAt >= COOKIE_SERVER_REFRESH_INTERVAL_MS
     }
 
     private suspend fun tryLoginChallenge(
@@ -980,8 +988,17 @@ class MainActivity : AppCompatActivity() {
         if (cookies.isBlank()) return
 
         runCatching { serverClient.saveCookies(deviceName, accountAlias, cookies) }
-            .onSuccess { appendLog(successLog) }
+            .onSuccess {
+                markCookieSessionSynced(deviceName, accountAlias)
+                appendLog(successLog)
+            }
             .onFailure { appendLog("쿠키 서버 저장 실패: ${it.message}") }
+    }
+
+    private fun markCookieSessionSynced(deviceName: String, accountAlias: String?) {
+        getSharedPreferences(PREF_COOKIE_SYNC, Context.MODE_PRIVATE).edit()
+            .putLong(cookieSyncKey(deviceName, accountAlias), System.currentTimeMillis())
+            .apply()
     }
 
     private suspend fun ensureExternalNaverLogin(
@@ -1075,6 +1092,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun cookieSessionKey(deviceName: String, accountAlias: String?): String {
         return "$deviceName|${accountAlias?.takeIf { it.isNotBlank() } ?: "manual"}"
+    }
+
+    private fun cookieSyncKey(deviceName: String, accountAlias: String?): String {
+        return "last_sync|${cookieSessionKey(deviceName, accountAlias)}"
     }
 
     private suspend fun resolveNaverLogin(
@@ -1260,6 +1281,8 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "SamsungTrafficBot"
         private val APP_VERSION = BuildConfig.VERSION_NAME
         private const val LOGIN_RETRY_DELAY_MS = 60_000L
+        private const val PREF_COOKIE_SYNC = "naver_cookie_sync"
+        private const val COOKIE_SERVER_REFRESH_INTERVAL_MS = 6 * 60 * 60 * 1_000L
         private const val EXTRA_AUTO_RUN = "autoRun"
         private const val EXTRA_DEVICE_NAME = "deviceName"
         private const val EXTRA_ROTATE_EVERY = "rotateEvery"
