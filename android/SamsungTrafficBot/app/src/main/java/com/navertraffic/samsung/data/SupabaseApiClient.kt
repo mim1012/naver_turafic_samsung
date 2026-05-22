@@ -16,11 +16,14 @@ class SupabaseApiClient(
     private val anonKey: String,
     private val trafficTable: String = "sellermate_traffic_navershopping",
     private val slotTable: String = "sellermate_slot_naver",
+    private val claimTtlSeconds: Int = 60,
+    private val allowRawRestFallback: Boolean = true,
+    private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport(),
 ) : StrategyTaskLeaseClient, CookieStorageClient, GroupControlClient {
 
-    private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport()
     // leaseId → link_url 캐시 (reportTask에서 history INSERT 시 사용)
     private val leaseLinkUrls = ConcurrentHashMap<String, String>()
+    private val rpcClaims = ConcurrentHashMap<String, DirectTaskClaim>()
 
     private fun now(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
@@ -59,16 +62,70 @@ class SupabaseApiClient(
         strategy: String,
         appVersion: String,
     ): StrategyTaskLease? = withContext(Dispatchers.IO) {
+        val rpcLease = runCatching { leaseTaskViaRpc(deviceName, strategy) }
+        if (rpcLease.isSuccess || !allowRawRestFallback) {
+            return@withContext rpcLease.getOrThrow()
+        }
+
+        // Local-dev fallback only. Production devices should use serverUrl, and direct
+        // Supabase mode must be explicitly enabled in local.properties.
+        leaseTaskViaRawRest()
+    }
+
+    private suspend fun leaseTaskViaRpc(deviceName: String, strategy: String): StrategyTaskLease? {
+        val body = """{"p_device_name":${jsonStr(deviceName)},"p_strategy":${jsonStr(strategy)},"p_claim_ttl_seconds":$claimTtlSeconds}"""
+        val raw = transport.request("POST", "${base()}/rpc/claim_android_naver_task", body, headers)
+        val row = parseRpcRow(raw) ?: return null
+        val taskId = readString(row, "task_id")
+            ?: readInt(row, "traffic_id", 0).takeIf { it > 0 }?.toString()
+            ?: return null
+        val leaseId = readString(row, "lease_id")
+            ?: "sb_rpc_${taskId}_${readInt(row, "slot_id", 0)}"
+        val slotId = readInt(row, "slot_id", 0)
+        val keyword = readString(row, "keyword").orEmpty()
+        val keywordName = readString(row, "keyword_name").orEmpty()
+        val linkUrl = readString(row, "link_url").orEmpty()
+        val mid = readString(row, "mid").orEmpty()
+
+        rpcClaims[leaseId] = DirectTaskClaim(
+            taskId = taskId,
+            leaseId = leaseId,
+            slotId = slotId,
+            linkUrl = linkUrl,
+        )
+        if (linkUrl.isNotBlank()) leaseLinkUrls[leaseId] = linkUrl
+
+        return StrategyTaskLease(
+            taskLeaseId = leaseId,
+            task = StrategyATask(
+                keyword = keyword,
+                secondKeyword = keywordName,
+                linkUrl = linkUrl,
+                mid = mid,
+                productTitle = keywordName.takeIf { it.isNotBlank() },
+                tailKeyword = keyword.split(" ").lastOrNull().orEmpty(),
+            ),
+            taskG = StrategyGTask(
+                keyword = keyword,
+                keywordName = keywordName,
+                linkUrl = linkUrl,
+                mid = mid,
+                productTitle = keywordName.takeIf { it.isNotBlank() },
+            ),
+        )
+    }
+
+    private suspend fun leaseTaskViaRawRest(): StrategyTaskLease? {
         // 1. 트래픽 큐에서 1건 가져오기 (id 오름차순)
         val trafficUrl = "${base()}/$trafficTable" +
             "?select=id,keyword,keyword_name,link_url,slot_id" +
             "&order=id.asc&limit=1"
         val trafficRaw = runCatching { transport.request("GET", trafficUrl, null, headers) }.getOrNull()
-            ?: return@withContext null
+            ?: return null
 
-        val trafficRow = parseJsonArray(trafficRaw).firstOrNull() ?: return@withContext null
-        val trafficId = readInt(trafficRow, "id", 0).takeIf { it > 0 } ?: return@withContext null
-        val slotId = readInt(trafficRow, "slot_id", 0).takeIf { it > 0 } ?: return@withContext null
+        val trafficRow = parseJsonArray(trafficRaw).firstOrNull() ?: return null
+        val trafficId = readInt(trafficRow, "id", 0).takeIf { it > 0 } ?: return null
+        val slotId = readInt(trafficRow, "slot_id", 0).takeIf { it > 0 } ?: return null
         val keyword = readString(trafficRow, "keyword").orEmpty()
         val keywordName = readString(trafficRow, "keyword_name").orEmpty()
         val linkUrl = readString(trafficRow, "link_url").orEmpty()
@@ -88,9 +145,9 @@ class SupabaseApiClient(
         val leaseId = "sb_${trafficId}_${slotId}"
         if (linkUrl.isNotBlank()) leaseLinkUrls[leaseId] = linkUrl
 
-        StrategyTaskLease(
+        return StrategyTaskLease(
             taskLeaseId = leaseId,
-            task = com.navertraffic.samsung.strategy.StrategyATask(
+            task = StrategyATask(
                 keyword = keyword,
                 secondKeyword = keywordName,
                 linkUrl = linkUrl,
@@ -110,10 +167,40 @@ class SupabaseApiClient(
 
     override suspend fun reportTask(report: StrategyTaskReport) = withContext(Dispatchers.IO) {
         val taskLeaseId = report.taskLeaseId ?: return@withContext
-        if (!taskLeaseId.startsWith("sb_")) return@withContext
+        val rpcClaim = rpcClaims[taskLeaseId]
+        val rpcReported = if (rpcClaim != null) {
+            runCatching { reportTaskViaRpc(report, rpcClaim) }
+                .onSuccess {
+                    rpcClaims.remove(taskLeaseId)
+                    leaseLinkUrls.remove(taskLeaseId)
+                }
+                .isSuccess
+        } else {
+            runCatching { reportTaskViaRpc(report, null) }.isSuccess
+        }
+        if (rpcReported || !allowRawRestFallback) return@withContext
+
+        // Local-dev fallback only. Kept for staged RPC rollout against developer Supabase projects.
+        reportTaskViaRawRest(report)
+    }
+
+    private suspend fun reportTaskViaRpc(report: StrategyTaskReport, claim: DirectTaskClaim?) {
+        val taskLeaseId = report.taskLeaseId ?: return
+        val success = report.result == StrategyTaskResult.SUCCESS
+        val taskId = claim?.taskId ?: taskLeaseId
+        val leaseId = claim?.leaseId ?: taskLeaseId
+        val linkUrl = claim?.linkUrl?.takeIf { it.isNotBlank() } ?: leaseLinkUrls[taskLeaseId]
+        val idempotencyKey = "$taskId:$leaseId:${report.deviceName}"
+        val body = """{"p_task_id":${jsonStr(taskId)},"p_lease_id":${jsonStr(leaseId)},"p_device_name":${jsonStr(report.deviceName)},"p_success":$success,"p_link_url":${jsonStr(linkUrl)},"p_source":"android_direct_supabase_dev","p_idempotency_key":${jsonStr(idempotencyKey)}}"""
+        transport.request("POST", "${base()}/rpc/report_android_naver_task", body, minimalHeaders)
+    }
+
+    private suspend fun reportTaskViaRawRest(report: StrategyTaskReport) {
+        val taskLeaseId = report.taskLeaseId ?: return
+        if (!taskLeaseId.startsWith("sb_")) return
         // leaseId 형식: sb_{trafficId}_{slotId}
         val slotId = taskLeaseId.removePrefix("sb_").substringAfterLast("_").toIntOrNull()
-            ?: return@withContext
+            ?: return
         val success = report.result == StrategyTaskResult.SUCCESS
         val cachedLinkUrl = leaseLinkUrls.remove(taskLeaseId)
 
@@ -144,6 +231,21 @@ class SupabaseApiClient(
         }
         Unit
     }
+
+    private fun parseRpcRow(raw: String): String? {
+        val trimmed = raw.trim()
+        if (trimmed.isBlank() || trimmed == "null" || trimmed == "{}" || trimmed == "[]") return null
+        if (trimmed.startsWith("[")) return parseJsonArray(trimmed).firstOrNull()
+        if (trimmed.startsWith("{")) return trimmed
+        return null
+    }
+
+    private data class DirectTaskClaim(
+        val taskId: String,
+        val leaseId: String,
+        val slotId: Int,
+        val linkUrl: String,
+    )
 
     private fun buildHistoryJson(slotId: Int, row: String?, linkUrl: String?): String {
         val keyword = row?.let { readString(it, "keyword") }

@@ -5,10 +5,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <queries>
         <package android:name="com.sec.android.app.sbrowser" />
+        <package android:name="com.android.chrome" />
+        <package android:name="com.google.android.webview" />
     </queries>
 
     <application
@@ -56,6 +60,11 @@
 
         <service
             android:name=".ui.BotKeepAliveService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
+            android:name=".ui.RemoteControlService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 

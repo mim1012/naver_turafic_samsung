@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.navertraffic.samsung.AppUpdateManager
 import com.navertraffic.samsung.BuildConfig
+import com.navertraffic.samsung.ChromeUpdateManager
 import com.navertraffic.samsung.DeviceCommandManager
 import com.navertraffic.samsung.R
 import com.navertraffic.samsung.boss.BossController
@@ -119,11 +120,13 @@ class MainActivity : AppCompatActivity() {
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
             )
         }
+        applyFullscreenBrowserMode()
 
         loadSavedConfig()
         applyLaunchExtras()
         applyDebugDefaults()
         refreshServerAccountFromServer()
+        startRemoteControlIfConfigured()
 
         findViewById<Button>(R.id.btnRunA).setOnClickListener {
             runBot()
@@ -145,6 +148,10 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (intent.action == ACTION_KEEP_VISIBLE) {
+            applyFullscreenBrowserMode()
+            return
+        }
         applyLaunchExtras()
         refreshServerAccountFromServer()
     }
@@ -218,9 +225,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun enterRunningMode(label: String = "전략 실행 중") {
         botRunActive = true
+        stopService(Intent(this, RemoteControlService::class.java))
         configPanel.visibility = android.view.View.GONE
         statusBar.visibility = android.view.View.VISIBLE
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        applyFullscreenBrowserMode()
         acquireRunWakeLock()
         startForegroundService(
             android.content.Intent(this, BotKeepAliveService::class.java).apply {
@@ -236,6 +245,39 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         configPanel.visibility = android.view.View.VISIBLE
         statusBar.visibility = android.view.View.GONE
+        clearFullscreenBrowserMode()
+        startRemoteControlIfConfigured()
+    }
+
+    private fun startRemoteControlIfConfigured() {
+        val config = ConfigStore(this)
+        if (config.isConfigured() && resolveServerUrl(config).isNotBlank() && !botRunActive) {
+            RemoteControlService.start(this)
+        }
+    }
+
+    private fun applyFullscreenBrowserMode() {
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                android.view.View.SYSTEM_UI_FLAG_FULLSCREEN or
+                android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_FULLSCREEN or
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD,
+        )
+    }
+
+    private fun clearFullscreenBrowserMode() {
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 
     @SuppressLint("WakelockTimeout")
@@ -256,12 +298,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        webViewManager.pauseTimers()
+        if (!botRunActive) {
+            webViewManager.pauseTimers()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         webViewManager.resumeTimers()
+        if (botRunActive) {
+            applyFullscreenBrowserMode()
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && botRunActive) {
+            applyFullscreenBrowserMode()
+        }
     }
 
     override fun onDestroy() {
@@ -278,6 +332,17 @@ class MainActivity : AppCompatActivity() {
             val config = ConfigStore(this@MainActivity)
             val serverUrl = resolveServerUrl(config)
             val apiKey = resolveApiKey(config)
+            val deviceName = etDeviceName.text.toString().trim()
+            val chromeUpdate = ChromeUpdateManager(this@MainActivity, ::appendLog).checkAndUpdate(
+                serverUrl = serverUrl,
+                apiKey = apiKey.takeIf { it.isNotBlank() },
+                deviceName = deviceName,
+            )
+            if (chromeUpdate.installed) return@launch
+            if (!chromeUpdate.success && chromeUpdate.updateRequired) {
+                appendLog("Chrome/WebView 업데이트 필요로 작업 시작 중단: ${chromeUpdate.message}")
+                return@launch
+            }
             val updateManager = AppUpdateManager(this@MainActivity, ::appendLog)
             val updated = if (serverUrl.isNotBlank()) {
                 updateManager.checkAndUpdateFromServer(serverUrl, apiKey.takeIf { it.isNotBlank() })
@@ -405,15 +470,8 @@ class MainActivity : AppCompatActivity() {
                 rotateEveryGroupTasks = rotateEvery,
                 rotationDrainWaitMs = drainWaitMs,
                 log = ::appendLog,
-                beforeRotate = if (!dryRun && !externalBrowser) ({
-                    webViewManager.clearPage()
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                        runCatching {
-                            val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser"))
-                            if (!proc.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) proc.destroy()
-                        }
-                    }
-                    appendLog("삼성 인터넷 강제 종료 완료")
+                beforeRotate = if (!dryRun) ({
+                    closeBrowserForNextTask("IP 로테이션 전")
                 }) else null,
             ) else null
 
@@ -424,6 +482,9 @@ class MainActivity : AppCompatActivity() {
                 groupControlClient = serverClient.groupControlClient,
                 deviceCommandHandler = deviceCommandManager,
                 log = ::appendLog,
+                beforePauseForRotation = if (!dryRun) ({
+                    closeBrowserForNextTask("IP 로테이션 대기")
+                }) else null,
             ) else null
 
             suspend fun reportRuntimeState(state: DeviceRuntimeState, message: String? = null) {
@@ -548,10 +609,10 @@ class MainActivity : AppCompatActivity() {
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val continuousServerMode = !dryRun && serverUrl.isNotBlank()
 
-        // 기본 전략(G): Chrome 137 UA 적용
+        // 기본 전략(G): Chrome 138 UA 적용
         if (!dryRun) {
-            webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
-            appendLog("기본 전략(G) UA 적용: Chrome 137 Mobile")
+            webViewManager.setUserAgent(SamsungWebViewManager.CHROME_138_UA)
+            appendLog("기본 전략(G) UA 적용: Chrome 138 Mobile")
         }
 
         val fallbackTask = StrategyGTask(
@@ -599,14 +660,7 @@ class MainActivity : AppCompatActivity() {
                 rotationDrainWaitMs = drainWaitMs,
                 log = ::appendLog,
                 beforeRotate = if (!dryRun) ({
-                    webViewManager.clearPage()
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                        runCatching {
-                            val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop com.sec.android.app.sbrowser"))
-                            if (!proc.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) proc.destroy()
-                        }
-                    }
-                    appendLog("삼성 인터넷 강제 종료 완료")
+                    closeBrowserForNextTask("IP 로테이션 전")
                 }) else null,
             ) else null
 
@@ -617,6 +671,9 @@ class MainActivity : AppCompatActivity() {
                 groupControlClient = serverClient.groupControlClient,
                 deviceCommandHandler = deviceCommandManager,
                 log = ::appendLog,
+                beforePauseForRotation = if (!dryRun) ({
+                    closeBrowserForNextTask("IP 로테이션 대기")
+                }) else null,
             ) else null
 
             suspend fun reportRuntimeState(state: DeviceRuntimeState, message: String? = null) {
@@ -664,6 +721,7 @@ class MainActivity : AppCompatActivity() {
                             DeviceRuntimeState.PAUSED,
                             "group_state_blocked:${blockedLease.groupState}",
                         )
+                        appendLog("그룹 대기 중: 현재 브라우저 화면 유지")
                         kotlinx.coroutines.delay(30_000)
                         continue
                     }
@@ -692,6 +750,7 @@ class MainActivity : AppCompatActivity() {
                     if (task == null) {
                         appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
                         reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
+                        appendLog("큐 대기 중: 현재 브라우저 화면 유지")
                         kotlinx.coroutines.delay(30_000)
                         continue
                     }
@@ -703,9 +762,17 @@ class MainActivity : AppCompatActivity() {
                         "${taskIndex + 1}/$loopCount"
                     }
                     appendLog("기본 전략(G) 반복 $loopLabel")
-                    val result: StrategyAResult = bossController?.runOnce(task)
-                        ?: soldierController?.runOnce(task)
-                        ?: StrategyAResult(success = false, message = "no_controller")
+                    val result: StrategyAResult = try {
+                        bossController?.runOnce(task)
+                            ?: soldierController?.runOnce(task)
+                            ?: StrategyAResult(success = false, message = "no_controller")
+                    } catch (error: Throwable) {
+                        val message = error.message ?: error::class.java.simpleName
+                        appendLog("기본 전략(G) 실행 예외: $message — 앱 유지 후 재시도")
+                        reportRuntimeState(DeviceRuntimeState.ERROR, message)
+                        kotlinx.coroutines.delay(30_000)
+                        continue
+                    }
 
                     if (result.message == "group_paused") {
                         appendLog("그룹 로테이션 대기 중 — 10초 후 재시도")
@@ -717,7 +784,7 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && webViewManager.rendererGone) {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
-                        webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
+                        webViewManager.setUserAgent(SamsungWebViewManager.CHROME_138_UA)
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
                                 reportRuntimeState(state, message)
                             }) {
@@ -758,6 +825,68 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ── 공통 헬퍼 ───────────────────────────────────────────────────────────
+
+    private suspend fun closeBrowserForNextTask(reason: String) {
+        appendLog("브라우저 강제 종료 시작: $reason")
+        runCatching { webViewManager.clearPage() }
+            .onFailure { appendLog("WebView 화면 정리 실패: ${it.message}") }
+        forceStopBrowserPackages()
+        runCatching { webViewManager.rebuildWebView(webViewContainer) }
+            .onFailure { appendLog("WebView 재생성 실패: ${it.message}") }
+        runCatching {
+            webViewManager.setBrowserMode(isChrome = true)
+            webViewManager.loadAndWait(SamsungBrowserStrategyG.NAVER_HOME_URL, 15_000)
+        }.onFailure { appendLog("브라우저 홈 표시 실패: ${it.message}") }
+        appendLog("브라우저 강제 종료 완료: $reason")
+    }
+
+    private suspend fun showBrowserHomeForNextTask(reason: String) {
+        appendLog("브라우저 표시 유지: $reason → 네이버 홈")
+        if (webViewManager.rendererGone) {
+            runCatching { webViewManager.rebuildWebView(webViewContainer) }
+                .onFailure { appendLog("WebView 재생성 실패: ${it.message}") }
+        }
+        runCatching {
+            webViewManager.setBrowserMode(isChrome = true)
+            webViewManager.loadAndWait(SamsungBrowserStrategyG.NAVER_HOME_URL, 15_000)
+        }.onFailure {
+            appendLog("네이버 홈 표시 실패: ${it.message}")
+            showBrowserStatus("브라우저 대기 중", "네이버 홈 표시 실패 후 다음 작업을 기다립니다.")
+        }
+    }
+
+    private suspend fun showBrowserStatus(title: String, message: String) {
+        runCatching { webViewManager.showLocalStatus(title, message) }
+            .onFailure { appendLog("브라우저 상태 화면 표시 실패: ${it.message}") }
+    }
+
+    private suspend fun forceStopBrowserPackages() {
+        val webViewProvider = currentWebViewProviderPackage()
+        val packages = listOf(
+            "com.android.chrome",
+            "com.google.android.webview",
+            SamsungWebViewManager.SAMSUNG_PACKAGE,
+            "com.microsoft.emmx",
+        ).filterNot { it == webViewProvider }
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            packages.forEach { packageName ->
+                runCatching {
+                    val proc = Runtime.getRuntime().exec(arrayOf("su", "-c", "am force-stop $packageName"))
+                    if (!proc.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) {
+                        proc.destroy()
+                    }
+                }
+            }
+        }
+        appendLog("외부 브라우저 프로세스 종료 완료 (WebView provider 제외: ${webViewProvider ?: "unknown"})")
+    }
+
+    private fun currentWebViewProviderPackage(): String? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WebView.getCurrentWebViewPackage()?.packageName
+        } else {
+            null
+        }
 
     private suspend fun ensureNaverLogin(
         credential: NaverLoginCredential,
@@ -985,7 +1114,10 @@ class MainActivity : AppCompatActivity() {
         successLog: String,
     ) {
         val cookies = webViewManager.extractNaverCookies()
-        if (cookies.isBlank()) return
+        if (cookies.isBlank()) {
+            appendLog("쿠키 서버 저장 건너뜀: NID 쿠키 없음")
+            return
+        }
 
         runCatching { serverClient.saveCookies(deviceName, accountAlias, cookies) }
             .onSuccess {
@@ -1143,7 +1275,10 @@ class MainActivity : AppCompatActivity() {
 
         val supabaseUrl = BuildConfig.SUPABASE_URL
         val supabaseKey = BuildConfig.SUPABASE_KEY
-        if (supabaseUrl.isBlank()) {
+        if (supabaseUrl.isBlank() || !BuildConfig.ALLOW_DIRECT_SUPABASE) {
+            if (supabaseUrl.isNotBlank() && !BuildConfig.ALLOW_DIRECT_SUPABASE) {
+                appendLog("직접 Supabase 연동 비활성화됨: serverUrl 없는 로컬 개발에서만 supabase.direct.enabled=true 사용")
+            }
             return ServerClients(
                 NoopAccountLeaseClient(),
                 NoopGroupControlClient(),
@@ -1278,6 +1413,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val ACTION_KEEP_VISIBLE = "com.navertraffic.samsung.action.KEEP_VISIBLE"
+
         private const val TAG = "SamsungTrafficBot"
         private val APP_VERSION = BuildConfig.VERSION_NAME
         private const val LOGIN_RETRY_DELAY_MS = 60_000L

@@ -17,6 +17,7 @@ This document records the Android bot APK versions that were relevant during the
 | --- | ---: | --- | --- |
 | 0.1.23 | 24 | Previous field version | Legacy bot APK observed from `z1-2-installed.apk`. This is the version operators referred to as the old `23` bot. It predates the current 0.1.24 rollout and should be replaced on active devices. |
 | 0.1.24 | 25 | Current production | Fleet update target. Published through the Sellermate production latest endpoint and manually verified on the currently connected ADB devices. |
+| 0.1.25 | 26 | Next rollout | Adds a foreground remote-control service so configured idle devices keep polling admin commands without ADB. |
 
 ## 0.1.24 / v25 changes
 

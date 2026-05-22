@@ -33,6 +33,7 @@ class SoldierController(
     private val groupControlClient: GroupControlClient = NoopGroupControlClient(),
     private val deviceCommandHandler: DeviceCommandHandler = NoopDeviceCommandHandler,
     private val log: (String) -> Unit,
+    private val beforePauseForRotation: (suspend () -> Unit)? = null,
 ) {
     private var taskCount = 0
     @Volatile
@@ -47,6 +48,8 @@ class SoldierController(
     private var lastHeartbeatSentState: DeviceRuntimeState? = null
     @Volatile
     private var lastHeartbeatSentError: String? = null
+    @Volatile
+    private var rotationPauseCleanupDone = false
 
     fun startHeartbeatMonitor(
         scope: CoroutineScope,
@@ -199,6 +202,10 @@ class SoldierController(
                 response.groupState == GroupState.ROTATING -> {
                 runtimeState = DeviceRuntimeState.PAUSED
                 heartbeat(DeviceRuntimeState.PAUSED)
+                if (!rotationPauseCleanupDone) {
+                    rotationPauseCleanupDone = true
+                    beforePauseForRotation?.invoke()
+                }
                 log("그룹 상태 ${response.groupState}: 새 작업 대기")
                 true
             }
@@ -211,7 +218,10 @@ class SoldierController(
                 log("그룹 상태 ${response.groupState}: 작업 중지")
                 true
             }
-            else -> false
+            else -> {
+                rotationPauseCleanupDone = false
+                false
+            }
         }
     }
 

@@ -344,8 +344,12 @@ class SamsungWebViewManager(
             delay(1_000)
             if (currentUrl()?.contains("nidlogin.login") != true) {
                 persistNaverSessionCookies()
-                log("네이버 로그인 완료")
-                return true
+                if (hasCookieSession()) {
+                    log("네이버 로그인 완료: NID 쿠키 확인")
+                    return true
+                }
+                log("네이버 로그인 후 NID 쿠키 없음: 세션 저장 실패")
+                return false
             }
         }
         log("네이버 로그인 타임아웃")
@@ -395,7 +399,7 @@ class SamsungWebViewManager(
             delay(1_000)
             if (currentUrl()?.contains("nidlogin.login") != true) {
                 persistNaverSessionCookies()
-                return true
+                return hasCookieSession()
             }
         }
         return false
@@ -713,6 +717,31 @@ class SamsungWebViewManager(
         log("브라우저 화면 재시작: 쿠키 세션 유지")
     }
 
+    suspend fun showLocalStatus(title: String, message: String) {
+        val html = """
+            <!doctype html>
+            <html lang="ko">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width,initial-scale=1">
+              <style>
+                html,body{margin:0;width:100%;height:100%;background:#0f172a;color:#e5e7eb;font-family:sans-serif}
+                body{display:flex;align-items:center;justify-content:center}
+                main{width:86%;text-align:center}
+                h1{font-size:28px;margin:0 0 14px}
+                p{font-size:16px;line-height:1.5;margin:0;color:#cbd5e1}
+              </style>
+            </head>
+            <body><main><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></main></body>
+            </html>
+        """.trimIndent()
+        withContext(Dispatchers.Main) {
+            webView.loadDataWithBaseURL("https://m.naver.com/", html, "text/html", "UTF-8", null)
+        }
+        delay(300)
+        log("브라우저 상태 화면 표시: $title")
+    }
+
     // Load about:blank and wait for TCP connections to close before network toggle.
     // Prevents modem driver kernel panic (S7 Android 8.0) from active naver.com connections.
     suspend fun typeIntoSearchBar(keyword: String): Boolean {
@@ -931,9 +960,16 @@ class SamsungWebViewManager(
             .replace("\r", "") + "\""
     }
 
+    private fun escapeHtml(value: String): String =
+        value
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+
     fun setBrowserMode(isChrome: Boolean) {
         chromeMode = isChrome
-        webView.settings.userAgentString = if (isChrome) CHROME_137_UA else SAMSUNG_BROWSER_UA
+        webView.settings.userAgentString = if (isChrome) CHROME_138_UA else SAMSUNG_BROWSER_UA
     }
 
     private var chromeMode = false
@@ -942,7 +978,7 @@ class SamsungWebViewManager(
         return buildMap {
             put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
             if (chromeMode) {
-                put("sec-ch-ua", "\"Chromium\";v=\"137\", \"Google Chrome\";v=\"137\", \"Not/A)Brand\";v=\"24\"")
+                put("sec-ch-ua", "\"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\", \"Not/A)Brand\";v=\"24\"")
             } else {
                 put("sec-ch-ua", "\"Chromium\";v=\"136\", \"Samsung Internet\";v=\"29\", \"Not.A/Brand\";v=\"99\"")
             }
@@ -963,9 +999,9 @@ class SamsungWebViewManager(
                 "(KHTML, like Gecko) SamsungBrowser/29.0 Chrome/136.0.0.0 Mobile Safari/537.36"
 
         // G전략 전용 UA
-        const val CHROME_137_UA =
+        const val CHROME_138_UA =
             "Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"
+                "(KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
 
         // navigator.webdriver 및 자동화 지문 제거
         const val NAVIGATOR_SPOOF_JS = """

@@ -174,6 +174,7 @@ class BossController(
             heartbeat(DeviceRuntimeState.ROTATING)
             runCatching { groupControlClient.startRotation(identity.groupId) }
                 .onFailure { log("rotation 시작 신호 실패: ${it.message}") }
+            beforeRotate?.invoke()
             val drainStepMs = 10_000L
             var remaining = rotationDrainWaitMs
             while (remaining > 0) {
@@ -182,7 +183,6 @@ class BossController(
                 remaining -= step
                 if (remaining > 0) log("대장봇 DRAINING 대기 중: ${remaining / 1000}초 남음")
             }
-            beforeRotate?.invoke()
             val (beforeIp, afterIp) = runCatching { ipRotationManager.rotate(log) }
                 .onFailure { log("대장봇 그룹 IP 로테이션 실패: ${it.message}") }
                 .getOrDefault(Pair(null, null))

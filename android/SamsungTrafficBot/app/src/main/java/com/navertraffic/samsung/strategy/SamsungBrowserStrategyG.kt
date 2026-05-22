@@ -36,7 +36,7 @@ class SamsungBrowserStrategyG(
         }
 
         webViewManager?.setBrowserMode(isChrome = true)
-        log("UA: Chrome 137 모드 적용")
+        log("UA: Chrome 138 모드 적용")
 
         log("네이버 홈 진입")
         browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
@@ -157,11 +157,7 @@ class SamsungBrowserStrategyG(
 
         val finalUrl = browserSession.currentUrl()
 
-        log("브라우저 닫기 → 네이버 메인홈")
-        browserSession.resetSurface()
-        delay(Random.nextLong(400, 900))
-        browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
-        delay(Random.nextLong(2_000, 4_000))
+        log("상세 페이지 표시 유지: 다음 작업 전까지 현재 화면 유지")
 
         webViewManager?.setBrowserMode(isChrome = false)
         return StrategyAResult(success = true, lastUrl = finalUrl)

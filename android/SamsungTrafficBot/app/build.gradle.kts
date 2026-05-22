@@ -39,8 +39,8 @@ android {
         applicationId = "com.navertraffic.samsung"
         minSdk = 24
         targetSdk = 34
-        versionCode = 19
-        versionName = "0.1.18"
+        versionCode = 26
+        versionName = "0.1.25"
 
         buildConfigField("String", "DEBUG_DEVICE_NAME", "\"${localProp("debug.device.name", "z1-1")}\"")
         buildConfigField("int",    "DEBUG_LOOP_COUNT",  localProp("debug.loop.count", "10"))
@@ -48,8 +48,12 @@ android {
         buildConfigField("String", "DEBUG_NAVER_PW",    "\"${localProp("debug.naver.pw")}\"")
         buildConfigField("String", "SUPABASE_URL",         "\"${localProp("supabase.url")}\"")
         buildConfigField("String", "SUPABASE_KEY",         "\"${localProp("supabase.key")}\"")
+        buildConfigField("boolean", "ALLOW_DIRECT_SUPABASE", localProp("supabase.direct.enabled", "false").toBoolean().toString())
         buildConfigField("String", "DEFAULT_SERVER_URL",   "\"${localProp("server.url", "https://www.sellermate.ai.kr")}\"")
         buildConfigField("String", "DEVICE_API_TOKEN",     "\"${localProp("android.device.api.token")}\"")
+        buildConfigField("String", "CHROME_UPDATE_APK_URL", "\"${localProp("chrome.update.apk.url")}\"")
+        buildConfigField("String", "CHROME_UPDATE_SHA256", "\"${localProp("chrome.update.sha256")}\"")
+        buildConfigField("int",    "MIN_CHROME_MAJOR",     localProp("min.chrome.major", "138"))
         buildConfigField("int",    "ROTATE_EVERY",         localProp("rotate.every", "5"))
         buildConfigField("int",    "ROTATION_DRAIN_WAIT_SEC", localProp("rotation.drain.wait.sec", "90"))
     }
