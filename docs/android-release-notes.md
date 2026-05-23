@@ -1,23 +1,24 @@
 # Android Bot Release Notes
 
 This document records the Android bot APK versions that were relevant during the
-0.1.23 -> 0.1.24 fleet update.
+0.1.23 -> 0.1.26 fleet update.
 
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.24-v25-release.apk`
+- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.26-v27-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.24`, `versionCode=25`
-- Current APK SHA256: `60ad04b42322ac04b7973950ed0d610b277759b0e01fdcf67e1049db636edaa4`
+- Current version: `versionName=0.1.26`, `versionCode=27`
+- Current APK SHA256: `4e6430cd96c13b616bdb8c07422ed0e0942fe975e56328ca5f579355a8ee2fb0`
 
 ## Version history
 
 | Version name | Version code | Status | Notes |
 | --- | ---: | --- | --- |
 | 0.1.23 | 24 | Previous field version | Legacy bot APK observed from `z1-2-installed.apk`. This is the version operators referred to as the old `23` bot. It predates the current 0.1.24 rollout and should be replaced on active devices. |
-| 0.1.24 | 25 | Current production | Fleet update target. Published through the Sellermate production latest endpoint and manually verified on the currently connected ADB devices. |
-| 0.1.25 | 26 | Next rollout | Adds a foreground remote-control service so configured idle devices keep polling admin commands without ADB. |
+| 0.1.24 | 25 | Previous production | Fleet update target. Published through the Sellermate production latest endpoint and manually verified on the connected ADB devices. |
+| 0.1.25 | 26 | Previous production | Adds a foreground remote-control service so configured idle devices keep polling admin commands without ADB. |
+| 0.1.26 | 27 | Current production | Persists operator-started auto-run intent so configured bots resume automatically after update/restart. |
 
 ## 0.1.24 / v25 changes
 

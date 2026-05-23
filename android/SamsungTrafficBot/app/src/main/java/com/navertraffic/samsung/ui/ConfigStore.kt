@@ -21,13 +21,25 @@ class ConfigStore(context: Context) {
         get() = prefs.getString("api_key", "").orEmpty()
         set(v) { prefs.edit().putString("api_key", v).apply() }
 
+    var autoStartEnabled: Boolean
+        get() = prefs.getBoolean("auto_start_enabled", false)
+        set(v) { prefs.edit().putBoolean("auto_start_enabled", v).apply() }
+
     fun isConfigured(): Boolean = deviceName.isNotBlank()
 
-    fun save(deviceName: String, loopCount: Int, serverUrl: String = this.serverUrl) {
+    fun shouldAutoStart(): Boolean = isConfigured() && autoStartEnabled
+
+    fun save(
+        deviceName: String,
+        loopCount: Int,
+        serverUrl: String = this.serverUrl,
+        autoStartEnabled: Boolean = this.autoStartEnabled,
+    ) {
         prefs.edit()
             .putString("device_name", deviceName)
             .putInt("loop_count", loopCount)
             .putString("server_url", serverUrl)
+            .putBoolean("auto_start_enabled", autoStartEnabled)
             .apply()
     }
 }

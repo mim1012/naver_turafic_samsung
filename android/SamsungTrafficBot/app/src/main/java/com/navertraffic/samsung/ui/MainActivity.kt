@@ -129,14 +129,17 @@ class MainActivity : AppCompatActivity() {
         startRemoteControlIfConfigured()
 
         findViewById<Button>(R.id.btnRunA).setOnClickListener {
-            runBot()
+            checkUpdateAndRun()
         }
 
         if (!getBoolExtra(EXTRA_AUTO_RUN)) {
             val config = ConfigStore(this)
             val hasSession = webViewManager.hasCookieSession()
             val hasServer = resolveServerUrl(config).isNotBlank()
-            if (config.isConfigured() && (hasServer || hasSession)) {
+            if (config.shouldAutoStart()) {
+                appendLog("자동 시작 설정 확인 → 자동 시작")
+                etDeviceName.post { checkUpdateAndRun() }
+            } else if (config.isConfigured() && (hasServer || hasSession)) {
                 appendLog("저장된 설정 확인 → 자동 시작")
                 etDeviceName.post { checkUpdateAndRun() }
             } else if (hasSession) {
@@ -333,6 +336,8 @@ class MainActivity : AppCompatActivity() {
             val serverUrl = resolveServerUrl(config)
             val apiKey = resolveApiKey(config)
             val deviceName = etDeviceName.text.toString().trim()
+            val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
+            if (!rememberStartRequest(config, deviceName, loopCount, serverUrl)) return@launch
             val chromeUpdate = ChromeUpdateManager(this@MainActivity, ::appendLog).checkAndUpdate(
                 serverUrl = serverUrl,
                 apiKey = apiKey.takeIf { it.isNotBlank() },
@@ -361,6 +366,25 @@ class MainActivity : AppCompatActivity() {
         runStrategyG()
     }
 
+    private fun rememberStartRequest(
+        config: ConfigStore,
+        deviceName: String,
+        loopCount: Int,
+        serverUrl: String,
+    ): Boolean {
+        DeviceIdentity.validateInput(deviceName)?.let {
+            appendLog(it)
+            return false
+        }
+        config.save(
+            deviceName = deviceName,
+            loopCount = loopCount,
+            serverUrl = serverUrl,
+            autoStartEnabled = true,
+        )
+        return true
+    }
+
     private fun loadSavedConfig() {
         val config = ConfigStore(this)
         if (etDeviceName.text.isBlank() && config.deviceName.isNotBlank()) etDeviceName.setText(config.deviceName)
@@ -386,6 +410,7 @@ class MainActivity : AppCompatActivity() {
             deviceName = deviceName,
             loopCount = loopCount,
             serverUrl = resolveServerUrl(config),
+            autoStartEnabled = true,
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val externalBrowser = getBoolExtra(EXTRA_EXTERNAL_BROWSER)
@@ -605,6 +630,7 @@ class MainActivity : AppCompatActivity() {
             deviceName = deviceName,
             loopCount = loopCount,
             serverUrl = serverUrl,
+            autoStartEnabled = true,
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val continuousServerMode = !dryRun && serverUrl.isNotBlank()
