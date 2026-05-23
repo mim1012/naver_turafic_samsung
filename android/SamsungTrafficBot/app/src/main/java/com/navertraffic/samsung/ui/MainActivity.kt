@@ -327,34 +327,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkUpdateAndRun() {
+        statusBar.visibility = android.view.View.VISIBLE
         if (botRunActive) {
             appendLog("작업 시작 요청 수신: 이미 실행/대기 중")
             return
         }
+        appendLog("작업 시작 준비: 설정 저장 및 업데이트 확인")
         lifecycleScope.launch {
-            val config = ConfigStore(this@MainActivity)
-            val serverUrl = resolveServerUrl(config)
-            val apiKey = resolveApiKey(config)
-            val deviceName = etDeviceName.text.toString().trim()
-            val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
-            if (!rememberStartRequest(config, deviceName, loopCount, serverUrl)) return@launch
-            val chromeUpdate = ChromeUpdateManager(this@MainActivity, ::appendLog).checkAndUpdate(
-                serverUrl = serverUrl,
-                apiKey = apiKey.takeIf { it.isNotBlank() },
-                deviceName = deviceName,
-            )
-            if (chromeUpdate.installed) return@launch
-            if (!chromeUpdate.success && chromeUpdate.updateRequired) {
-                appendLog("Chrome/WebView 업데이트 필요로 작업 시작 중단: ${chromeUpdate.message}")
-                return@launch
+            try {
+                val config = ConfigStore(this@MainActivity)
+                val serverUrl = resolveServerUrl(config)
+                val apiKey = resolveApiKey(config)
+                val deviceName = etDeviceName.text.toString().trim()
+                val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
+                if (!rememberStartRequest(config, deviceName, loopCount, serverUrl)) return@launch
+                appendLog("기기명 저장 완료: $deviceName")
+
+                val chromeUpdate = ChromeUpdateManager(this@MainActivity, ::appendLog).checkAndUpdate(
+                    serverUrl = serverUrl,
+                    apiKey = apiKey.takeIf { it.isNotBlank() },
+                    deviceName = deviceName,
+                )
+                if (chromeUpdate.installed) return@launch
+                if (!chromeUpdate.success && chromeUpdate.updateRequired) {
+                    appendLog("Chrome/WebView 업데이트 실패: ${chromeUpdate.message} — 현재 WebView로 계속 시작")
+                }
+
+                val updateManager = AppUpdateManager(this@MainActivity, ::appendLog)
+                val updated = if (serverUrl.isNotBlank()) {
+                    updateManager.checkAndUpdateFromServer(serverUrl, apiKey.takeIf { it.isNotBlank() })
+                } else {
+                    updateManager.checkAndUpdate(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_KEY)
+                }
+                if (!updated) {
+                    appendLog("업데이트 확인 완료 → 작업 시작")
+                    runBot()
+                }
+            } catch (error: Throwable) {
+                appendLog("업데이트 확인 실패: ${error.message ?: error::class.java.simpleName} — 현재 버전으로 시작")
+                runBot()
             }
-            val updateManager = AppUpdateManager(this@MainActivity, ::appendLog)
-            val updated = if (serverUrl.isNotBlank()) {
-                updateManager.checkAndUpdateFromServer(serverUrl, apiKey.takeIf { it.isNotBlank() })
-            } else {
-                updateManager.checkAndUpdate(BuildConfig.SUPABASE_URL, BuildConfig.SUPABASE_KEY)
-            }
-            if (!updated) runBot()
         }
     }
 
