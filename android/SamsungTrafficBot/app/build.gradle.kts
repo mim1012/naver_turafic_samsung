@@ -39,8 +39,8 @@ android {
         applicationId = "com.navertraffic.samsung"
         minSdk = 24
         targetSdk = 34
-        versionCode = 27
-        versionName = "0.1.26"
+        versionCode = 28
+        versionName = "0.1.27"
 
         buildConfigField("String", "DEBUG_DEVICE_NAME", "\"${localProp("debug.device.name", "z1-1")}\"")
         buildConfigField("int",    "DEBUG_LOOP_COUNT",  localProp("debug.loop.count", "10"))
@@ -53,7 +53,7 @@ android {
         buildConfigField("String", "DEVICE_API_TOKEN",     "\"${localProp("android.device.api.token")}\"")
         buildConfigField("String", "CHROME_UPDATE_APK_URL", "\"${localProp("chrome.update.apk.url")}\"")
         buildConfigField("String", "CHROME_UPDATE_SHA256", "\"${localProp("chrome.update.sha256")}\"")
-        buildConfigField("int",    "MIN_CHROME_MAJOR",     localProp("min.chrome.major", "138"))
+        buildConfigField("int",    "MIN_CHROME_MAJOR",     localProp("min.chrome.major", "137"))
         buildConfigField("int",    "ROTATE_EVERY",         localProp("rotate.every", "5"))
         buildConfigField("int",    "ROTATION_DRAIN_WAIT_SEC", localProp("rotation.drain.wait.sec", "90"))
     }

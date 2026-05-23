@@ -36,7 +36,7 @@ class SamsungBrowserStrategyG(
         }
 
         webViewManager?.setBrowserMode(isChrome = true)
-        log("UA: Chrome 138 모드 적용")
+        log("UA: Chrome 137 모드 적용")
 
         log("네이버 홈 진입")
         browserSession.loadAndWait(NAVER_HOME_URL, 15_000)

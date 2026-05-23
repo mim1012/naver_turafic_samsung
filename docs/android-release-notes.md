@@ -1,15 +1,15 @@
 # Android Bot Release Notes
 
 This document records the Android bot APK versions that were relevant during the
-0.1.23 -> 0.1.26 fleet update.
+0.1.23 -> 0.1.27 fleet update.
 
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.26-v27-release.apk`
+- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.27-v28-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.26`, `versionCode=27`
-- Current APK SHA256: `4e6430cd96c13b616bdb8c07422ed0e0942fe975e56328ca5f579355a8ee2fb0`
+- Current version: `versionName=0.1.27`, `versionCode=28`
+- Current APK SHA256: `c5fa0c51916d05f01b80373c58d48755fd677d6a940f74a6d82dfaf6419dbe8b`
 
 ## Version history
 
@@ -18,7 +18,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.23 | 24 | Previous field version | Legacy bot APK observed from `z1-2-installed.apk`. This is the version operators referred to as the old `23` bot. It predates the current 0.1.24 rollout and should be replaced on active devices. |
 | 0.1.24 | 25 | Previous production | Fleet update target. Published through the Sellermate production latest endpoint and manually verified on the connected ADB devices. |
 | 0.1.25 | 26 | Previous production | Adds a foreground remote-control service so configured idle devices keep polling admin commands without ADB. |
-| 0.1.26 | 27 | Current production | Persists operator-started auto-run intent so configured bots resume automatically after update/restart. |
+| 0.1.26 | 27 | Previous production | Persists operator-started auto-run intent so configured bots resume automatically after update/restart. |
+| 0.1.27 | 28 | Current production | Sets G Chrome-mode UA and `sec-ch-ua` metadata back to Chrome 137 while keeping the auto-resume update path. |
 
 ## 0.1.24 / v25 changes
 

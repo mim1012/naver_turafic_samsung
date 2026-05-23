@@ -635,10 +635,10 @@ class MainActivity : AppCompatActivity() {
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val continuousServerMode = !dryRun && serverUrl.isNotBlank()
 
-        // 기본 전략(G): Chrome 138 UA 적용
+        // 기본 전략(G): Chrome 137 UA 적용
         if (!dryRun) {
-            webViewManager.setUserAgent(SamsungWebViewManager.CHROME_138_UA)
-            appendLog("기본 전략(G) UA 적용: Chrome 138 Mobile")
+            webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
+            appendLog("기본 전략(G) UA 적용: Chrome 137 Mobile")
         }
 
         val fallbackTask = StrategyGTask(
@@ -810,7 +810,7 @@ class MainActivity : AppCompatActivity() {
                     if (!dryRun && webViewManager.rendererGone) {
                         appendLog("렌더러 OOM 감지: WebView 재생성 중")
                         webViewManager.rebuildWebView(webViewContainer)
-                        webViewManager.setUserAgent(SamsungWebViewManager.CHROME_138_UA)
+                        webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
                                 reportRuntimeState(state, message)
                             }) {

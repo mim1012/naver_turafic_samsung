@@ -969,7 +969,7 @@ class SamsungWebViewManager(
 
     fun setBrowserMode(isChrome: Boolean) {
         chromeMode = isChrome
-        webView.settings.userAgentString = if (isChrome) CHROME_138_UA else SAMSUNG_BROWSER_UA
+        webView.settings.userAgentString = if (isChrome) CHROME_137_UA else SAMSUNG_BROWSER_UA
     }
 
     private var chromeMode = false
@@ -978,7 +978,7 @@ class SamsungWebViewManager(
         return buildMap {
             put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
             if (chromeMode) {
-                put("sec-ch-ua", "\"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\", \"Not/A)Brand\";v=\"24\"")
+                put("sec-ch-ua", "\"Chromium\";v=\"137\", \"Google Chrome\";v=\"137\", \"Not-A.Brand\";v=\"99\"")
             } else {
                 put("sec-ch-ua", "\"Chromium\";v=\"136\", \"Samsung Internet\";v=\"29\", \"Not.A/Brand\";v=\"99\"")
             }
@@ -999,9 +999,9 @@ class SamsungWebViewManager(
                 "(KHTML, like Gecko) SamsungBrowser/29.0 Chrome/136.0.0.0 Mobile Safari/537.36"
 
         // G전략 전용 UA
-        const val CHROME_138_UA =
+        const val CHROME_137_UA =
             "Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+                "(KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"
 
         // navigator.webdriver 및 자동화 지문 제거
         const val NAVIGATOR_SPOOF_JS = """
