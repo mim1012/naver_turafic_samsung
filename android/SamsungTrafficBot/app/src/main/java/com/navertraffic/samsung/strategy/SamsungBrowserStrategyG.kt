@@ -20,8 +20,7 @@ class SamsungBrowserStrategyG(
     private val screenshotCapture: ScreenshotCapture? = null,
     private val captchaChallengeTimeoutMs: Long = 5 * 60 * 1_000,
 ) {
-    private val failedSecondPhrasesByMid = mutableMapOf<String, MutableSet<String>>()
-    private val midMissCountByMid = mutableMapOf<String, Int>()
+    private val secondPhraseMemory = BoundedMidPhraseMemory()
 
     constructor(
         webViewManager: SamsungWebViewManager,
@@ -204,13 +203,13 @@ class SamsungBrowserStrategyG(
         log: (String) -> Unit,
     ): String {
         val mid = task.mid.trim()
-        val missCount = midMissCountByMid[mid] ?: 0
+        val missCount = secondPhraseMemory.missCount(mid)
         if (missCount >= FORCE_FULL_SECOND_SEARCH_AFTER_MISSES) {
             log("G모드 2차 미노출 누적 $missCount 회 → 풀검색어 강제")
             return task.keywordName
         }
 
-        val failed = failedSecondPhrasesByMid[mid].orEmpty()
+        val failed = secondPhraseMemory.failedPhrases(mid)
         repeat(200) { attempt ->
             val candidate = SecondKeywordStore.buildGIntegratedFiveWordQuery(
                 mainKeyword = task.keyword,
@@ -234,9 +233,7 @@ class SamsungBrowserStrategyG(
     ) {
         val key = mid.trim()
         if (key.isBlank() || phrase.isBlank()) return
-        failedSecondPhrasesByMid.getOrPut(key) { linkedSetOf() }.add(phrase)
-        val nextCount = (midMissCountByMid[key] ?: 0) + 1
-        midMissCountByMid[key] = nextCount
+        val nextCount = secondPhraseMemory.rememberMiss(key, phrase)
         log("G 2차 미노출 조합 등록: mid=$key count=$nextCount phrase=$phrase")
     }
 
