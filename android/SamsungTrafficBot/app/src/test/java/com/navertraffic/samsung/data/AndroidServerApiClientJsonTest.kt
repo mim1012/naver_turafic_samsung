@@ -305,6 +305,15 @@ class AndroidServerApiClientJsonTest {
         val json = """
             {
               "taskLeaseId": "task_123",
+              "strategyGroup": "B",
+              "strategyVersion": "b1.0.0",
+              "strategyConfig": {
+                "entryFlow": "search_url_two_step",
+                "uaProfile": "chrome_137_mobile",
+                "keywordMode": "full_name",
+                "searchExecution": "url_load",
+                "midMatchMode": "mid"
+              },
               "keyword": "1차",
               "secondKeyword": "2차",
               "linkUrl": "https://smartstore.naver.com/sunsaem/products/83539482665",
@@ -320,5 +329,39 @@ class AndroidServerApiClientJsonTest {
         assertEquals("2차", lease?.task?.secondKeyword)
         assertEquals("83539482665", lease?.task?.mid)
         assertEquals("차이팟", lease?.task?.productTitle)
+        assertEquals("B", lease?.assignedStrategyGroup)
+        assertEquals("b1.0.0", lease?.strategyVersion)
+        assertEquals("search_url_two_step", lease?.strategyConfig?.entryFlow)
+        assertEquals("chrome_137_mobile", lease?.strategyConfig?.uaProfile)
+        assertEquals("full_name", lease?.strategyConfig?.keywordMode)
+        assertEquals("url_load", lease?.strategyConfig?.searchExecution)
+        assertEquals("mid", lease?.strategyConfig?.midMatchMode)
+    }
+
+    @Test
+    fun serializesStrategyTaskReportWithStrategyMetadata() {
+        val body = AndroidServerApiJson.strategyTaskReportBody(
+            StrategyTaskReport(
+                taskLeaseId = "task_123",
+                deviceName = "z1-1",
+                result = StrategyTaskResult.SUCCESS,
+                strategyGroup = "B",
+                strategyVersion = "b1.0.0",
+                entryFlow = "search_url_two_step",
+                uaProfile = "chrome_137_mobile",
+                keywordMode = "full_name",
+                searchExecution = "url_load",
+                midMatchMode = "mid",
+            ),
+        )
+
+        assertEquals("task_123", body.getString("taskLeaseId"))
+        assertEquals("B", body.getString("strategyGroup"))
+        assertEquals("b1.0.0", body.getString("strategyVersion"))
+        assertEquals("search_url_two_step", body.getString("entryFlow"))
+        assertEquals("chrome_137_mobile", body.getString("uaProfile"))
+        assertEquals("full_name", body.getString("keywordMode"))
+        assertEquals("url_load", body.getString("searchExecution"))
+        assertEquals("mid", body.getString("midMatchMode"))
     }
 }

@@ -21,6 +21,7 @@ import com.navertraffic.samsung.strategy.BotStrategy
 import com.navertraffic.samsung.strategy.StrategyAResult
 import com.navertraffic.samsung.strategy.StrategyATask
 import com.navertraffic.samsung.strategy.StrategyGTask
+import com.navertraffic.samsung.strategy.StrategyVariant
 import com.navertraffic.samsung.strategy.isRecoverableTaskFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -80,14 +81,24 @@ class BossController(
         return response
     }
 
-    suspend fun runOnce(task: StrategyATask): StrategyAResult {
-        val strategy = (botStrategy as? BotStrategy.A)?.strategy
+    suspend fun runOnce(task: StrategyATask, variantOverride: StrategyVariant? = null): StrategyAResult {
+        val strategy = when (val current = botStrategy) {
+            is BotStrategy.A -> current.strategy
+            is BotStrategy.Multi -> current.strategyA
+            else -> null
+        }
             ?: return StrategyAResult(success = false, message = "wrong_strategy_for_A")
-        return executeWithLifecycle("A") { strategy.runDetailed(task, log) }
+        return executeWithLifecycle(variantOverride?.name ?: "A") {
+            strategy.runDetailed(task, log, variantOverride)
+        }
     }
 
     suspend fun runOnce(task: StrategyGTask): StrategyAResult {
-        val strategy = (botStrategy as? BotStrategy.G)?.strategy
+        val strategy = when (val current = botStrategy) {
+            is BotStrategy.G -> current.strategy
+            is BotStrategy.Multi -> current.strategyG
+            else -> null
+        }
             ?: return StrategyAResult(success = false, message = "wrong_strategy_for_G")
         return executeWithLifecycle("G") { strategy.runDetailed(task, log) }
     }

@@ -57,7 +57,12 @@ class SamsungBrowserStrategyA(
         return runDetailed(task, log).success
     }
 
-    suspend fun runDetailed(task: StrategyATask, log: (String) -> Unit): StrategyAResult {
+    suspend fun runDetailed(
+        task: StrategyATask,
+        log: (String) -> Unit,
+        variantOverride: StrategyVariant? = null,
+    ): StrategyAResult {
+        val activeVariant = variantOverride ?: variant
         task.validate()?.let {
             log("INVALID_TASK: $it")
             return StrategyAResult(
@@ -80,16 +85,16 @@ class SamsungBrowserStrategyA(
         delay(Random.nextLong(800, 1_500))
         val tapped = browserSession.tapSearchBar()
         if (tapped) delay(Random.nextLong(400, 700))
-        if (variant != StrategyVariant.A) {
+        if (activeVariant != StrategyVariant.A) {
             browserSession.typeIntoSearchBar(task.keyword)
             delay(Random.nextLong(300, 600))
         }
-        log("1차 자동완성 시뮬레이션 [${variant}]: ${task.keyword}")
+        log("1차 자동완성 시뮬레이션 [${activeVariant}]: ${task.keyword}")
         browserSession.simulateAutocomplete(task.keyword)
         delay(Random.nextLong(400, 700))
 
         log("1차 검색: ${task.keyword}")
-        if (variant == StrategyVariant.A) {
+        if (activeVariant == StrategyVariant.A) {
             browserSession.loadAndWait(buildFirstSearchUrl(task.keyword))
         } else {
             browserSession.tapSearchSubmitAndWait()
@@ -104,21 +109,21 @@ class SamsungBrowserStrategyA(
 
         val tapped2 = browserSession.tapSearchBar()
         if (tapped2) delay(Random.nextLong(400, 700))
-        if (variant != StrategyVariant.A) {
+        if (activeVariant != StrategyVariant.A) {
             browserSession.typeIntoSearchBar(task.secondKeyword)
             delay(Random.nextLong(300, 600))
         }
-        log("2차 자동완성 시뮬레이션 [${variant}]: ${task.secondKeyword}")
+        log("2차 자동완성 시뮬레이션 [${activeVariant}]: ${task.secondKeyword}")
         browserSession.simulateAutocomplete(task.secondKeyword)
         delay(Random.nextLong(400, 700))
         // React controlled input resets value to URL query after re-render — re-type immediately before submit
-        if (variant != StrategyVariant.A) {
+        if (activeVariant != StrategyVariant.A) {
             browserSession.typeIntoSearchBar(task.secondKeyword)
             delay(200)
         }
 
         log("2차 검색: ${task.secondKeyword}")
-        if (variant == StrategyVariant.A) {
+        if (activeVariant == StrategyVariant.A) {
             browserSession.loadAndWait(buildSecondSearchUrl(task.keyword, task.secondKeyword))
         } else {
             browserSession.tapSearchSubmitAndWait()

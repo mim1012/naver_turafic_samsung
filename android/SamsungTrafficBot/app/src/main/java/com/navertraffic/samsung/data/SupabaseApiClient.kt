@@ -86,6 +86,8 @@ class SupabaseApiClient(
         val keywordName = readString(row, "keyword_name").orEmpty()
         val linkUrl = readString(row, "link_url").orEmpty()
         val mid = readString(row, "mid").orEmpty()
+        val strategyGroup = readString(row, "strategy_group")
+        val strategyVersion = readString(row, "strategy_version")
 
         rpcClaims[leaseId] = DirectTaskClaim(
             taskId = taskId,
@@ -97,6 +99,8 @@ class SupabaseApiClient(
 
         return StrategyTaskLease(
             taskLeaseId = leaseId,
+            strategyGroup = strategyGroup,
+            strategyVersion = strategyVersion,
             task = StrategyATask(
                 keyword = keyword,
                 secondKeyword = keywordName,
@@ -118,7 +122,7 @@ class SupabaseApiClient(
     private suspend fun leaseTaskViaRawRest(): StrategyTaskLease? {
         // 1. 트래픽 큐에서 1건 가져오기 (id 오름차순)
         val trafficUrl = "${base()}/$trafficTable" +
-            "?select=id,keyword,keyword_name,link_url,slot_id" +
+            "?select=id,keyword,keyword_name,link_url,slot_id,strategy_group,strategy_version" +
             "&order=id.asc&limit=1"
         val trafficRaw = runCatching { transport.request("GET", trafficUrl, null, headers) }.getOrNull()
             ?: return null
@@ -129,6 +133,8 @@ class SupabaseApiClient(
         val keyword = readString(trafficRow, "keyword").orEmpty()
         val keywordName = readString(trafficRow, "keyword_name").orEmpty()
         val linkUrl = readString(trafficRow, "link_url").orEmpty()
+        val strategyGroup = readString(trafficRow, "strategy_group")
+        val strategyVersion = readString(trafficRow, "strategy_version")
 
         // 2. 트래픽 행 DELETE (클레임)
         runCatching {
@@ -147,6 +153,8 @@ class SupabaseApiClient(
 
         return StrategyTaskLease(
             taskLeaseId = leaseId,
+            strategyGroup = strategyGroup,
+            strategyVersion = strategyVersion,
             task = StrategyATask(
                 keyword = keyword,
                 secondKeyword = keywordName,

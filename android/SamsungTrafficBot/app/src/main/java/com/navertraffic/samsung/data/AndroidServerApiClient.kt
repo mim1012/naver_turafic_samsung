@@ -208,10 +208,20 @@ object AndroidServerApiJson {
         val hasStrategyGShape = raw.contains(""""keywordName"""")
         val keywordName = readString(raw, "keywordName").orEmpty()
         val mid = readString(raw, "mid").orEmpty()
+        val strategyGroup = readString(raw, "strategyGroup")
+            ?: readString(raw, "strategy_group")
+        val strategyVersion = readString(raw, "strategyVersion")
+            ?: readString(raw, "strategy_version")
+        val strategyConfig = parseNaverStrategyConfig(
+            readObject(raw, "strategyConfig") ?: readObject(raw, "strategy_config"),
+        )
 
         return if (hasStrategyGShape) {
             StrategyTaskLease(
                 taskLeaseId = taskLeaseId,
+                strategyGroup = strategyGroup,
+                strategyVersion = strategyVersion,
+                strategyConfig = strategyConfig,
                 taskG = StrategyGTask(
                     keyword = readString(raw, "keyword").orEmpty(),
                     keywordName = keywordName,
@@ -223,6 +233,9 @@ object AndroidServerApiJson {
         } else {
             StrategyTaskLease(
                 taskLeaseId = taskLeaseId,
+                strategyGroup = strategyGroup,
+                strategyVersion = strategyVersion,
+                strategyConfig = strategyConfig,
                 task = StrategyATask(
                     keyword = readString(raw, "keyword").orEmpty(),
                     secondKeyword = readString(raw, "secondKeyword").orEmpty(),
@@ -255,6 +268,18 @@ object AndroidServerApiJson {
             "versionCode" to heartbeat.appVersionCode,
             "currentIp" to heartbeat.currentIp,
             "lastError" to heartbeat.lastError,
+        )
+    }
+
+    private fun parseNaverStrategyConfig(raw: String?): NaverStrategyConfig? {
+        val source = raw ?: return null
+        return NaverStrategyConfig(
+            entryFlow = readString(source, "entryFlow") ?: readString(source, "entry_flow"),
+            uaProfile = readString(source, "uaProfile") ?: readString(source, "ua_profile"),
+            keywordMode = readString(source, "keywordMode") ?: readString(source, "keyword_mode"),
+            searchExecution = readString(source, "searchExecution") ?: readString(source, "search_execution"),
+            midMatchMode = readString(source, "midMatchMode") ?: readString(source, "mid_match_mode"),
+            rawJson = source,
         )
     }
 
@@ -318,6 +343,13 @@ object AndroidServerApiJson {
             "deviceName" to report.deviceName,
             "result" to report.result.apiName(),
             "message" to report.message,
+            "strategyGroup" to report.strategyGroup,
+            "strategyVersion" to report.strategyVersion,
+            "entryFlow" to report.entryFlow,
+            "uaProfile" to report.uaProfile,
+            "keywordMode" to report.keywordMode,
+            "searchExecution" to report.searchExecution,
+            "midMatchMode" to report.midMatchMode,
         )
     }
 

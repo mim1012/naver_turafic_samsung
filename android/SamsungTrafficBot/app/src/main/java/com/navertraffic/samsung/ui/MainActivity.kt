@@ -45,6 +45,7 @@ import com.navertraffic.samsung.data.SupabaseApiClient
 import com.navertraffic.samsung.data.ProtectionSignal
 import com.navertraffic.samsung.data.StrategyTaskLeaseBlockedException
 import com.navertraffic.samsung.data.StrategyTaskLeaseClient
+import com.navertraffic.samsung.data.StrategyTaskLease
 import com.navertraffic.samsung.data.StrategyTaskReport
 import com.navertraffic.samsung.data.StrategyTaskResult
 import com.navertraffic.samsung.strategy.StrategyAResult
@@ -595,8 +596,8 @@ class MainActivity : AppCompatActivity() {
 
                     runCatching {
                         serverClient.taskLeaseClient.reportTask(
-                            StrategyTaskReport(
-                                taskLeaseId = taskLease?.taskLeaseId,
+                            buildStrategyTaskReport(
+                                taskLease = taskLease,
                                 deviceName = identity.rawName,
                                 result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
                                 message = if (result.success) null else result.message,
@@ -662,7 +663,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         val serverClient = buildServerClient()
-        val strategyImpl = if (dryRun) {
+        val strategyGImpl = if (dryRun) {
             appendLog("DRY_RUN 모드: URL 흐름만 검증")
             SamsungBrowserStrategyG(DryRunBrowserSession(::appendLog))
         } else {
@@ -674,7 +675,21 @@ class MainActivity : AppCompatActivity() {
                 screenshotCapture = screenshotCapture,
             )
         }
-        val botStrategy = BotStrategy.G(strategyImpl)
+        val strategyAImpl = if (dryRun) {
+            SamsungBrowserStrategyA(
+                DryRunBrowserSession(::appendLog),
+                stepDelayMs = 0,
+                productDelayMs = 0,
+                useMidClick = false,
+            )
+        } else {
+            SamsungBrowserStrategyA(
+                browserSession = WebViewBrowserSession(webViewManager),
+                captchaChallengeClient = serverClient.challengeClient,
+                screenshotCapture = screenshotCapture,
+            )
+        }
+        val botStrategy = BotStrategy.Multi(strategyAImpl, strategyGImpl)
         logServerMode(serverClient)
         enterRunningMode("기본 전략(G) 실행 중")
 
@@ -768,12 +783,115 @@ class MainActivity : AppCompatActivity() {
                         kotlinx.coroutines.delay(30_000)
                         continue
                     }
+                    val assignedVariant = taskLease?.assignedVariant()
+                    if (assignedVariant != null) {
+                        val strategyTask = taskLease.toStrategyATaskForAssignedVariant()
+                        if (strategyTask == null) {
+                            appendLog("전략 ${assignedVariant.name} 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
+                            runCatching {
+                                serverClient.taskLeaseClient.reportTask(
+                                    buildStrategyTaskReport(
+                                        taskLease = taskLease,
+                                        deviceName = identity.rawName,
+                                        result = StrategyTaskResult.FAILED,
+                                        message = "invalid_strategy_${assignedVariant.name.lowercase()}_task_payload",
+                                    ),
+                                )
+                            }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+                            taskIndex++
+                            continue
+                        }
+
+                        appendLog(
+                            "상품 task 획득: ${strategyTask.productTitle ?: strategyTask.linkUrl} " +
+                                "[전략 ${assignedVariant.name}${taskLease.strategyVersion?.let { " $it" } ?: ""}]",
+                        )
+                        applyNaverStrategyRuntimeConfig(taskLease)
+                        val loopLabel = if (continuousServerMode) {
+                            "${taskIndex + 1}/연속"
+                        } else {
+                            "${taskIndex + 1}/$loopCount"
+                        }
+                        appendLog("전략 ${assignedVariant.name} 반복 $loopLabel")
+                        val result: StrategyAResult = try {
+                            bossController?.runOnce(strategyTask, assignedVariant)
+                                ?: soldierController?.runOnce(strategyTask, assignedVariant)
+                                ?: StrategyAResult(success = false, message = "no_controller")
+                        } catch (error: Throwable) {
+                            val message = error.message ?: error::class.java.simpleName
+                            appendLog("전략 ${assignedVariant.name} 실행 예외: $message — 앱 유지 후 재시도")
+                            reportRuntimeState(DeviceRuntimeState.ERROR, message)
+                            kotlinx.coroutines.delay(30_000)
+                            continue
+                        }
+
+                        if (result.message == "group_paused") {
+                            appendLog("그룹 로테이션 대기 중 — 10초 후 재시도")
+                            kotlinx.coroutines.delay(10_000)
+                            continue
+                        }
+                        taskIndex++
+
+                        if (!dryRun && webViewManager.rendererGone) {
+                            appendLog("렌더러 OOM 감지: WebView 재생성 중")
+                            webViewManager.rebuildWebView(webViewContainer)
+                            webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
+                            if (!ensureNaverLoginOrBackoff(serverClient, identity, assignedVariant.name) { state, message ->
+                                    reportRuntimeState(state, message)
+                                }) {
+                                if (loginFailureStopRequested) break
+                                continue
+                            }
+                        }
+
+                        if (result.success) successCount += 1
+
+                        runCatching {
+                            serverClient.taskLeaseClient.reportTask(
+                                buildStrategyTaskReport(
+                                    taskLease = taskLease,
+                                    deviceName = identity.rawName,
+                                    result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
+                                    message = if (result.success) null else result.message,
+                                ),
+                            )
+                        }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+
+                        if (result.signals.isNotEmpty()) {
+                            val signalText = result.signals.joinToString()
+                            appendLog("보호/재인증 신호로 작업 중지: $signalText")
+                            reportRuntimeState(
+                                DeviceRuntimeState.ERROR,
+                                result.message ?: "protection_signal_detected",
+                            )
+                            break
+                        }
+                        continue
+                    }
+
+                    val unsupportedStrategyGroup = taskLease?.assignedStrategyGroup
+                    if (unsupportedStrategyGroup != null) {
+                        appendLog("지원하지 않는 상품 전략 $unsupportedStrategyGroup — 작업 실패 보고 후 다음 큐 확인")
+                        runCatching {
+                            serverClient.taskLeaseClient.reportTask(
+                                buildStrategyTaskReport(
+                                    taskLease = taskLease,
+                                    deviceName = identity.rawName,
+                                    result = StrategyTaskResult.FAILED,
+                                    message = "unsupported_strategy_group:$unsupportedStrategyGroup",
+                                ),
+                            )
+                        }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
+                        taskIndex++
+                        continue
+                    }
+
                     if (taskLease != null && taskLease.taskG == null) {
                         appendLog("기본 전략(G) 작업 형식 불일치 — 작업 실패 보고 후 다음 큐 확인")
                         runCatching {
                             serverClient.taskLeaseClient.reportTask(
-                                StrategyTaskReport(
-                                    taskLeaseId = taskLease.taskLeaseId,
+                                buildStrategyTaskReport(
+                                    taskLease = taskLease,
                                     deviceName = identity.rawName,
                                     result = StrategyTaskResult.FAILED,
                                     message = "invalid_g_task_payload",
@@ -835,8 +953,8 @@ class MainActivity : AppCompatActivity() {
 
                     runCatching {
                         serverClient.taskLeaseClient.reportTask(
-                            StrategyTaskReport(
-                                taskLeaseId = taskLease?.taskLeaseId,
+                            buildStrategyTaskReport(
+                                taskLease = taskLease,
                                 deviceName = identity.rawName,
                                 result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
                                 message = if (result.success) null else result.message,
@@ -1326,6 +1444,57 @@ class MainActivity : AppCompatActivity() {
         }
         val client = SupabaseApiClient(supabaseUrl, supabaseKey)
         return ServerClients(NoopAccountLeaseClient(), client, client, client)
+    }
+
+    private fun StrategyTaskLease.toStrategyATaskForAssignedVariant(): StrategyATask? {
+        task?.let { return it }
+        val source = taskG ?: return null
+        return StrategyATask(
+            keyword = source.keyword,
+            secondKeyword = source.keywordName,
+            linkUrl = source.linkUrl,
+            mid = source.mid,
+            productTitle = source.productTitle,
+            tailKeyword = source.keyword.split(" ").lastOrNull().orEmpty(),
+        )
+    }
+
+    private fun buildStrategyTaskReport(
+        taskLease: StrategyTaskLease?,
+        deviceName: String,
+        result: StrategyTaskResult,
+        message: String?,
+    ): StrategyTaskReport {
+        val config = taskLease?.strategyConfig
+        return StrategyTaskReport(
+            taskLeaseId = taskLease?.taskLeaseId,
+            deviceName = deviceName,
+            result = result,
+            message = message,
+            strategyGroup = taskLease?.assignedStrategyGroup ?: taskLease?.strategyGroup,
+            strategyVersion = taskLease?.strategyVersion,
+            entryFlow = config?.entryFlow,
+            uaProfile = config?.uaProfile,
+            keywordMode = config?.keywordMode,
+            searchExecution = config?.searchExecution,
+            midMatchMode = config?.midMatchMode,
+        )
+    }
+
+    private fun applyNaverStrategyRuntimeConfig(taskLease: StrategyTaskLease) {
+        val uaProfile = taskLease.strategyConfig?.uaProfile?.trim()?.lowercase().orEmpty()
+        if (uaProfile.isBlank()) return
+        when {
+            "samsung" in uaProfile -> {
+                webViewManager.setUserAgent(SamsungWebViewManager.SAMSUNG_BROWSER_UA)
+                appendLog("전략 UA 적용: SamsungBrowser")
+            }
+            "chrome" in uaProfile -> {
+                webViewManager.setUserAgent(SamsungWebViewManager.CHROME_137_UA)
+                appendLog("전략 UA 적용: Chrome 137 Mobile")
+            }
+            else -> appendLog("전략 UA 미적용: 알 수 없는 uaProfile=$uaProfile")
+        }
     }
 
     private fun logServerMode(serverClient: ServerClients) {
