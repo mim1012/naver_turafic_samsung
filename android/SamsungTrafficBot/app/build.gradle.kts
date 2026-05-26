@@ -39,8 +39,8 @@ android {
         applicationId = "com.navertraffic.samsung"
         minSdk = 24
         targetSdk = 34
-        versionCode = 32
-        versionName = "0.1.31"
+        versionCode = 33
+        versionName = "0.1.32"
 
         buildConfigField("String", "DEBUG_DEVICE_NAME", "\"${localProp("debug.device.name", "z1-1")}\"")
         buildConfigField("int",    "DEBUG_LOOP_COUNT",  localProp("debug.loop.count", "10"))

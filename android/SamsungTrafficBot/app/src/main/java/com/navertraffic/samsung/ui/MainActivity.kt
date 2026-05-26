@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
     private var loginFailureStopRequested = false
     @Volatile
     private var botRunActive = false
+    private var lastInRunUpdateCheckAt = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -419,10 +420,12 @@ class MainActivity : AppCompatActivity() {
         val rotateEvery = BuildConfig.ROTATE_EVERY
         val drainWaitMs = BuildConfig.ROTATION_DRAIN_WAIT_SEC * 1000L
         val loopCount = getIntExtra(EXTRA_LOOP_COUNT, BuildConfig.DEBUG_LOOP_COUNT).coerceIn(1, 1_000)
+        val serverUrl = resolveServerUrl(config)
+        val apiKey = resolveApiKey(config)
         config.save(
             deviceName = deviceName,
             loopCount = loopCount,
-            serverUrl = resolveServerUrl(config),
+            serverUrl = serverUrl,
             autoStartEnabled = true,
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
@@ -473,8 +476,8 @@ class MainActivity : AppCompatActivity() {
                 context = this@MainActivity,
                 identity = identity,
                 groupControlClient = serverClient.groupControlClient,
-                serverUrl = resolveServerUrl(config),
-                apiKey = resolveApiKey(config).takeIf { it.isNotBlank() },
+                serverUrl = serverUrl,
+                apiKey = apiKey.takeIf { it.isNotBlank() },
                 log = ::appendLog,
             )
             var taskLeaseError: Throwable? = null
@@ -550,9 +553,14 @@ class MainActivity : AppCompatActivity() {
                 var comboIndex = 0
                 var successCount = 0
                 var stopForLoginFailure = false
+                var updateScheduled = false
 
                 repeat(loopCount) { index ->
-                    if (stopForLoginFailure) return@repeat
+                    if (stopForLoginFailure || updateScheduled) return@repeat
+                    if (!dryRun && checkForInRunAppUpdate(serverUrl, apiKey.takeIf { it.isNotBlank() }, "A전략 반복 전")) {
+                        updateScheduled = true
+                        return@repeat
+                    }
                     val available = keywordCombos.filter { it !in excludedCombos }
                     if (available.isEmpty()) {
                         appendLog("모든 2차 검색어 조합 제외됨: 종료")
@@ -616,7 +624,11 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
+                if (updateScheduled) {
+                    appendLog("앱 업데이트 예약으로 A전략 루프 중지")
+                } else {
+                    appendLog("A전략 반복 완료: ${successCount}/$loopCount 성공")
+                }
             } finally {
                 heartbeatJob?.cancel()
             }
@@ -637,6 +649,7 @@ class MainActivity : AppCompatActivity() {
         val drainWaitMs = BuildConfig.ROTATION_DRAIN_WAIT_SEC * 1000L
         val config = ConfigStore(this)
         val serverUrl = resolveServerUrl(config)
+        val apiKey = resolveApiKey(config)
         val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
 
         config.save(
@@ -699,7 +712,7 @@ class MainActivity : AppCompatActivity() {
                 identity = identity,
                 groupControlClient = serverClient.groupControlClient,
                 serverUrl = resolveServerUrl(config),
-                apiKey = resolveApiKey(config).takeIf { it.isNotBlank() },
+                apiKey = apiKey.takeIf { it.isNotBlank() },
                 log = ::appendLog,
             )
             val bossController = if (identity.isBoss) BossController(
@@ -746,6 +759,10 @@ class MainActivity : AppCompatActivity() {
                 reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                 while (taskIndex < loopCount || continuousServerMode) {
                     reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
+                    if (!dryRun && checkForInRunAppUpdate(serverUrl, apiKey.takeIf { it.isNotBlank() }, "G전략 작업 대기")) {
+                        appendLog("앱 업데이트 예약으로 G전략 루프 중지")
+                        break
+                    }
 
                     if (!dryRun) {
                         if (!ensureNaverLoginOrBackoff(serverClient, identity, "G") { state, message ->
@@ -981,6 +998,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ── 공통 헬퍼 ───────────────────────────────────────────────────────────
+
+    private suspend fun checkForInRunAppUpdate(
+        serverUrl: String,
+        apiKey: String?,
+        reason: String,
+    ): Boolean {
+        if (serverUrl.isBlank()) return false
+        val now = System.currentTimeMillis()
+        if (now - lastInRunUpdateCheckAt < IN_RUN_UPDATE_CHECK_INTERVAL_MS) return false
+        lastInRunUpdateCheckAt = now
+
+        appendLog("실행 중 앱 업데이트 확인: $reason")
+        return try {
+            val result = AppUpdateManager(this@MainActivity, ::appendLog)
+                .checkAndUpdateFromServerDetailed(
+                    serverUrl = serverUrl,
+                    apiKey = apiKey,
+                    restartAfterInstall = true,
+                )
+            if (!result.success) {
+                appendLog("실행 중 앱 업데이트 확인 실패: ${result.message}")
+                false
+            } else if (result.installed) {
+                appendLog("신버전 설치 예약됨: ${result.message}")
+                true
+            } else {
+                appendLog("실행 중 앱 업데이트 확인 완료: ${result.message}")
+                false
+            }
+        } catch (error: Throwable) {
+            appendLog("실행 중 앱 업데이트 확인 예외: ${error.message ?: error::class.java.simpleName}")
+            false
+        }
+    }
 
     private suspend fun closeBrowserForNextTask(reason: String) {
         appendLog("브라우저 강제 종료 시작: $reason")
@@ -1625,6 +1676,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "SamsungTrafficBot"
         private val APP_VERSION = BuildConfig.VERSION_NAME
         private const val LOGIN_RETRY_DELAY_MS = 60_000L
+        private const val IN_RUN_UPDATE_CHECK_INTERVAL_MS = 10 * 60 * 1_000L
         private const val PREF_COOKIE_SYNC = "naver_cookie_sync"
         private const val COOKIE_SERVER_REFRESH_INTERVAL_MS = 6 * 60 * 60 * 1_000L
         private const val EXTRA_AUTO_RUN = "autoRun"
