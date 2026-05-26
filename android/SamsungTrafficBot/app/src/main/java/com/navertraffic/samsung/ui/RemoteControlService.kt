@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import com.navertraffic.samsung.AppUpdateManager
 import com.navertraffic.samsung.BuildConfig
 import com.navertraffic.samsung.DeviceCommandManager
 import com.navertraffic.samsung.data.AndroidServerApiClient
@@ -28,6 +29,8 @@ import kotlinx.coroutines.launch
 class RemoteControlService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var pollJob: Job? = null
+    @Volatile
+    private var updateCheckRunning = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val message = intent?.getStringExtra(EXTRA_MESSAGE) ?: "원격 제어 대기 중"
@@ -64,6 +67,7 @@ class RemoteControlService : Service() {
 
         val apiKey = config.apiKey.ifBlank { BuildConfig.DEVICE_API_TOKEN }.trim().takeIf { it.isNotBlank() }
         val client = AndroidServerApiClient(serverUrl, apiKey)
+        checkForAppUpdateIfDue(serverUrl, apiKey)
         val commandManager = DeviceCommandManager(
             context = this,
             identity = identity,
@@ -85,6 +89,36 @@ class RemoteControlService : Service() {
             ),
         )
         commandManager.handleDeviceCommand(response, state)
+    }
+
+    private suspend fun checkForAppUpdateIfDue(serverUrl: String, apiKey: String?) {
+        if (updateCheckRunning) return
+        val prefs = getSharedPreferences(PREF_AUTO_UPDATE, Context.MODE_PRIVATE)
+        val now = System.currentTimeMillis()
+        val lastCheckedAt = prefs.getLong(KEY_LAST_UPDATE_CHECK_AT, 0L)
+        if (now - lastCheckedAt < AUTO_UPDATE_CHECK_INTERVAL_MS) return
+
+        updateCheckRunning = true
+        prefs.edit().putLong(KEY_LAST_UPDATE_CHECK_AT, now).apply()
+        try {
+            val result = AppUpdateManager(this, log = { Log.i(TAG, it) })
+                .checkAndUpdateFromServerDetailed(
+                    serverUrl = serverUrl,
+                    apiKey = apiKey,
+                    restartAfterInstall = true,
+                )
+            if (!result.success) {
+                Log.w(TAG, "auto update check failed: ${result.message}")
+                return
+            }
+            if (result.installed) {
+                Log.i(TAG, "auto update scheduled: ${result.message}")
+            }
+        } catch (error: Throwable) {
+            Log.w(TAG, "auto update check error: ${error.message ?: error::class.java.simpleName}")
+        } finally {
+            updateCheckRunning = false
+        }
     }
 
     private fun buildNotification(message: String): Notification {
@@ -129,6 +163,9 @@ class RemoteControlService : Service() {
         const val NOTIF_ID = 1002
         const val EXTRA_MESSAGE = "message"
         private const val POLL_INTERVAL_MS = 15_000L
+        private const val AUTO_UPDATE_CHECK_INTERVAL_MS = 10 * 60 * 1_000L
+        private const val PREF_AUTO_UPDATE = "auto_update"
+        private const val KEY_LAST_UPDATE_CHECK_AT = "last_update_check_at"
         private const val TAG = "RemoteControlService"
 
         fun start(context: Context, message: String = "원격 제어 대기 중") {
