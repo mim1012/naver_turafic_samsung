@@ -1,15 +1,15 @@
 # Android Bot Release Notes
 
 This document records the Android bot APK versions that were relevant during the
-0.1.23 -> 0.1.30 fleet update.
+0.1.23 -> 0.1.31 fleet update.
 
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.30-v31-release.apk`
+- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.31-v32-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.30`, `versionCode=31`
-- Current APK SHA256: `7ed03988a7839a40eed29f99bceeb3d894dd6ccad99ad6edf6abcec7fd1afac0`
+- Current version: `versionName=0.1.31`, `versionCode=32`
+- Current APK SHA256: `eb90b81f5a3e76ac31ed2f3d35a77742c1e9d8bc7c939f5a57abecef1c0fdf30`
 
 ## Version history
 
@@ -22,7 +22,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.27 | 28 | Previous production | Sets G Chrome-mode UA and `sec-ch-ua` metadata back to Chrome 137 while keeping the auto-resume update path. |
 | 0.1.28 | 29 | Previous production | Makes the manual start button visible immediately and lets manual starts continue when Chrome/WebView preflight update is unavailable. |
 | 0.1.29 | 30 | Previous production | Routes Naver Shopping tasks by product-scoped strategy assignment: unassigned stays on default G, while A/B/C run in the same APK from task lease metadata. |
-| 0.1.30 | 31 | Current production | Keeps boss-device hotspot/tethering enabled around mobile-data IP rotation and adds idle remote-service auto update checks. |
+| 0.1.30 | 31 | Previous production | Keeps boss-device hotspot/tethering enabled around mobile-data IP rotation and adds idle remote-service auto update checks. |
+| 0.1.31 | 32 | Current production | Aligns Android G with the Electron GUI G flow: five-word first search, search-box second search, failed second-phrase memory, and full-name fallback after repeated MID misses. |
 
 ## 0.1.24 / v25 changes
 

@@ -20,6 +20,9 @@ class SamsungBrowserStrategyG(
     private val screenshotCapture: ScreenshotCapture? = null,
     private val captchaChallengeTimeoutMs: Long = 5 * 60 * 1_000,
 ) {
+    private val failedSecondPhrasesByMid = mutableMapOf<String, MutableSet<String>>()
+    private val midMissCountByMid = mutableMapOf<String, Int>()
+
     constructor(
         webViewManager: SamsungWebViewManager,
         protectionDetector: ProtectionDetector = ProtectionDetector(),
@@ -50,12 +53,17 @@ class SamsungBrowserStrategyG(
             return it
         }
 
-        // 1차 검색 — 검색만, MID 클릭 없음
-        // URL 직접 진입: 검색바 submit은 느린 기기에서 타이밍 불안정
-        log("1차 검색: ${task.keyword}")
-        browserSession.simulateAutocomplete(task.keyword)
+        val firstPhrase = SecondKeywordStore.buildGIntegratedFiveWordQuery(
+            mainKeyword = task.keyword,
+            secondaryText = task.keywordName,
+        )
+        val secondPhrase = pickSecondPhrase(task, log)
+
+        // 1차 검색 — GUI G와 동일하게 5단어 통합검색 URL 진입, MID 클릭 없음
+        log("1차 검색(G 5단어): $firstPhrase")
+        browserSession.simulateAutocomplete(firstPhrase)
         delay(Random.nextLong(600, 1_200))
-        browserSession.loadAndWait(buildNaverSearchUrl(task.keyword), 30_000)
+        browserSession.loadAndWait(buildNaverSearchUrl(firstPhrase), 30_000)
         delay(Random.nextLong(2_500, 4_000))
 
         log("1차 탐색 스크롤 (${explorationScrollCount}회 × ${explorationScrollPixels}px)")
@@ -72,11 +80,15 @@ class SamsungBrowserStrategyG(
             return it
         }
 
-        // 2차 검색 — keywordName으로 검색 후 MID 탐색
-        log("2차 검색: ${task.keywordName}")
-        browserSession.simulateAutocomplete(task.keywordName)
+        // 2차 검색 — GUI G처럼 검색창 전체값을 갈아끼운 뒤 제출하고, 실패 시 URL 이동 폴백
+        log("2차 검색(G): $secondPhrase")
+        browserSession.simulateAutocomplete(secondPhrase)
         delay(Random.nextLong(600, 1_200))
-        browserSession.loadAndWait(buildNaverSearchUrl(task.keywordName), 30_000)
+        val typedSecondSearch = submitSecondSearchViaSearchBox(secondPhrase, log)
+        if (!typedSecondSearch) {
+            log("2차 검색창 입력 실패 → URL 직접 이동 폴백")
+            browserSession.loadAndWait(buildNaverSearchUrl(secondPhrase), 30_000)
+        }
         delay(Random.nextLong(2_500, 4_000))
         detectProtection(log)?.let {
             webViewManager?.setBrowserMode(isChrome = false)
@@ -85,6 +97,13 @@ class SamsungBrowserStrategyG(
         detectRateLimit(log)?.let {
             webViewManager?.setBrowserMode(isChrome = false)
             return it
+        }
+
+        // GUI G처럼 2차 검색 직후 쇼핑 영역까지 먼저 밀어 올린다.
+        log("G모드 2차 검색 직후 쇼핑 영역 선탐색 스크롤")
+        repeat(4) {
+            browserSession.scrollBy((explorationScrollPixels * 0.95).toInt().coerceAtLeast(280))
+            delay(Random.nextLong(350, 700))
         }
 
         // 탐색 스크롤하며 MID 탐색
@@ -110,6 +129,7 @@ class SamsungBrowserStrategyG(
         if (!clicked) {
             val reason = if (midExplorationResult == null) "timeout" else "exploration"
             log("MID 미탐색: ${reason}, 다음 작업으로 이동")
+            rememberSecondPhraseMiss(task.mid, secondPhrase, log)
             webViewManager?.setBrowserMode(isChrome = false)
             return StrategyAResult(
                 success = false,
@@ -161,6 +181,63 @@ class SamsungBrowserStrategyG(
 
         webViewManager?.setBrowserMode(isChrome = false)
         return StrategyAResult(success = true, lastUrl = finalUrl)
+    }
+
+    private suspend fun submitSecondSearchViaSearchBox(
+        query: String,
+        log: (String) -> Unit,
+    ): Boolean {
+        val tapped = browserSession.tapSearchBar()
+        if (tapped) delay(Random.nextLong(250, 500))
+        val typed = browserSession.typeIntoSearchBar(query)
+        if (!typed) return false
+        delay(Random.nextLong(250, 550))
+        val submitted = browserSession.tapSearchSubmitAndWait(45_000)
+        if (submitted) {
+            log("2차 검색창 전체삭제/재입력 제출 완료")
+        }
+        return submitted
+    }
+
+    private fun pickSecondPhrase(
+        task: StrategyGTask,
+        log: (String) -> Unit,
+    ): String {
+        val mid = task.mid.trim()
+        val missCount = midMissCountByMid[mid] ?: 0
+        if (missCount >= FORCE_FULL_SECOND_SEARCH_AFTER_MISSES) {
+            log("G모드 2차 미노출 누적 $missCount 회 → 풀검색어 강제")
+            return task.keywordName
+        }
+
+        val failed = failedSecondPhrasesByMid[mid].orEmpty()
+        repeat(200) { attempt ->
+            val candidate = SecondKeywordStore.buildGIntegratedFiveWordQuery(
+                mainKeyword = task.keyword,
+                secondaryText = task.keywordName,
+            )
+            if (candidate !in failed) {
+                if (attempt > 0) log("G 2차 5단어 ${attempt + 1}번째 시도로 채택: $candidate")
+                return candidate
+            }
+        }
+
+        val fallback = SecondKeywordStore.buildGIntegratedFiveWordQuery(task.keyword, task.keywordName)
+        log("G 2차 제외 목록 충돌 다수 → 임의 5단어 사용: $fallback")
+        return fallback
+    }
+
+    private fun rememberSecondPhraseMiss(
+        mid: String,
+        phrase: String,
+        log: (String) -> Unit,
+    ) {
+        val key = mid.trim()
+        if (key.isBlank() || phrase.isBlank()) return
+        failedSecondPhrasesByMid.getOrPut(key) { linkedSetOf() }.add(phrase)
+        val nextCount = (midMissCountByMid[key] ?: 0) + 1
+        midMissCountByMid[key] = nextCount
+        log("G 2차 미노출 조합 등록: mid=$key count=$nextCount phrase=$phrase")
     }
 
     private fun buildNaverSearchUrl(query: String): String {
@@ -291,5 +368,6 @@ class SamsungBrowserStrategyG(
 
     companion object {
         const val NAVER_HOME_URL = "https://m.naver.com/"
+        private const val FORCE_FULL_SECOND_SEARCH_AFTER_MISSES = 10
     }
 }

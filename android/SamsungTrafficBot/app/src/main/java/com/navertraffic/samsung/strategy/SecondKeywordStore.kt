@@ -47,5 +47,34 @@ class SecondKeywordStore {
             }
             return List(count) { i -> result[i % result.size] }
         }
+
+        /**
+         * GUI G 전략과 맞춘 통합검색 5단어 조합.
+         * 1차 키워드에서 1단어 + 상품명/2차 텍스트에서 4단어를 뽑는다.
+         */
+        fun buildGIntegratedFiveWordQuery(
+            mainKeyword: String,
+            secondaryText: String,
+        ): String {
+            val mainWords = tokenize(mainKeyword)
+            val mainPick = mainWords.randomOrNull() ?: "상품"
+            var pool = tokenize(secondaryText)
+                .distinct()
+                .filter { it != mainPick }
+            if (pool.isEmpty()) pool = tokenize(secondaryText).distinct()
+            if (pool.isEmpty()) pool = listOf(mainPick)
+
+            val shuffled = pool.shuffled()
+            val four = List(4) { index -> shuffled[index % shuffled.size] }
+            return (listOf(mainPick) + four).joinToString(" ")
+        }
+
+        private fun tokenize(text: String): List<String> {
+            return text
+                .replace(Regex("\\s+"), " ")
+                .trim()
+                .split(" ")
+                .filter { it.isNotBlank() }
+        }
     }
 }
