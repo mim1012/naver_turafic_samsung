@@ -333,6 +333,7 @@ test("omits admin API CORS headers for a disallowed origin", async () => {
 
 test("serves latest app release for Vercel-style Android update checks", async () => {
   const state = createState({
+    androidReleaseRepo: "",
     appReleases: [
       { versionCode: 2, versionName: "0.2.0", apkUrl: "https://example.com/app-v2.apk", enabled: true },
       { versionCode: 3, versionName: "0.3.0", apkUrl: "https://example.com/app-v3.apk", enabled: false },
@@ -346,6 +347,98 @@ test("serves latest app release for Vercel-style Android update checks", async (
   assert.equal(release.version_code, 2);
   assert.equal(release.version_name, "0.2.0");
   assert.equal(release.apk_url, "https://example.com/app-v2.apk");
+});
+
+test("serves newer GitHub Android release when metadata table is stale", async () => {
+  const github = await startGitHubReleases([
+    {
+      tag_name: "android-0.1.34",
+      name: "Android 0.1.34",
+      draft: false,
+      prerelease: false,
+      assets: [
+        {
+          name: "naver-traffic-samsung-0.1.34-v35-release.apk",
+          browser_download_url: "https://github.com/example/releases/download/android-0.1.34/app.apk",
+          digest: "sha256:abc123",
+        },
+      ],
+    },
+  ]);
+  const state = createState({
+    githubReleaseApiUrl: `${github.baseUrl}/releases`,
+    appReleases: [
+      { versionCode: 34, versionName: "0.1.33", apkUrl: "https://example.com/app-v34.apk", enabled: true },
+    ],
+  });
+  const baseUrl = await start(state);
+
+  const release = await get(baseUrl, "/android/app-release/latest");
+
+  assert.equal(release.version_code, 35);
+  assert.equal(release.version_name, "0.1.34");
+  assert.equal(release.apk_url, "https://github.com/example/releases/download/android-0.1.34/app.apk");
+  assert.equal(release.sha256, "abc123");
+});
+
+test("admin group update command is delivered through heartbeat and reportable", async () => {
+  const state = createState();
+  const baseUrl = await start(state);
+
+  await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 0,
+    appVersion: "0.1.24",
+    versionCode: 25,
+  });
+
+  const requested = await post(baseUrl, "/admin/api/groups/command", {
+    groupId: "z1",
+    command: "UPDATE_APP",
+  });
+  assert.equal(requested.ok, true);
+  assert.equal(requested.command, "UPDATE_APP");
+
+  const heartbeat = await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 0,
+    appVersion: "0.1.24",
+    versionCode: 25,
+  });
+  assert.equal(heartbeat.deviceCommand.type, "UPDATE_APP");
+  assert.equal(heartbeat.deviceCommand.commandId, requested.commandId);
+
+  const report = await post(baseUrl, "/android/commands/report", {
+    commandId: requested.commandId,
+    deviceName: "z1-1",
+    groupId: "z1",
+    command: "UPDATE_APP",
+    success: true,
+    message: "already latest: 25",
+  });
+  assert.equal(report.ok, true);
+
+  const afterReport = await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 0,
+    appVersion: "0.1.24",
+    versionCode: 25,
+  });
+  assert.equal(afterReport.deviceCommand, null);
+
+  const snapshot = await get(baseUrl, "/admin/api/snapshot");
+  assert.equal(snapshot.groups[0].deviceCommand.type, "UPDATE_APP");
+  assert.equal(snapshot.groups[0].deviceCommand.reportedCount, 1);
+  assert.equal(snapshot.deviceCommandReports[0].message, "already latest: 25");
 });
 
 test("maps existing zero claim-work product task into strategy A lease", async () => {
@@ -435,6 +528,103 @@ test("maps existing supabase traffic queue into strategy A lease", async () => {
   assert.equal(upstream.requests.some((item) => item.method === "PATCH" && item.url.startsWith("/sellermate_slot_naver")), true);
 });
 
+test("supabase RPC lease claims a strategy A task without deleting queue rows", async () => {
+  const upstream = await startSupabaseRest({
+    rpcClaim: {
+      task_id: 188,
+      lease_id: "lease-188",
+      slot_id: 144,
+      idempotency_key: "idem-188",
+      keyword: "삼성 갤럭시 이어폰",
+      keyword_name: "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료",
+      link_url: "https://smartstore.naver.com/sunsaem/products/83539482665",
+      mid: "83539482665",
+      product_title: "차이팟",
+    },
+  });
+  const state = createState({
+    supabaseRestUrl: upstream.baseUrl,
+    supabaseAnonKey: "test-key",
+    supabaseTaskRpcEnabled: true,
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/tasks/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "A",
+    appVersion: "0.1.0",
+  });
+
+  assert.equal(lease.taskLeaseId, "sb_lease-188");
+  assert.equal(lease.keyword, "삼성 갤럭시 이어폰");
+  assert.equal(lease.secondKeyword, "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료");
+  assert.equal(lease.mid, "83539482665");
+  assert.equal(upstream.requests.some((item) => item.method === "POST" && item.url === "/rpc/claim_android_naver_task"), true);
+  assert.equal(upstream.requests.some((item) => item.method === "DELETE" && item.url.startsWith("/sellermate_traffic_navershopping")), false);
+
+  const snapshot = await get(baseUrl, "/admin/api/snapshot");
+  assert.equal(snapshot.taskLeases[0].taskId, 188);
+  assert.equal(snapshot.taskLeases[0].leaseId, "lease-188");
+  assert.equal(snapshot.taskLeases[0].slotId, 144);
+  assert.equal(snapshot.taskLeases[0].idempotencyKey, "idem-188");
+  assert.equal(snapshot.taskLeases[0].linkUrl, "https://smartstore.naver.com/sunsaem/products/83539482665");
+});
+
+test("supabase RPC report calls report RPC without slot patching on duplicate reports", async () => {
+  const upstream = await startSupabaseRest({
+    rpcClaim: {
+      task_id: 288,
+      lease_id: "lease-288",
+      slot_id: 244,
+      idempotency_key: "idem-288",
+      keyword: "삼성 갤럭시 이어폰",
+      keyword_name: "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료",
+      link_url: "https://smartstore.naver.com/sunsaem/products/83539482665",
+      mid: "83539482665",
+    },
+    rpcReport: { ok: true },
+  });
+  const state = createState({
+    supabaseRestUrl: upstream.baseUrl,
+    supabaseAnonKey: "test-key",
+    supabaseTaskRpcEnabled: true,
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/tasks/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "A",
+    appVersion: "0.1.0",
+  });
+  const firstReport = await post(baseUrl, "/android/tasks/report", {
+    taskLeaseId: lease.taskLeaseId,
+    deviceName: "z1-1",
+    result: "success",
+  });
+  const duplicateReport = await post(baseUrl, "/android/tasks/report", {
+    taskLeaseId: lease.taskLeaseId,
+    deviceName: "z1-1",
+    result: "success",
+  });
+
+  assert.equal(firstReport.ok, true);
+  assert.equal(duplicateReport.ok, true);
+  const reportRequests = upstream.requests.filter((item) => item.method === "POST" && item.url === "/rpc/report_android_naver_task");
+  assert.equal(reportRequests.length, 2);
+  assert.deepEqual(reportRequests[0].body, {
+    p_task_id: 288,
+    p_lease_id: "lease-288",
+    p_device_name: "z1-1",
+    p_success: true,
+    p_link_url: "https://smartstore.naver.com/sunsaem/products/83539482665",
+    p_source: "android-samsung-login-A",
+    p_idempotency_key: "idem-288",
+  });
+  assert.equal(upstream.requests.some((item) => item.method === "PATCH" && item.url.startsWith("/sellermate_slot_naver")), false);
+});
+
 test("maps supabase traffic queue into strategy G without strategy query filter", async () => {
   const upstream = await startSupabaseRest({
     trafficRows: [
@@ -443,6 +633,8 @@ test("maps supabase traffic queue into strategy G without strategy query filter"
         slot_id: 45,
         keyword: "나이키 운동화",
         keyword_name: "나이키 에어맥스 운동화 스니커즈",
+        product_name: "나이키 에어맥스 270 운동화 남성 여성 스니커즈",
+        catalog_mid: "catalog-123",
         link_url: "https://smartstore.naver.com/sunsaem/products/123456789",
       },
     ],
@@ -472,6 +664,8 @@ test("maps supabase traffic queue into strategy G without strategy query filter"
   assert.equal(lease.taskLeaseId, "sb_89_45");
   assert.equal(lease.keyword, "나이키 운동화");
   assert.equal(lease.keywordName, "나이키 에어맥스 운동화 스니커즈");
+  assert.equal(lease.productName, "나이키 에어맥스 270 운동화 남성 여성 스니커즈");
+  assert.equal(lease.catalogMid, "catalog-123");
   assert.equal(lease.secondKeyword, null);
   assert.equal(lease.mid, "123456789");
   assert.equal(
@@ -525,6 +719,48 @@ test("defaults omitted task strategy to strategy G", async () => {
   assert.equal(lease.mid, "987654321");
 });
 
+test("bounds task leases and evicts stale heartbeat devices", async () => {
+  const products = Array.from({ length: 505 }, (_, index) => ({
+    keyword: `keyword-${index}`,
+    secondKeyword: `second-${index}`,
+    linkUrl: `https://example.com/products/${index}`,
+    mid: String(index),
+    productTitle: `product-${index}`,
+    strategy: "A",
+    status: "available",
+  }));
+  const state = createState({ products });
+  const baseUrl = await start(state);
+
+  for (let index = 0; index < products.length; index += 1) {
+    const lease = await post(baseUrl, "/android/tasks/lease", {
+      deviceName: `z1-${index}`,
+      role: "soldier",
+      strategy: "A",
+      appVersion: "0.1.0",
+    });
+    assert.equal(lease.taskLeaseId.startsWith("task_"), true);
+  }
+  assert.equal(state.taskLeases.size, 500);
+  const snapshot = await get(baseUrl, "/admin/api/snapshot");
+  assert.equal(snapshot.taskLeases.length, 50);
+
+  await post(baseUrl, "/android/heartbeat", {
+    deviceName: "z1-1",
+    groupId: "z1",
+    role: "soldier",
+    state: "IDLE",
+    taskCount: 0,
+  });
+  state.groups.get("z1").devices.get("z1-1").updatedAt = Date.now() - 31_000;
+  const offlineSnapshot = await get(baseUrl, "/admin/api/snapshot");
+  assert.equal(offlineSnapshot.devices.find((device) => device.deviceName === "z1-1").online, false);
+
+  state.groups.get("z1").devices.get("z1-1").updatedAt = Date.now() - 11 * 60_000;
+  const evictedSnapshot = await get(baseUrl, "/admin/api/snapshot");
+  assert.equal(evictedSnapshot.devices.some((device) => device.deviceName === "z1-1"), false);
+});
+
 async function start(state) {
   const server = createServer(state);
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -557,10 +793,17 @@ function send(res, body, status = 200) {
   res.end(text);
 }
 
-async function startSupabaseRest({ trafficRows, slotRows }) {
+async function startSupabaseRest({ trafficRows = [], slotRows = [], rpcClaim = null, rpcReport = { ok: true } }) {
   const requests = [];
   const server = require("node:http").createServer(async (req, res) => {
-    requests.push({ url: req.url, method: req.method });
+    const body = await readRequestBody(req);
+    requests.push({ url: req.url, method: req.method, body });
+    if (req.method === "POST" && req.url === "/rpc/claim_android_naver_task") {
+      return send(res, rpcClaim);
+    }
+    if (req.method === "POST" && req.url === "/rpc/report_android_naver_task") {
+      return send(res, rpcReport);
+    }
     if (req.method === "GET" && req.url.startsWith("/sellermate_traffic_navershopping")) {
       return send(res, trafficRows);
     }
@@ -582,6 +825,31 @@ async function startSupabaseRest({ trafficRows, slotRows }) {
   test.after(() => server.close());
   const { port } = server.address();
   return { baseUrl: `http://127.0.0.1:${port}`, requests };
+}
+
+async function startGitHubReleases(releases) {
+  const server = require("node:http").createServer(async (req, res) => {
+    if (req.method === "GET" && req.url === "/releases") {
+      return send(res, releases);
+    }
+    send(res, { error: "not_found" }, 404);
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  test.after(() => server.close());
+  const { port } = server.address();
+  return { baseUrl: `http://127.0.0.1:${port}` };
+}
+
+function readRequestBody(req) {
+  return new Promise((resolve) => {
+    let raw = "";
+    req.on("data", (chunk) => {
+      raw += chunk;
+    });
+    req.on("end", () => {
+      resolve(raw ? JSON.parse(raw) : null);
+    });
+  });
 }
 
 async function post(baseUrl, path, body) {

@@ -198,7 +198,9 @@ class AndroidServerApiClientJsonTest {
               "keyword": "검색어",
               "keywordName": "상품명",
               "linkUrl": "https://smartstore.naver.com/main/products/",
-              "mid": ""
+              "mid": "",
+              "productName": "상품명 풀네임 테스트",
+              "catalogMid": "catalog-123"
             }
         """.trimIndent()
 
@@ -207,6 +209,8 @@ class AndroidServerApiClientJsonTest {
         assertEquals("sb_10_20_lease", lease?.taskLeaseId)
         assertEquals("상품명", lease?.taskG?.keywordName)
         assertEquals("", lease?.taskG?.mid)
+        assertEquals("상품명 풀네임 테스트", lease?.taskG?.productName)
+        assertEquals("catalog-123", lease?.taskG?.catalogMid)
         assertEquals("mid is required for Strategy G", lease?.taskG?.validate())
     }
 

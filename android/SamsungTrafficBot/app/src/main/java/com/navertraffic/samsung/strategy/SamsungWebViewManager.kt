@@ -92,14 +92,19 @@ class SamsungWebViewManager(
         }
     }
 
-    suspend fun loadAndWait(url: String, timeoutMs: Long = 30_000) {
+    suspend fun loadAndWait(
+        url: String,
+        timeoutMs: Long = 30_000,
+        includeReferer: Boolean = true,
+    ) {
         if (rendererGone) return
-        val referer = withContext(Dispatchers.Main) {
+        val referer = if (includeReferer) withContext(Dispatchers.Main) {
             webView.url?.takeIf { it.isNotEmpty() && it != "about:blank" && !it.startsWith("about:") }
-        }
+        } else null
         repeat(3) { attempt ->
             lastLoadHadError = false
-            log("URL 로딩: $url")
+            val refererLog = if (referer == null) "Referer 없음" else "Referer 포함"
+            log("URL 로딩: $url ($refererLog)")
             // pageLoad reset must happen atomically with loadUrl on the main thread.
             // If reset on the coroutine thread, a stale onPageFinished from the
             // previous navigation can complete the new deferred before loadUrl fires.
@@ -817,6 +822,56 @@ class SamsungWebViewManager(
         }
         tapCssPoint(cssX, cssY)
         log("검색 버튼 탭 완료 — 페이지 로드 대기")
+        withTimeoutOrNull(timeoutMs) { pageLoad.await() }
+        delay(500)
+        log("검색 제출 착지: ${currentUrl()}")
+        return true
+    }
+
+    suspend fun submitSearchWithEnterAndWait(timeoutMs: Long = 30_000): Boolean {
+        lastLoadHadError = false
+        withContext(Dispatchers.Main) {
+            pageLoad = CompletableDeferred()
+        }
+        val result = evaluateText(
+            """
+            (function() {
+                var selectors = [
+                    'input#query', 'input[name="query"]', 'input[type="search"]',
+                    '.gnb_search input', '.lnb_search input', '.search_input input',
+                    'input[placeholder]'
+                ];
+                for (var i = 0; i < selectors.length; i++) {
+                    var el = document.querySelector(selectors[i]);
+                    if (!el) continue;
+                    el.focus();
+                    ['keydown', 'keypress', 'keyup'].forEach(function(type) {
+                        el.dispatchEvent(new KeyboardEvent(type, {
+                            key: 'Enter',
+                            code: 'Enter',
+                            keyCode: 13,
+                            which: 13,
+                            bubbles: true,
+                            cancelable: true
+                        }));
+                    });
+                    var form = el.form || el.closest('form');
+                    if (form && typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else if (form) {
+                        form.submit();
+                    }
+                    return 'submitted';
+                }
+                return 'missing';
+            })();
+            """.trimIndent()
+        )
+        if (result != "submitted") {
+            log("검색 Enter 제출 실패: $result")
+            return false
+        }
+        log("검색 Enter 제출 완료 — 페이지 로드 대기")
         withTimeoutOrNull(timeoutMs) { pageLoad.await() }
         delay(500)
         log("검색 제출 착지: ${currentUrl()}")

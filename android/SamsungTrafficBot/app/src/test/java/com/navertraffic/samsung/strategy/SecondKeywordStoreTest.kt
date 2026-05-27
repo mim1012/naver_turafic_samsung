@@ -53,6 +53,14 @@ class SecondKeywordStoreTest {
     }
 
     @Test
+    fun strategyGSearchUrlMatchesElectronParameterOrder() {
+        val url = SamsungBrowserStrategyG.buildNaverSearchUrlForQuery("나이키 운동화")
+
+        assertTrue(url.startsWith("https://m.search.naver.com/search.naver?where=m&query="))
+        assertTrue(url.contains("query=%EB%82%98%EC%9D%B4%ED%82%A4+%EC%9A%B4%EB%8F%99%ED%99%94"))
+    }
+
+    @Test
     fun boundedMidPhraseMemoryEvictsOldPhrasesAndMids() {
         val memory = BoundedMidPhraseMemory(maxMids = 2, maxPhrasesPerMid = 2)
 

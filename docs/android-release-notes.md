@@ -6,10 +6,10 @@ This document records the Android bot APK versions that were relevant during the
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://www.sellermate.ai.kr/downloads/android/naver-traffic-samsung-0.1.32-v33-release.apk`
+- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.34/naver-traffic-samsung-0.1.34-v35-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.32`, `versionCode=33`
-- Current APK SHA256: `d677421267221468f2ed825f6379d68d0ec7aab6c7590bd2c463767879e1296d`
+- Current version: `versionName=0.1.34`, `versionCode=35`
+- Current APK SHA256: `57763dcee861190f96c794cb2ace4a9b0a53c4bea553d2c2ac54a2290e65d087`
 
 ## Version history
 
@@ -24,7 +24,9 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.29 | 30 | Previous production | Routes Naver Shopping tasks by product-scoped strategy assignment: unassigned stays on default G, while A/B/C run in the same APK from task lease metadata. |
 | 0.1.30 | 31 | Previous production | Keeps boss-device hotspot/tethering enabled around mobile-data IP rotation and adds idle remote-service auto update checks. |
 | 0.1.31 | 32 | Previous production | Aligns Android G with the Electron GUI G flow: five-word first search, search-box second search, failed second-phrase memory, and full-name fallback after repeated MID misses. |
-| 0.1.32 | 33 | Current production | Checks for app updates at safe in-run task boundaries so future releases can apply even while the bot loop keeps running. |
+| 0.1.32 | 33 | Previous production | Checks for app updates at safe in-run task boundaries so future releases can apply even while the bot loop keeps running. |
+| 0.1.33 | 34 | Previous production | Adds S7 Chrome/WebView 138 update support at safe task boundaries, including APKMirror ZIP-with-single-APK extraction before rooted `pm install -r`. |
+| 0.1.34 | 35 | Current production | Aligns Android G URL loading with Electron G and makes update metadata fall back to GitHub Android releases when the DB row is stale. |
 
 ## 0.1.24 / v25 changes
 

@@ -14,6 +14,22 @@ const DEFAULT_POLICY = {
 const DEFAULT_SUPABASE_TRAFFIC_TABLE = "sellermate_traffic_navershopping";
 const DEFAULT_SUPABASE_SLOT_TABLE = "sellermate_slot_naver";
 const DEFAULT_STRATEGY = "G";
+const DEFAULT_ANDROID_RELEASE_REPO = "mim1012/naver_turafic_samsung";
+const TASK_LEASE_CAP = 500;
+const ACCOUNT_REPORT_CAP = 100;
+const DEVICE_OFFLINE_MS = 30_000;
+const DEVICE_EVICT_MS = 10 * 60_000;
+const CHALLENGE_CAP = 200;
+const DEVICE_COMMAND_REPORT_CAP = 200;
+const DEVICE_COMMAND_TTL_MS = 30 * 60 * 1000;
+const DEVICE_COMMAND_TYPES = new Set([
+  "START_BOT",
+  "UPDATE_APP",
+  "RESTART_APP",
+  "REBOOT_DEVICE",
+  "STOP",
+  "PAUSE",
+]);
 
 function createState(options = {}) {
   return {
@@ -29,6 +45,13 @@ function createState(options = {}) {
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "",
     supabaseTrafficTable: options.supabaseTrafficTable || process.env.SUPABASE_TRAFFIC_TABLE || DEFAULT_SUPABASE_TRAFFIC_TABLE,
     supabaseSlotTable: options.supabaseSlotTable || process.env.SUPABASE_SLOT_TABLE || DEFAULT_SUPABASE_SLOT_TABLE,
+    supabaseTaskRpcEnabled: parseBooleanOption(options.supabaseTaskRpcEnabled, process.env.SUPABASE_TASK_RPC_ENABLED),
+    androidReleaseRepo: options.androidReleaseRepo === undefined
+      ? (process.env.ANDROID_RELEASE_REPO || DEFAULT_ANDROID_RELEASE_REPO)
+      : options.androidReleaseRepo,
+    githubReleaseApiUrl: options.githubReleaseApiUrl === undefined
+      ? (process.env.GITHUB_RELEASE_API_URL || "")
+      : options.githubReleaseApiUrl,
     adminApiToken: options.adminApiToken || process.env.ADMIN_API_TOKEN || "",
     adminAllowedOrigins: options.adminAllowedOrigins || parseCsv(process.env.ADMIN_ALLOWED_ORIGINS || ""),
     leases: new Map(),
@@ -36,6 +59,7 @@ function createState(options = {}) {
     groups: new Map(),
     cookieStore: new Map(),
     accountReports: [],
+    deviceCommandReports: [],
     challenges: new Map(),
     policy: { ...DEFAULT_POLICY, ...(options.policy || {}) },
   };
@@ -82,6 +106,8 @@ function createServer(state = createState()) {
               return sendJson(res, 200, addAdminAccount(state, body), corsHeaders);
             case "/admin/api/groups/state":
               return sendJson(res, 200, setAdminGroupState(state, body), corsHeaders);
+            case "/admin/api/groups/command":
+              return sendJson(res, 200, setAdminGroupCommand(state, body), corsHeaders);
             default: {
               const answerMatch = pathname.match(/^\/admin\/api\/challenges\/([^/]+)\/answer$/);
               if (answerMatch) {
@@ -132,6 +158,8 @@ function createServer(state = createState()) {
           return sendJson(res, 200, pollChallenge(state, body));
         case "/android/challenges/complete":
           return sendJson(res, 200, completeChallenge(state, body));
+        case "/android/commands/report":
+          return sendJson(res, 200, reportDeviceCommand(state, body));
         default:
           return sendJson(res, 404, { error: "not_found" });
       }
@@ -179,7 +207,7 @@ async function leaseTask(state, body) {
     status: "active",
     leasedAt: new Date(now).toISOString(),
   };
-  state.taskLeases.set(lease.id, lease);
+  rememberTaskLease(state, lease);
   return taskLeaseResponse(product, lease);
 }
 
@@ -211,6 +239,10 @@ async function reportTask(state, body) {
 }
 
 async function leaseTaskFromSupabase(state, body) {
+  if (state.supabaseTaskRpcEnabled) {
+    return leaseTaskFromSupabaseRpc(state, body);
+  }
+
   const strategy = normalizeStrategy(body.strategy);
   const deviceName = String(body.deviceName || "");
 
@@ -254,16 +286,22 @@ async function leaseTaskFromSupabase(state, body) {
       linkUrl: traffic.link_url || "",
       mid,
       productTitle: traffic.keyword_name || "",
+      productName: traffic.product_name || traffic.productName || traffic.product_title || "",
+      catalogMid: traffic.catalog_mid || traffic.catalogMid || "",
     },
     deviceName,
     strategy,
     status: "active",
   };
-  state.taskLeases.set(lease.id, lease);
+  rememberTaskLease(state, lease);
   return taskLeaseResponse(lease.product, lease);
 }
 
 async function reportTaskToSupabase(state, body) {
+  if (state.supabaseTaskRpcEnabled) {
+    return reportTaskToSupabaseRpc(state, body);
+  }
+
   const taskLeaseId = String(body.taskLeaseId || "");
   const lease = state.taskLeases.get(taskLeaseId);
   const slotId = lease?.supabaseSlotId || 0;
@@ -309,6 +347,82 @@ async function reportTaskToSupabase(state, body) {
   return { ok: true };
 }
 
+async function leaseTaskFromSupabaseRpc(state, body) {
+  const strategy = normalizeStrategy(body.strategy);
+  const deviceName = String(body.deviceName || "");
+  const response = await supabaseRequestJson(
+    state,
+    "POST",
+    "/rpc/claim_android_naver_task",
+    {
+      p_device_name: deviceName,
+      p_strategy: strategy,
+    },
+  );
+  const claimed = firstRpcRow(response);
+  if (!claimed) return null;
+
+  const taskId = claimed.task_id ?? claimed.taskId ?? claimed.traffic_id ?? claimed.id ?? "";
+  const leaseId = claimed.lease_id ?? claimed.leaseId ?? "";
+  const slotId = claimed.slot_id ?? claimed.slotId ?? claimed.slot_status_id ?? "";
+  if (!taskId && !leaseId) return null;
+
+  const productTitle = claimed.product_title ?? claimed.productTitle ?? claimed.keyword_name ?? "";
+  const productName = claimed.product_name ?? claimed.productName ?? productTitle;
+  const lease = {
+    id: `sb_${leaseId || taskId}`,
+    supabaseTaskId: taskId,
+    supabaseLeaseId: leaseId,
+    supabaseSlotId: slotId,
+    supabaseIdempotencyKey: claimed.idempotency_key ?? claimed.idempotencyKey ?? "",
+    product: {
+      keyword: claimed.keyword ?? claimed.short_keyword ?? claimed.shortKeyword ?? "",
+      secondKeyword: strategy === "G" ? null : (claimed.second_keyword ?? claimed.secondKeyword ?? claimed.keyword_name ?? productTitle),
+      keywordName: strategy === "G" ? (claimed.keyword_name ?? claimed.keywordName ?? productTitle) : null,
+      linkUrl: claimed.link_url ?? claimed.linkUrl ?? claimed.target_url ?? "",
+      mid: claimed.mid ?? claimed.nv_mid ?? claimed.product_mid ?? "",
+      productTitle,
+      productName,
+      catalogMid: claimed.catalog_mid ?? claimed.catalogMid ?? "",
+    },
+    deviceName,
+    strategy,
+    status: "active",
+    leasedAt: new Date().toISOString(),
+  };
+  rememberTaskLease(state, lease);
+  return taskLeaseResponse(lease.product, lease);
+}
+
+async function reportTaskToSupabaseRpc(state, body) {
+  const taskLeaseId = String(body.taskLeaseId || "");
+  const lease = state.taskLeases.get(taskLeaseId);
+  const result = String(body.result || "");
+  const success = result === "success";
+  const strategy = normalizeStrategy(body.strategy || lease?.strategy);
+  await supabaseRequestJson(
+    state,
+    "POST",
+    "/rpc/report_android_naver_task",
+    {
+      p_task_id: lease?.supabaseTaskId || body.taskId || null,
+      p_lease_id: lease?.supabaseLeaseId || body.leaseId || null,
+      p_device_name: String(body.deviceName || lease?.deviceName || ""),
+      p_success: success,
+      p_link_url: body.linkUrl || lease?.product?.linkUrl || null,
+      p_source: supabaseTaskSource(strategy),
+      p_idempotency_key: body.idempotencyKey || lease?.supabaseIdempotencyKey || taskLeaseId || null,
+    },
+    true,
+  );
+  if (lease) {
+    lease.status = "reported";
+    lease.result = result;
+    lease.message = body.message || null;
+  }
+  return { ok: true };
+}
+
 async function leaseTaskFromZero(state, body) {
   const payload = {
     device_id: String(body.deviceName || ""),
@@ -329,12 +443,14 @@ async function leaseTaskFromZero(state, body) {
       linkUrl: claimed.target_url || claimed.link_url || "",
       mid: claimed.nv_mid || "",
       productTitle: claimed.product_name || "",
+      productName: claimed.product_name || "",
+      catalogMid: claimed.catalog_mid || claimed.catalogMid || "",
     },
     deviceName: String(body.deviceName || ""),
     strategy: zeroStrategy,
     status: "active",
   };
-  state.taskLeases.set(lease.id, lease);
+  rememberTaskLease(state, lease);
   return taskLeaseResponse(lease.product, lease);
 }
 
@@ -431,6 +547,7 @@ function reportAccount(state, body) {
     message: body.message || null,
     createdAt: new Date().toISOString(),
   });
+  trimArray(state.accountReports, ACCOUNT_REPORT_CAP);
   if (lease) {
     lease.status = "reported";
     if (result === "protected") {
@@ -469,6 +586,7 @@ function releaseAccount(state, body) {
 function heartbeat(state, body) {
   const groupId = String(body.groupId || "default");
   const group = getGroup(state, groupId);
+  evictStaleDevices(state);
   const deviceName = String(body.deviceName || "");
   const role = String(body.role || "soldier");
   const currentCount = Number(body.taskCount || 0);
@@ -493,7 +611,7 @@ function heartbeat(state, body) {
   });
 
   updateGroupState(state, group);
-  return controlResponse(state, group, role);
+  return controlResponse(state, group, role, deviceName);
 }
 
 async function saveCookies(state, body) {
@@ -549,20 +667,34 @@ function cookieStoreKey(deviceName, accountAlias) {
 }
 
 async function latestAppRelease(state) {
+  const candidates = [];
   if (state.supabaseRestUrl && state.supabaseAnonKey) {
     const rows = await supabaseRequestJson(
       state, "GET",
       "/app_releases?select=version_code,version_name,apk_url,sha256&enabled=eq.true&order=version_code.desc&limit=1",
     ).catch(() => null);
     const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
-    if (row) return row;
+    if (row) candidates.push(normalizeRelease(row));
   }
 
   const release = state.appReleases
     .filter((item) => item.enabled !== false)
     .sort((a, b) => releaseVersionCode(b) - releaseVersionCode(a))[0];
+  if (release) candidates.push(normalizeRelease(release));
 
-  if (!release) return {};
+  const githubRelease = await latestGitHubAndroidRelease(state).catch(() => null);
+  if (githubRelease) candidates.push(githubRelease);
+
+  return candidates
+    .filter((item) => item.version_code > 0 && item.apk_url)
+    .sort((a, b) => b.version_code - a.version_code)[0] || {};
+}
+
+function releaseVersionCode(release) {
+  return Number(release.versionCode || release.version_code || 0);
+}
+
+function normalizeRelease(release) {
   return {
     version_code: releaseVersionCode(release),
     version_name: release.versionName || release.version_name || "",
@@ -571,8 +703,44 @@ async function latestAppRelease(state) {
   };
 }
 
-function releaseVersionCode(release) {
-  return Number(release.versionCode || release.version_code || 0);
+async function latestGitHubAndroidRelease(state) {
+  if (!state.androidReleaseRepo) return null;
+  const apiUrl = state.githubReleaseApiUrl ||
+    `https://api.github.com/repos/${state.androidReleaseRepo}/releases?per_page=20`;
+  const response = await fetch(apiUrl, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      "User-Agent": "naver-traffic-android-samsung-update-check",
+    },
+  });
+  if (!response.ok) return null;
+  const releases = await response.json();
+  if (!Array.isArray(releases)) return null;
+  const candidates = releases
+    .filter((release) => !release.draft && !release.prerelease)
+    .filter((release) => /^android-\d+\.\d+\.\d+$/.test(String(release.tag_name || "")))
+    .map(releaseFromGitHub)
+    .filter(Boolean);
+  return candidates.sort((a, b) => b.version_code - a.version_code)[0] || null;
+}
+
+function releaseFromGitHub(release) {
+  const assets = Array.isArray(release.assets) ? release.assets : [];
+  const apk = assets.find((asset) => /\.apk$/i.test(String(asset.name || "")));
+  if (!apk) return null;
+  const versionName = String(release.tag_name || "").replace(/^android-/, "");
+  const versionCode = Number(
+    /(?:^|[-_])v(\d+)(?:[-_.]|$)/i.exec(String(apk.name || ""))?.[1] ||
+    /(?:^|[-_])v(\d+)(?:[-_.]|$)/i.exec(String(release.name || ""))?.[1] ||
+    0,
+  );
+  if (!versionCode) return null;
+  return {
+    version_code: versionCode,
+    version_name: versionName,
+    apk_url: apk.browser_download_url || "",
+    sha256: String(apk.digest || "").replace(/^sha256:/i, "") || null,
+  };
 }
 
 function rotationReport(state, body) {
@@ -606,12 +774,13 @@ function updateGroupState(state, group) {
   }
 }
 
-function controlResponse(state, group, role) {
+function controlResponse(state, group, role, deviceName) {
   const command = commandFor(group.state, role);
   return {
     groupState: group.state,
     command,
     commandId: command === "NONE" ? null : group.commandId,
+    deviceCommand: pendingDeviceCommandFor(group, deviceName),
     policy: { ...state.policy, rotateOwner: group.groupId },
   };
 }
@@ -623,18 +792,67 @@ function commandFor(groupState, role) {
   return "NONE";
 }
 
+function pendingDeviceCommandFor(group, deviceName) {
+  const command = group.deviceCommand;
+  if (!command || !deviceName) return null;
+  if (Date.now() > command.expiresAtMs) {
+    group.deviceCommand = null;
+    return null;
+  }
+  if (command.reports?.has(deviceName)) return null;
+  return {
+    commandId: command.commandId,
+    type: command.type,
+    payload: command.payload,
+  };
+}
+
 function getGroup(state, groupId) {
   if (!state.groups.has(groupId)) {
     state.groups.set(groupId, {
       groupId,
       state: "READY",
       commandId: `cmd_${crypto.randomUUID()}`,
+      deviceCommand: null,
       completedSinceRotation: 0,
       drainingStartedAt: null,
       devices: new Map(),
     });
   }
   return state.groups.get(groupId);
+}
+
+function rememberTaskLease(state, lease) {
+  state.taskLeases.set(lease.id, lease);
+  while (state.taskLeases.size > TASK_LEASE_CAP) {
+    const oldestKey = state.taskLeases.keys().next().value;
+    state.taskLeases.delete(oldestKey);
+  }
+}
+
+function trimArray(items, maxSize) {
+  if (items.length > maxSize) items.length = maxSize;
+}
+
+function evictStaleDevices(state, now = Date.now()) {
+  for (const group of state.groups.values()) {
+    for (const [deviceName, device] of group.devices.entries()) {
+      if (now - device.updatedAt > DEVICE_EVICT_MS) {
+        group.devices.delete(deviceName);
+      }
+    }
+  }
+}
+
+function isDeviceOnline(device, now = Date.now()) {
+  return now - device.updatedAt <= DEVICE_OFFLINE_MS;
+}
+
+function trimChallenges(state) {
+  if (state.challenges.size <= CHALLENGE_CAP) return;
+  const sorted = Array.from(state.challenges.entries())
+    .sort((a, b) => a[1].createdAt.localeCompare(b[1].createdAt));
+  sorted.slice(0, state.challenges.size - CHALLENGE_CAP).forEach(([key]) => state.challenges.delete(key));
 }
 
 function taskLeaseResponse(product, lease) {
@@ -644,6 +862,8 @@ function taskLeaseResponse(product, lease) {
     linkUrl: product.linkUrl,
     mid: product.mid || null,
     productTitle: product.productTitle || null,
+    productName: product.productName || null,
+    catalogMid: product.catalogMid || null,
   };
   if (normalizeStrategy(lease.strategy) === "G") {
     return {
@@ -680,6 +900,21 @@ function parseCsv(value) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function parseBooleanOption(optionValue, envValue) {
+  const value = optionValue === undefined ? envValue : optionValue;
+  if (typeof value === "boolean") return value;
+  return ["1", "true", "yes", "on"].includes(String(value || "").trim().toLowerCase());
+}
+
+function firstRpcRow(response) {
+  if (Array.isArray(response)) return response[0] || null;
+  return response || null;
+}
+
+function supabaseTaskSource(strategy) {
+  return normalizeStrategy(strategy) === "G" ? "android-samsung-login-G" : "android-samsung-login-A";
 }
 
 function adminCorsHeaders(state, req) {
@@ -733,11 +968,7 @@ function submitChallenge(state, body) {
     success: null,
   });
   // 오래된 완료 챌린지 정리 (최대 200개 유지)
-  if (state.challenges.size > 200) {
-    const sorted = Array.from(state.challenges.entries())
-      .sort((a, b) => a[1].createdAt.localeCompare(b[1].createdAt));
-    sorted.slice(0, state.challenges.size - 200).forEach(([key]) => state.challenges.delete(key));
-  }
+  trimChallenges(state);
   return { challengeId: id };
 }
 
@@ -801,12 +1032,33 @@ function adminChallengeScreenshot(state, id) {
   return { screenshotBase64: challenge.screenshotBase64 };
 }
 
+function publicDeviceCommandInfo(command) {
+  if (!command) return null;
+  const reports = Array.from(command.reports?.values?.() || []);
+  return {
+    commandId: command.commandId,
+    type: command.type,
+    requestedAt: command.requestedAt,
+    expiresAtIso: new Date(command.expiresAtMs).toISOString(),
+    reportedCount: reports.length,
+    successCount: reports.filter((report) => report.success).length,
+    failureCount: reports.filter((report) => !report.success).length,
+  };
+}
+
 function adminSnapshot(state) {
   const now = Date.now();
+  evictStaleDevices(state, now);
   const latestReportByDevice = new Map();
   state.accountReports.forEach((report) => {
     if (report.deviceName && !latestReportByDevice.has(report.deviceName)) {
       latestReportByDevice.set(report.deviceName, report);
+    }
+  });
+  const latestDeviceCommandReportByDevice = new Map();
+  state.deviceCommandReports.forEach((report) => {
+    if (report.deviceName && !latestDeviceCommandReportByDevice.has(report.deviceName)) {
+      latestDeviceCommandReportByDevice.set(report.deviceName, report);
     }
   });
   const accountByDevice = new Map(
@@ -818,11 +1070,15 @@ function adminSnapshot(state) {
     .sort((a, b) => a.groupId.localeCompare(b.groupId))
     .map((group) => {
       const devices = Array.from(group.devices.values());
-      const onlineDevices = devices.filter((device) => now - device.updatedAt <= 120_000);
+      const onlineDevices = devices.filter((device) => isDeviceOnline(device, now));
+      if (group.deviceCommand && now > group.deviceCommand.expiresAtMs) {
+        group.deviceCommand = null;
+      }
       return {
         groupId: group.groupId,
         state: group.state,
         commandId: group.commandId,
+        deviceCommand: publicDeviceCommandInfo(group.deviceCommand),
         completedSinceRotation: group.completedSinceRotation,
         drainingStartedAt: group.drainingStartedAt ? new Date(group.drainingStartedAt).toISOString() : null,
         deviceCount: devices.length,
@@ -837,14 +1093,16 @@ function adminSnapshot(state) {
   const devices = Array.from(state.groups.values())
     .flatMap((group) => Array.from(group.devices.values()).map((device) => {
       const report = latestReportByDevice.get(device.deviceName) || null;
+      const latestDeviceCommandReport = latestDeviceCommandReportByDevice.get(device.deviceName) || null;
       const account = accountByDevice.get(device.deviceName) || null;
       return {
         ...device,
         accountAlias: account?.alias || report?.accountAlias || null,
         accountStatus: account?.status || null,
         latestAccountReport: report,
+        latestDeviceCommandReport,
         accountAlert: deviceAccountAlert(account, report),
-        online: now - device.updatedAt <= 120_000,
+        online: isDeviceOnline(device, now),
         updatedAtIso: new Date(device.updatedAt).toISOString(),
         lastSeenSec: Math.floor((now - device.updatedAt) / 1000),
       };
@@ -883,6 +1141,7 @@ function adminSnapshot(state) {
     products: state.products.slice(0, 100).map(publicProductInfo),
     taskLeases: Array.from(state.taskLeases.values()).slice(-50).map(publicTaskLeaseInfo),
     accountReports: state.accountReports.slice(0, 100),
+    deviceCommandReports: state.deviceCommandReports.slice(0, 100),
   };
 }
 
@@ -974,6 +1233,62 @@ function setAdminGroupState(state, body) {
   return { ok: true, groupId, groupState: group.state, commandId: group.commandId };
 }
 
+function setAdminGroupCommand(state, body) {
+  const groupId = String(body.groupId || "").trim();
+  const type = String(body.command || body.type || "").trim().toUpperCase();
+  if (!groupId || !DEVICE_COMMAND_TYPES.has(type)) {
+    return { ok: false, error: "invalid_device_command" };
+  }
+
+  const group = getGroup(state, groupId);
+  const now = Date.now();
+  group.deviceCommand = {
+    commandId: `devcmd_${crypto.randomUUID()}`,
+    type,
+    payload: body.payload == null ? null : String(body.payload),
+    requestedAt: new Date(now).toISOString(),
+    expiresAtMs: now + DEVICE_COMMAND_TTL_MS,
+    reports: new Map(),
+  };
+  return {
+    ok: true,
+    groupId,
+    commandId: group.deviceCommand.commandId,
+    command: group.deviceCommand.type,
+    expiresAtIso: new Date(group.deviceCommand.expiresAtMs).toISOString(),
+  };
+}
+
+function reportDeviceCommand(state, body) {
+  const groupId = String(body.groupId || "").trim();
+  const deviceName = String(body.deviceName || "").trim();
+  const commandId = String(body.commandId || "").trim();
+  const command = String(body.command || body.type || "").trim().toUpperCase();
+  const success = body.success === true || String(body.result || "").toLowerCase() === "succeeded";
+  const message = body.message == null ? null : String(body.message);
+  if (!groupId || !deviceName || !command) {
+    return { ok: false, error: "invalid_device_command_report" };
+  }
+
+  const report = {
+    commandId: commandId || null,
+    deviceName,
+    groupId,
+    command,
+    success,
+    message,
+    reportedAt: new Date().toISOString(),
+  };
+  state.deviceCommandReports.unshift(report);
+  trimArray(state.deviceCommandReports, DEVICE_COMMAND_REPORT_CAP);
+
+  const group = getGroup(state, groupId);
+  if (group.deviceCommand && (!commandId || group.deviceCommand.commandId === commandId)) {
+    group.deviceCommand.reports.set(deviceName, report);
+  }
+  return { ok: true };
+}
+
 function publicAccountInfo(account, state = null) {
   const loginId = account.loginId || (state ? readAccountSecret(state, account, "loginId") : "");
   return {
@@ -998,6 +1313,8 @@ function publicProductInfo(product) {
     linkUrl: product.linkUrl || "",
     mid: product.mid || null,
     productTitle: product.productTitle || null,
+    productName: product.productName || null,
+    catalogMid: product.catalogMid || null,
     strategy: normalizeStrategy(product.strategy),
     status: product.status || "available",
     successCount: Number(product.successCount || 0),
@@ -1015,6 +1332,11 @@ function normalizeStrategy(strategy) {
 function publicTaskLeaseInfo(lease) {
   return {
     id: lease.id,
+    taskId: lease.supabaseTaskId || lease.zeroTrafficId || null,
+    leaseId: lease.supabaseLeaseId || null,
+    slotId: lease.supabaseSlotId || lease.zeroSlotId || null,
+    idempotencyKey: lease.supabaseIdempotencyKey || null,
+    linkUrl: lease.product?.linkUrl || null,
     deviceName: lease.deviceName,
     strategy: lease.strategy,
     status: lease.status,

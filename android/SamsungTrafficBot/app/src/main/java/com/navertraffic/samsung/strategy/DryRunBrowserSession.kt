@@ -7,9 +7,10 @@ class DryRunBrowserSession(
 
     private var lastUrl: String? = null
 
-    override suspend fun loadAndWait(url: String, timeoutMs: Long) {
+    override suspend fun loadAndWait(url: String, timeoutMs: Long, includeReferer: Boolean) {
         lastUrl = url
-        log("DRY_RUN URL 기록: $url")
+        val refererMode = if (includeReferer) "referer=auto" else "referer=none"
+        log("DRY_RUN URL 기록: $url ($refererMode)")
     }
 
     override suspend fun visibleText(): String = ""

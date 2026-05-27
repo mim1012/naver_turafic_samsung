@@ -5,8 +5,8 @@ class WebViewBrowserSession(
 ) : BrowserSession {
     override val supportsPageInspection: Boolean = true
 
-    override suspend fun loadAndWait(url: String, timeoutMs: Long) {
-        webViewManager.loadAndWait(url, timeoutMs)
+    override suspend fun loadAndWait(url: String, timeoutMs: Long, includeReferer: Boolean) {
+        webViewManager.loadAndWait(url, timeoutMs, includeReferer)
     }
 
     override suspend fun visibleText(): String {
@@ -47,6 +47,10 @@ class WebViewBrowserSession(
 
     override suspend fun tapSearchSubmitAndWait(timeoutMs: Long): Boolean {
         return webViewManager.tapSearchSubmitAndWait(timeoutMs)
+    }
+
+    override suspend fun submitSearchWithEnterAndWait(timeoutMs: Long): Boolean {
+        return webViewManager.submitSearchWithEnterAndWait(timeoutMs)
     }
 
     override suspend fun scrollBy(dy: Int) {

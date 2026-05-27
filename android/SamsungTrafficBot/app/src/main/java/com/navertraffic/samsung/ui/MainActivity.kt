@@ -557,7 +557,7 @@ class MainActivity : AppCompatActivity() {
 
                 repeat(loopCount) { index ->
                     if (stopForLoginFailure || updateScheduled) return@repeat
-                    if (!dryRun && checkForInRunAppUpdate(serverUrl, apiKey.takeIf { it.isNotBlank() }, "A전략 반복 전")) {
+                    if (!dryRun && checkForInRunRuntimeUpdates(serverUrl, apiKey.takeIf { it.isNotBlank() }, identity.rawName, "A전략 반복 전")) {
                         updateScheduled = true
                         return@repeat
                     }
@@ -673,6 +673,8 @@ class MainActivity : AppCompatActivity() {
             linkUrl = intent.getStringExtra(EXTRA_LINK_URL) ?: "",
             mid = intent.getStringExtra(EXTRA_MID) ?: "",
             productTitle = intent.getStringExtra(EXTRA_PRODUCT_TITLE),
+            productName = intent.getStringExtra(EXTRA_PRODUCT_NAME),
+            catalogMid = intent.getStringExtra(EXTRA_CATALOG_MID),
         )
 
         val serverClient = buildServerClient()
@@ -759,8 +761,8 @@ class MainActivity : AppCompatActivity() {
                 reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
                 while (taskIndex < loopCount || continuousServerMode) {
                     reportRuntimeState(DeviceRuntimeState.WAITING_TASK)
-                    if (!dryRun && checkForInRunAppUpdate(serverUrl, apiKey.takeIf { it.isNotBlank() }, "G전략 작업 대기")) {
-                        appendLog("앱 업데이트 예약으로 G전략 루프 중지")
+                    if (!dryRun && checkForInRunRuntimeUpdates(serverUrl, apiKey.takeIf { it.isNotBlank() }, identity.rawName, "G전략 작업 대기")) {
+                        appendLog("런타임 업데이트 예약으로 G전략 루프 중지")
                         break
                     }
 
@@ -999,9 +1001,10 @@ class MainActivity : AppCompatActivity() {
 
     // ── 공통 헬퍼 ───────────────────────────────────────────────────────────
 
-    private suspend fun checkForInRunAppUpdate(
+    private suspend fun checkForInRunRuntimeUpdates(
         serverUrl: String,
         apiKey: String?,
+        deviceName: String,
         reason: String,
     ): Boolean {
         if (serverUrl.isBlank()) return false
@@ -1009,26 +1012,39 @@ class MainActivity : AppCompatActivity() {
         if (now - lastInRunUpdateCheckAt < IN_RUN_UPDATE_CHECK_INTERVAL_MS) return false
         lastInRunUpdateCheckAt = now
 
-        appendLog("실행 중 앱 업데이트 확인: $reason")
+        appendLog("실행 중 런타임 업데이트 확인: $reason")
         return try {
-            val result = AppUpdateManager(this@MainActivity, ::appendLog)
+            val chromeResult = ChromeUpdateManager(this@MainActivity, ::appendLog).checkAndUpdate(
+                serverUrl = serverUrl,
+                apiKey = apiKey,
+                deviceName = deviceName,
+            )
+            if (chromeResult.installed) {
+                appendLog("Chrome/WebView 업데이트 예약됨: ${chromeResult.message}")
+                return true
+            }
+            if (!chromeResult.success && chromeResult.updateRequired) {
+                appendLog("Chrome/WebView 실행 중 업데이트 실패: ${chromeResult.message} — 앱 업데이트 확인 계속")
+            }
+
+            val appResult = AppUpdateManager(this@MainActivity, ::appendLog)
                 .checkAndUpdateFromServerDetailed(
                     serverUrl = serverUrl,
                     apiKey = apiKey,
                     restartAfterInstall = true,
                 )
-            if (!result.success) {
-                appendLog("실행 중 앱 업데이트 확인 실패: ${result.message}")
+            if (!appResult.success) {
+                appendLog("실행 중 앱 업데이트 확인 실패: ${appResult.message}")
                 false
-            } else if (result.installed) {
-                appendLog("신버전 설치 예약됨: ${result.message}")
+            } else if (appResult.installed) {
+                appendLog("신버전 설치 예약됨: ${appResult.message}")
                 true
             } else {
-                appendLog("실행 중 앱 업데이트 확인 완료: ${result.message}")
+                appendLog("실행 중 런타임 업데이트 확인 완료: chrome=${chromeResult.message}, app=${appResult.message}")
                 false
             }
         } catch (error: Throwable) {
-            appendLog("실행 중 앱 업데이트 확인 예외: ${error.message ?: error::class.java.simpleName}")
+            appendLog("실행 중 런타임 업데이트 확인 예외: ${error.message ?: error::class.java.simpleName}")
             false
         }
     }
@@ -1693,6 +1709,8 @@ class MainActivity : AppCompatActivity() {
         private const val EXTRA_LINK_URL = "linkUrl"
         private const val EXTRA_MID = "mid"
         private const val EXTRA_PRODUCT_TITLE = "productTitle"
+        private const val EXTRA_PRODUCT_NAME = "productName"
+        private const val EXTRA_CATALOG_MID = "catalogMid"
         private const val EXTRA_TAIL_KEYWORD = "tailKeyword"
         private const val EXTRA_STRATEGY_VARIANT = "strategyVariant"
         private const val EXTRA_STRATEGY = "strategy"

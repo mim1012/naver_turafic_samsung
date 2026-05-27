@@ -86,6 +86,10 @@ class SupabaseApiClient(
         val keywordName = readString(row, "keyword_name").orEmpty()
         val linkUrl = readString(row, "link_url").orEmpty()
         val mid = readString(row, "mid").orEmpty()
+        val productName = readString(row, "product_name")
+            ?: readString(row, "productName")
+            ?: readString(row, "product_title")
+        val catalogMid = readString(row, "catalog_mid") ?: readString(row, "catalogMid")
         val strategyGroup = readString(row, "strategy_group")
         val strategyVersion = readString(row, "strategy_version")
 
@@ -115,6 +119,8 @@ class SupabaseApiClient(
                 linkUrl = linkUrl,
                 mid = mid,
                 productTitle = keywordName.takeIf { it.isNotBlank() },
+                productName = productName?.takeIf { it.isNotBlank() },
+                catalogMid = catalogMid?.takeIf { it.isNotBlank() },
             ),
         )
     }
@@ -133,6 +139,10 @@ class SupabaseApiClient(
         val keyword = readString(trafficRow, "keyword").orEmpty()
         val keywordName = readString(trafficRow, "keyword_name").orEmpty()
         val linkUrl = readString(trafficRow, "link_url").orEmpty()
+        val productName = readString(trafficRow, "product_name")
+            ?: readString(trafficRow, "productName")
+            ?: readString(trafficRow, "product_title")
+        val catalogMid = readString(trafficRow, "catalog_mid") ?: readString(trafficRow, "catalogMid")
         val strategyGroup = readString(trafficRow, "strategy_group")
         val strategyVersion = readString(trafficRow, "strategy_version")
 
@@ -169,6 +179,8 @@ class SupabaseApiClient(
                 linkUrl = linkUrl,
                 mid = mid,
                 productTitle = keywordName.takeIf { it.isNotBlank() },
+                productName = productName?.takeIf { it.isNotBlank() },
+                catalogMid = catalogMid?.takeIf { it.isNotBlank() },
             ),
         )
     }

@@ -15,7 +15,7 @@ class ExternalSamsungBrowserSession(
 
     private var lastUrl: String? = null
 
-    override suspend fun loadAndWait(url: String, timeoutMs: Long) {
+    override suspend fun loadAndWait(url: String, timeoutMs: Long, includeReferer: Boolean) {
         lastUrl = url
         log("Samsung Internet 실행: $url")
         withContext(Dispatchers.Main) {

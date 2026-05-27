@@ -6,6 +6,8 @@ data class StrategyGTask(
     val linkUrl: String,
     val mid: String,
     val productTitle: String? = null,
+    val productName: String? = null,
+    val catalogMid: String? = null,
 ) {
     fun validate(): String? {
         if (keyword.isBlank()) return "keyword is required"

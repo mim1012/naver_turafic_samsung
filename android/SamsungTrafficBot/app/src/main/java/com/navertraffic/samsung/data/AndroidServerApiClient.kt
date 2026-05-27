@@ -228,6 +228,9 @@ object AndroidServerApiJson {
                     linkUrl = readString(raw, "linkUrl").orEmpty(),
                     mid = mid,
                     productTitle = readString(raw, "productTitle")?.takeIf { it.isNotBlank() },
+                    productName = readString(raw, "productName")?.takeIf { it.isNotBlank() },
+                    catalogMid = readString(raw, "catalogMid")?.takeIf { it.isNotBlank() }
+                        ?: readString(raw, "catalog_mid")?.takeIf { it.isNotBlank() },
                 ),
             )
         } else {

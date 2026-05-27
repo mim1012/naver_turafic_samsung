@@ -40,18 +40,6 @@ class SamsungBrowserStrategyG(
         webViewManager?.setBrowserMode(isChrome = true)
         log("UA: Chrome 137 모드 적용")
 
-        log("네이버 홈 진입")
-        browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
-        delay(Random.nextLong(800, 1_500))
-        detectProtection(log)?.let {
-            webViewManager?.setBrowserMode(isChrome = false)
-            return it
-        }
-        detectRateLimit(log)?.let {
-            webViewManager?.setBrowserMode(isChrome = false)
-            return it
-        }
-
         val firstPhrase = SecondKeywordStore.buildGIntegratedFiveWordQuery(
             mainKeyword = task.keyword,
             secondaryText = task.keywordName,
@@ -60,9 +48,7 @@ class SamsungBrowserStrategyG(
 
         // 1차 검색 — GUI G와 동일하게 5단어 통합검색 URL 진입, MID 클릭 없음
         log("1차 검색(G 5단어): $firstPhrase")
-        browserSession.simulateAutocomplete(firstPhrase)
-        delay(Random.nextLong(600, 1_200))
-        browserSession.loadAndWait(buildNaverSearchUrl(firstPhrase), 30_000)
+        browserSession.loadAndWait(buildNaverSearchUrl(firstPhrase), 30_000, includeReferer = false)
         delay(Random.nextLong(2_500, 4_000))
 
         log("1차 탐색 스크롤 (${explorationScrollCount}회 × ${explorationScrollPixels}px)")
@@ -81,12 +67,10 @@ class SamsungBrowserStrategyG(
 
         // 2차 검색 — GUI G처럼 검색창 전체값을 갈아끼운 뒤 제출하고, 실패 시 URL 이동 폴백
         log("2차 검색(G): $secondPhrase")
-        browserSession.simulateAutocomplete(secondPhrase)
-        delay(Random.nextLong(600, 1_200))
         val typedSecondSearch = submitSecondSearchViaSearchBox(secondPhrase, log)
         if (!typedSecondSearch) {
             log("2차 검색창 입력 실패 → URL 직접 이동 폴백")
-            browserSession.loadAndWait(buildNaverSearchUrl(secondPhrase), 30_000)
+            browserSession.loadAndWait(buildNaverSearchUrl(secondPhrase), 30_000, includeReferer = false)
         }
         delay(Random.nextLong(2_500, 4_000))
         detectProtection(log)?.let {
@@ -191,9 +175,9 @@ class SamsungBrowserStrategyG(
         val typed = browserSession.typeIntoSearchBar(query)
         if (!typed) return false
         delay(Random.nextLong(250, 550))
-        val submitted = browserSession.tapSearchSubmitAndWait(45_000)
+        val submitted = browserSession.submitSearchWithEnterAndWait(45_000)
         if (submitted) {
-            log("2차 검색창 전체삭제/재입력 제출 완료")
+            log("2차 검색창 전체삭제/재입력 Enter 제출 완료")
         }
         return submitted
     }
@@ -207,6 +191,13 @@ class SamsungBrowserStrategyG(
         if (missCount >= FORCE_FULL_SECOND_SEARCH_AFTER_MISSES) {
             log("G모드 2차 미노출 누적 $missCount 회 → 풀검색어 강제")
             return task.keywordName
+        }
+
+        val productName = task.productName?.takeIf { it.isNotBlank() }
+            ?: task.productTitle?.takeIf { it.isNotBlank() }
+        if (!task.catalogMid.isNullOrBlank() && productName != null && productName.length > 10) {
+            log("G모드 catalogMid 보유 → 2차 풀네임 검색 사용: $productName")
+            return productName
         }
 
         val failed = secondPhraseMemory.failedPhrases(mid)
@@ -238,8 +229,7 @@ class SamsungBrowserStrategyG(
     }
 
     private fun buildNaverSearchUrl(query: String): String {
-        val encoded = URLEncoder.encode(query, "UTF-8")
-        return "https://m.search.naver.com/search.naver?query=$encoded&where=m"
+        return buildNaverSearchUrlForQuery(query)
     }
 
     private suspend fun detectRateLimit(log: (String) -> Unit): StrategyAResult? {
@@ -366,5 +356,10 @@ class SamsungBrowserStrategyG(
     companion object {
         const val NAVER_HOME_URL = "https://m.naver.com/"
         private const val FORCE_FULL_SECOND_SEARCH_AFTER_MISSES = 10
+
+        internal fun buildNaverSearchUrlForQuery(query: String): String {
+            val encoded = URLEncoder.encode(query, "UTF-8")
+            return "https://m.search.naver.com/search.naver?where=m&query=$encoded"
+        }
     }
 }

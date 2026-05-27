@@ -10,7 +10,7 @@ enum class ProductDetailStatus {
 interface BrowserSession {
     val supportsPageInspection: Boolean
 
-    suspend fun loadAndWait(url: String, timeoutMs: Long = 30_000)
+    suspend fun loadAndWait(url: String, timeoutMs: Long = 30_000, includeReferer: Boolean = true)
 
     suspend fun visibleText(): String
 
@@ -31,6 +31,8 @@ interface BrowserSession {
     suspend fun typeIntoSearchBar(keyword: String): Boolean = false
 
     suspend fun tapSearchSubmitAndWait(timeoutMs: Long = 30_000): Boolean = false
+
+    suspend fun submitSearchWithEnterAndWait(timeoutMs: Long = 30_000): Boolean = false
 
     suspend fun scrollBy(dy: Int) = Unit
 
