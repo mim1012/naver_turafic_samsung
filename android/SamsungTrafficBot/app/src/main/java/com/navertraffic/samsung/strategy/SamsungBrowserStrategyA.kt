@@ -76,10 +76,6 @@ class SamsungBrowserStrategyA(
             log("외부 Samsung Internet 모드: 보호 문구 자동 감지는 건너뜀")
         }
 
-        log("초기 랜딩: $AI_REWARD_LANDING_URL")
-        browserSession.loadAndWait(AI_REWARD_LANDING_URL, 8_000)
-        delay(Random.nextLong(800, 1_500))
-
         log("네이버 홈 진입: 검색창 탭 준비")
         browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
         delay(Random.nextLong(800, 1_500))
@@ -189,7 +185,6 @@ class SamsungBrowserStrategyA(
 
     companion object {
         const val NAVER_HOME_URL = "https://m.naver.com/"
-        const val AI_REWARD_LANDING_URL = "https://snsz.kr"
     }
 
     private suspend fun detectProtection(

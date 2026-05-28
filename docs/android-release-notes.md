@@ -6,10 +6,10 @@ This document records the Android bot APK versions that were relevant during the
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.35/naver-traffic-samsung-0.1.35-v36-release.apk`
+- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.36/naver-traffic-samsung-0.1.36-v37-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.35`, `versionCode=36`
-- Current APK SHA256: `99e123a88bcd3d072e30dc491f6f1dbcfa446609ad79a46927d881e2803c0940`
+- Current version: `versionName=0.1.36`, `versionCode=37`
+- Current APK SHA256: `73988623d080384300fa33dfc4e8f763c7b7b42c20425f9396b2cc5a1a66fcbf`
 
 ## Version history
 
@@ -27,7 +27,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.32 | 33 | Previous production | Checks for app updates at safe in-run task boundaries so future releases can apply even while the bot loop keeps running. |
 | 0.1.33 | 34 | Previous production | Adds S7 Chrome/WebView 138 update support at safe task boundaries, including APKMirror ZIP-with-single-APK extraction before rooted `pm install -r`. |
 | 0.1.34 | 35 | Previous production | Aligns Android G URL loading with Electron G and makes update metadata fall back to GitHub Android releases when the DB row is stale. |
-| 0.1.35 | 36 | Current production | Reduces Supabase report growth by suppressing duplicate task reports and keeping success reports out of append-only history. |
+| 0.1.35 | 36 | Previous production | Reduces Supabase report growth by suppressing duplicate task reports and keeping success reports out of append-only history. |
+| 0.1.36 | 37 | Current production | Removes the A/B/C pre-search landing hop so those variants start directly from Naver mobile home. |
 
 ## 0.1.24 / v25 changes
 
