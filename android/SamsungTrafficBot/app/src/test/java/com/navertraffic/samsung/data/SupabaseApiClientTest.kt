@@ -94,6 +94,44 @@ class SupabaseApiClientTest {
         assertTrue(reportBody.contains(""""p_idempotency_key":"traffic_10:lease_10:z1-1""""))
     }
 
+    @Test
+    fun directReportSuppressesDuplicateLeaseReportsInProcess() = runBlocking {
+        val transport = RecordingTransport(
+            "POST https://example.supabase.co/rpc/claim_android_naver_task" to """
+                {
+                  "task_id": "traffic_10",
+                  "lease_id": "lease_10",
+                  "traffic_id": 10,
+                  "slot_id": 20,
+                  "keyword": "first keyword",
+                  "keyword_name": "second keyword",
+                  "link_url": "https://smartstore.naver.com/store/products/123",
+                  "mid": "123"
+                }
+            """.trimIndent(),
+            "POST https://example.supabase.co/rpc/report_android_naver_task" to "{}",
+        )
+        val client = SupabaseApiClient(
+            baseUrl = "https://example.supabase.co",
+            anonKey = "anon",
+            allowRawRestFallback = false,
+            transport = transport,
+        )
+        val lease = client.leaseTask("z1-1", DeviceIdentity.Role.SOLDIER, "G", "0.1.20")
+        val report = StrategyTaskReport(
+            taskLeaseId = lease?.taskLeaseId,
+            deviceName = "z1-1",
+            result = StrategyTaskResult.SUCCESS,
+            message = "done",
+        )
+
+        client.reportTask(report)
+        client.reportTask(report)
+
+        val reportCalls = transport.calls.filter { it.signature == "POST https://example.supabase.co/rpc/report_android_naver_task" }
+        assertEquals(1, reportCalls.size)
+    }
+
     private class RecordingTransport(
         vararg responses: Pair<String, String>,
     ) : HttpJsonTransport {

@@ -6,10 +6,10 @@ This document records the Android bot APK versions that were relevant during the
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.34/naver-traffic-samsung-0.1.34-v35-release.apk`
+- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.35/naver-traffic-samsung-0.1.35-v36-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.34`, `versionCode=35`
-- Current APK SHA256: `57763dcee861190f96c794cb2ace4a9b0a53c4bea553d2c2ac54a2290e65d087`
+- Current version: `versionName=0.1.35`, `versionCode=36`
+- Current APK SHA256: `99e123a88bcd3d072e30dc491f6f1dbcfa446609ad79a46927d881e2803c0940`
 
 ## Version history
 
@@ -26,7 +26,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.31 | 32 | Previous production | Aligns Android G with the Electron GUI G flow: five-word first search, search-box second search, failed second-phrase memory, and full-name fallback after repeated MID misses. |
 | 0.1.32 | 33 | Previous production | Checks for app updates at safe in-run task boundaries so future releases can apply even while the bot loop keeps running. |
 | 0.1.33 | 34 | Previous production | Adds S7 Chrome/WebView 138 update support at safe task boundaries, including APKMirror ZIP-with-single-APK extraction before rooted `pm install -r`. |
-| 0.1.34 | 35 | Current production | Aligns Android G URL loading with Electron G and makes update metadata fall back to GitHub Android releases when the DB row is stale. |
+| 0.1.34 | 35 | Previous production | Aligns Android G URL loading with Electron G and makes update metadata fall back to GitHub Android releases when the DB row is stale. |
+| 0.1.35 | 36 | Current production | Reduces Supabase report growth by suppressing duplicate task reports and keeping success reports out of append-only history. |
 
 ## 0.1.24 / v25 changes
 

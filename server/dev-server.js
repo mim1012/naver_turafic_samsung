@@ -304,6 +304,7 @@ async function reportTaskToSupabase(state, body) {
 
   const taskLeaseId = String(body.taskLeaseId || "");
   const lease = state.taskLeases.get(taskLeaseId);
+  if (lease?.status === "reported") return { ok: true, duplicate: true };
   const slotId = lease?.supabaseSlotId || 0;
   const result = String(body.result || "");
   const success = result === "success";
@@ -326,22 +327,24 @@ async function reportTaskToSupabase(state, body) {
     );
   }
 
-  await supabaseRequestJson(
-    state,
-    "POST",
-    "/slot_rank_naverapp_history",
-    {
-      slot_status_id: slotId || null,
-      source_table: state.supabaseSlotTable,
-      source_row_id: slotId || null,
-      customer_id: null,
-      keyword: lease?.product?.keyword || null,
-      link_url: lease?.product?.linkUrl || null,
-      keyword_name: lease?.product?.productTitle || null,
-      created_at: new Date().toISOString(),
-    },
-    true,
-  ).catch(() => ({ ok: false }));
+  if (!success) {
+    await supabaseRequestJson(
+      state,
+      "POST",
+      "/slot_rank_naverapp_history",
+      {
+        slot_status_id: slotId || null,
+        source_table: state.supabaseSlotTable,
+        source_row_id: slotId || null,
+        customer_id: null,
+        keyword: lease?.product?.keyword || null,
+        link_url: lease?.product?.linkUrl || null,
+        keyword_name: lease?.product?.productTitle || null,
+        created_at: new Date().toISOString(),
+      },
+      true,
+    ).catch(() => ({ ok: false }));
+  }
 
   if (lease) lease.status = "reported";
   return { ok: true };
@@ -397,6 +400,7 @@ async function leaseTaskFromSupabaseRpc(state, body) {
 async function reportTaskToSupabaseRpc(state, body) {
   const taskLeaseId = String(body.taskLeaseId || "");
   const lease = state.taskLeases.get(taskLeaseId);
+  if (lease?.status === "reported") return { ok: true, duplicate: true };
   const result = String(body.result || "");
   const success = result === "success";
   const strategy = normalizeStrategy(body.strategy || lease?.strategy);

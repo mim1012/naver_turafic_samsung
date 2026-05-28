@@ -21,9 +21,10 @@ class SupabaseApiClient(
     private val transport: HttpJsonTransport = UrlConnectionHttpJsonTransport(),
 ) : StrategyTaskLeaseClient, CookieStorageClient, GroupControlClient {
 
-    // leaseId → link_url 캐시 (reportTask에서 history INSERT 시 사용)
+    // leaseId -> link_url cache for failure history fallback.
     private val leaseLinkUrls = ConcurrentHashMap<String, String>()
     private val rpcClaims = ConcurrentHashMap<String, DirectTaskClaim>()
+    private val reportedTaskLeaseIds = ConcurrentHashMap.newKeySet<String>()
 
     private fun now(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
@@ -187,21 +188,26 @@ class SupabaseApiClient(
 
     override suspend fun reportTask(report: StrategyTaskReport) = withContext(Dispatchers.IO) {
         val taskLeaseId = report.taskLeaseId ?: return@withContext
+        if (reportedTaskLeaseIds.contains(taskLeaseId)) return@withContext
         val rpcClaim = rpcClaims[taskLeaseId]
         val rpcReported = if (rpcClaim != null) {
             runCatching { reportTaskViaRpc(report, rpcClaim) }
                 .onSuccess {
                     rpcClaims.remove(taskLeaseId)
                     leaseLinkUrls.remove(taskLeaseId)
+                    reportedTaskLeaseIds.add(taskLeaseId)
                 }
                 .isSuccess
         } else {
-            runCatching { reportTaskViaRpc(report, null) }.isSuccess
+            runCatching { reportTaskViaRpc(report, null) }
+                .onSuccess { reportedTaskLeaseIds.add(taskLeaseId) }
+                .isSuccess
         }
         if (rpcReported || !allowRawRestFallback) return@withContext
 
         // Local-dev fallback only. Kept for staged RPC rollout against developer Supabase projects.
         reportTaskViaRawRest(report)
+        reportedTaskLeaseIds.add(taskLeaseId)
     }
 
     private suspend fun reportTaskViaRpc(report: StrategyTaskReport, claim: DirectTaskClaim?) {
@@ -240,6 +246,8 @@ class SupabaseApiClient(
         runCatching {
             transport.request("PATCH", "${base()}/$slotTable?id=eq.$slotId", patch, minimalHeaders)
         }
+
+        if (success) return
 
         runCatching {
             transport.request(

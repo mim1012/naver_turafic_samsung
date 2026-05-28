@@ -571,7 +571,7 @@ test("supabase RPC lease claims a strategy A task without deleting queue rows", 
   assert.equal(snapshot.taskLeases[0].linkUrl, "https://smartstore.naver.com/sunsaem/products/83539482665");
 });
 
-test("supabase RPC report calls report RPC without slot patching on duplicate reports", async () => {
+test("supabase RPC report suppresses duplicate reports after the first RPC call", async () => {
   const upstream = await startSupabaseRest({
     rpcClaim: {
       task_id: 288,
@@ -611,8 +611,9 @@ test("supabase RPC report calls report RPC without slot patching on duplicate re
 
   assert.equal(firstReport.ok, true);
   assert.equal(duplicateReport.ok, true);
+  assert.equal(duplicateReport.duplicate, true);
   const reportRequests = upstream.requests.filter((item) => item.method === "POST" && item.url === "/rpc/report_android_naver_task");
-  assert.equal(reportRequests.length, 2);
+  assert.equal(reportRequests.length, 1);
   assert.deepEqual(reportRequests[0].body, {
     p_task_id: 288,
     p_lease_id: "lease-288",
