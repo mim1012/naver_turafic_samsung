@@ -205,15 +205,7 @@ class SamsungBrowserStrategyG(
         val mid = task.mid.trim()
         val missCount = secondPhraseMemory.missCount(mid)
         if (missCount >= FORCE_FULL_SECOND_SEARCH_AFTER_MISSES) {
-            log("G모드 2차 미노출 누적 $missCount 회 → 풀검색어 강제")
-            return task.keywordName
-        }
-
-        val productName = task.productName?.takeIf { it.isNotBlank() }
-            ?: task.productTitle?.takeIf { it.isNotBlank() }
-        if (!task.catalogMid.isNullOrBlank() && productName != null && productName.length > 10) {
-            log("G모드 catalogMid 보유 → 2차 풀네임 검색 사용: $productName")
-            return productName
+            log("G모드 2차 미노출 누적 $missCount 회 → 5단어 재조합 유지")
         }
 
         val failed = secondPhraseMemory.failedPhrases(mid)

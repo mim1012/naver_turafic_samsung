@@ -1,6 +1,6 @@
 # Current APK Strategy Variants
 
-기준 APK: `0.1.39`, `versionCode=40`
+기준 APK: `0.1.40`, `versionCode=41`
 
 배포 경로:
 
@@ -8,7 +8,7 @@
 https://www.sellermate.ai.kr/android/app-release/latest
 ```
 
-현재 latest endpoint는 GitHub Release `android-0.1.39`의 APK를 반환한다.
+현재 latest endpoint는 GitHub Release `android-0.1.40`의 APK를 반환한다.
 
 ## Summary
 
@@ -57,7 +57,7 @@ strategyGroup 없음/LEGACY/UNASSIGNED -> 기본 G
 
 - 기본 production 전략이다.
 - 2차 검색어가 반복 실패하면 실패 phrase를 기억한다.
-- 같은 MID에서 미노출이 누적되면 풀검색어 또는 상품명 기반 검색으로 전환한다.
+- 2차 검색도 G 5단어 조합을 유지하며, 상품명 풀네임 검색으로 전환하지 않는다.
 - 상세 페이지 DOM 확인 실패나 429는 실패로 보고한다.
 
 ## Strategy A

@@ -6,10 +6,10 @@ This document records the Android bot APK versions that were relevant during the
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.39/naver-traffic-samsung-0.1.39-v40-release.apk`
+- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.40/naver-traffic-samsung-0.1.40-v41-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.39`, `versionCode=40`
-- Current APK SHA256: `4f1cec15956abc5ffe8dd3dcd0813244ea69c7e97bee4549a8b3ce3faa26194e`
+- Current version: `versionName=0.1.40`, `versionCode=41`
+- Current APK SHA256: `bb0f498bf7fdb037c809e350e174f047b33ab9218f264d30621ec8009e039fcd`
 
 ## Version history
 
@@ -31,7 +31,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.36 | 37 | Previous production | Removes the A/B/C pre-search landing hop so those variants start directly from Naver mobile home. |
 | 0.1.37 | 38 | Previous production | Reports structured Android failure reasons/query phrases and records MID-not-found keyword failures for Supabase blacklist cooldowns across unassigned G, A, and B strategy runs. |
 | 0.1.38 | 39 | Previous production | Adds browser-layer reporting so G/A/B failures can be split by WEBVIEW, SAMSUNG_INTERNET, or DRY_RUN in Supabase statistics. |
-| 0.1.39 | 40 | Current production | Lets WebView MID scanning fall back to exact product-title matches for Naver price-comparison cards, while keeping final detail-page MID verification. |
+| 0.1.39 | 40 | Previous production | Lets WebView MID scanning fall back to exact product-title matches for Naver price-comparison cards, while keeping final detail-page MID verification. |
+| 0.1.40 | 41 | Current production | Keeps Android G second searches on five-word combinations only, removing product full-name fallback from G blacklist data. |
 
 ## 0.1.24 / v25 changes
 
