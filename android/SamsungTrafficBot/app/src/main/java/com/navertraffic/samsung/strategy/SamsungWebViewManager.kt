@@ -12,9 +12,13 @@ import android.webkit.CookieManager
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import androidx.annotation.RequiresApi
 import kotlin.math.PI
 import kotlin.math.sin
@@ -56,6 +60,22 @@ class SamsungWebViewManager(
         }
 
         webView.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                request ?: return null
+                val host = request.url.host ?: return null
+                if (!host.endsWith("smartstore.naver.com")) return null
+                android.util.Log.i("SamsungTrafficBot", "smartstore shouldIntercept: mainFrame=${request.isForMainFrame} url=${request.url.toString().take(80)}")
+                if (!request.isForMainFrame) return null
+                return try {
+                    val resp = interceptSmartstore(request.url.toString())
+                    android.util.Log.i("SamsungTrafficBot", "smartstore 인터셉트 완료: resp=${resp != null}")
+                    resp
+                } catch (e: Exception) {
+                    android.util.Log.i("SamsungTrafficBot", "smartstore 인터셉트 오류: ${e.message}")
+                    null
+                }
+            }
+
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val url = request?.url?.toString() ?: return false
                 if (!url.startsWith("http://") && !url.startsWith("https://")) return true
@@ -253,14 +273,35 @@ class SamsungWebViewManager(
 
     fun currentUrl(): String? = webView.url
 
-    suspend fun productDetailStatus(mid: String): ProductDetailStatus {
+    suspend fun productDetailStatus(mid: String, titleHint: String? = null): ProductDetailStatus {
         val js = """
-            (function(mid) {
+            (function(mid, titleHint) {
               var doc = document;
               var body = doc.body ? doc.body.innerText : "";
               var title = doc.title || "";
               var url = location.href || "";
+              var host = location.host || "";
               var combined = (title + "\n" + body).toLowerCase();
+              function normalizeText(value) {
+                return (value || '')
+                  .replace(/<[^>]*>/g, ' ')
+                  .replace(/[\[\](){},]/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .toLowerCase();
+              }
+              function titleTokenMatches(hint, haystack) {
+                var normalizedHint = normalizeText(hint);
+                if (!normalizedHint || normalizedHint.length < 4) return false;
+                var tokens = normalizedHint.split(' ')
+                  .filter(function(token) { return token.length >= 2 && !/^\d+$/.test(token); });
+                if (!tokens.length) return false;
+                var matched = tokens.reduce(function(count, token) {
+                  return count + (haystack.indexOf(token) >= 0 ? 1 : 0);
+                }, 0);
+                return matched >= Math.min(2, tokens.length) ||
+                  tokens.some(function(token) { return token.length >= 5 && haystack.indexOf(token) >= 0; });
+              }
               var rateLimited = combined.indexOf("429") >= 0 ||
                 combined.indexOf("too many requests") >= 0 ||
                 combined.indexOf("rate limit") >= 0 ||
@@ -274,6 +315,9 @@ class SamsungWebViewManager(
                 /\/products\/\d+/.test(ogUrl) ||
                 /\/products\/\d+/.test(canonical) ||
                 url.indexOf("nv_mid=" + mid) >= 0;
+              var commerceHost = host.indexOf("smartstore.naver.com") >= 0 ||
+                host.indexOf("brand.naver.com") >= 0 ||
+                host.indexOf("shopping.naver.com") >= 0;
               var urlMatchesMid = !mid || url.indexOf(mid) >= 0 || ogUrl.indexOf(mid) >= 0 || canonical.indexOf(mid) >= 0;
               var productMeta = !!doc.querySelector('meta[property="og:type"][content*="product"], meta[property="product:retailer_item_id"]');
               var productJson = Array.prototype.slice.call(doc.querySelectorAll('script[type="application/ld+json"]'))
@@ -287,12 +331,23 @@ class SamsungWebViewManager(
               var actionScore = ["구매하기", "바로구매", "장바구니", "찜하기", "톡톡"].reduce(function(count, word) {
                 return count + (actionText.indexOf(word) >= 0 ? 1 : 0);
               }, 0);
+              var hasPrice = /[0-9][0-9,]{2,}\s*원/.test(body) ||
+                !!doc.querySelector('[class*="price"], [class*="Price"], [class*="cost"], [class*="Cost"]');
+              var hasStoreSignal = body.indexOf("스토어") >= 0 ||
+                body.indexOf("판매자") >= 0 ||
+                body.indexOf("네이버페이") >= 0 ||
+                !!doc.querySelector('a[href*="smartstore.naver.com"], a[href*="brand.naver.com"]');
+              var titleMatched = titleTokenMatches(titleHint, combined);
               var hasReview = body.indexOf("리뷰") >= 0 || body.indexOf("상품정보") >= 0 || body.indexOf("배송") >= 0;
-              var hasDetailDom = productMeta || productJson || (productUrl && actionScore >= 1) || (actionScore >= 2 && hasReview);
-              if (hasDetailDom && (urlMatchesMid || productUrl || productJson)) return "DETAIL";
+              var hasDetailDom = productMeta ||
+                productJson ||
+                (productUrl && (actionScore >= 1 || hasPrice)) ||
+                (commerceHost && actionScore >= 1 && hasPrice && (titleMatched || hasStoreSignal || productUrl)) ||
+                (actionScore >= 2 && hasReview && (titleMatched || hasStoreSignal));
+              if (hasDetailDom && (urlMatchesMid || productUrl || productJson || titleMatched || commerceHost)) return "DETAIL";
               if (body.trim().length > 0) return "NOT_DETAIL";
               return "UNKNOWN";
-            })(${quoteJs(mid)});
+            })(${quoteJs(mid)}, ${quoteJs(titleHint.orEmpty())});
         """.trimIndent()
         return when (evaluateText(js)) {
             "DETAIL" -> ProductDetailStatus.DETAIL
@@ -300,6 +355,56 @@ class SamsungWebViewManager(
             "RATE_LIMITED" -> ProductDetailStatus.RATE_LIMITED
             else -> ProductDetailStatus.UNKNOWN
         }
+    }
+
+    suspend fun pageDiagnostics(titleHint: String? = null): PageDiagnostics {
+        val js = """
+            (function(titleHint) {
+              var doc = document;
+              var body = doc.body ? doc.body.innerText : "";
+              var title = doc.title || "";
+              var markers = [];
+              function add(name, value) { if (value) markers.push(name); }
+              function normalizeText(value) {
+                return (value || '')
+                  .replace(/<[^>]*>/g, ' ')
+                  .replace(/[\[\](){},]/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .toLowerCase();
+              }
+              var combined = normalizeText(title + ' ' + body);
+              var hint = normalizeText(titleHint);
+              var tokenHit = false;
+              if (hint.length >= 4) {
+                tokenHit = hint.split(' ')
+                  .filter(function(token) { return token.length >= 2 && !/^\d+$/.test(token); })
+                  .some(function(token) { return combined.indexOf(token) >= 0; });
+              }
+              add('url_product', /\/products\/\d+/.test(location.href || ''));
+              add('og_product', !!doc.querySelector('meta[property="og:type"][content*="product"], meta[property="product:retailer_item_id"]'));
+              add('json_product', Array.prototype.slice.call(doc.querySelectorAll('script[type="application/ld+json"]')).some(function(script) {
+                return (script.textContent || '').indexOf('Product') >= 0;
+              }));
+              add('buy_button', body.indexOf('구매하기') >= 0 || body.indexOf('바로구매') >= 0);
+              add('cart_button', body.indexOf('장바구니') >= 0);
+              add('price', /[0-9][0-9,]{2,}\s*원/.test(body));
+              add('store', body.indexOf('스토어') >= 0 || body.indexOf('판매자') >= 0 || body.indexOf('네이버페이') >= 0);
+              add('title_token', tokenHit);
+              return [
+                title.replace(/\s+/g, ' ').trim(),
+                markers.join(',') || 'none',
+                body.replace(/\s+/g, ' ').trim().slice(0, 220)
+              ].join('\n__DIAG__\n');
+            })(${quoteJs(titleHint.orEmpty())});
+        """.trimIndent()
+        val parts = evaluateText(js).split("\n__DIAG__\n", limit = 3)
+        return PageDiagnostics(
+            url = currentUrl(),
+            title = parts.getOrNull(0).orEmpty().compactForDiagnostics(120),
+            htmlMarkers = parts.getOrNull(1).orEmpty().ifBlank { "none" },
+            visibleTextSample = parts.getOrNull(2).orEmpty().compactForDiagnostics(),
+        )
     }
 
     suspend fun isNaverLoggedIn(): Boolean {
@@ -589,10 +694,23 @@ class SamsungWebViewManager(
             if (result.startsWith("found|")) {
                 val parts = result.split("|")
                 val method = parts.getOrNull(1) ?: "unknown"
-                val cssX = parts.getOrNull(2)?.toFloatOrNull() ?: return@repeat
-                val cssY = parts.getOrNull(3)?.toFloatOrNull() ?: return@repeat
+                val href = parts.getOrNull(2)?.takeIf { it.startsWith("http") }
+                val cssX = parts.getOrNull(3)?.toFloatOrNull()
+                val cssY = parts.getOrNull(4)?.toFloatOrNull()
                 log("MID($mid) 상품 발견: $method (캐러셀 ${pageIdx + 1}페이지)")
-                tapCssPoint(cssX, cssY)
+                if (!href.isNullOrBlank()) {
+                    // Plain loadUrl (no additionalHeaders) so Chromium calls shouldInterceptRequest
+                    // for the smartstore redirect target, letting interceptSmartstore() override sec-ch-ua.
+                    withContext(Dispatchers.Main) {
+                        pageLoad = CompletableDeferred()
+                        webView.loadUrl(href)
+                    }
+                    delay(1_000)
+                } else if (cssX != null && cssY != null) {
+                    tapCssPoint(cssX, cssY)
+                } else {
+                    return false
+                }
                 return true
             }
             // MID not on this carousel page → try next
@@ -687,7 +805,8 @@ class SamsungWebViewManager(
               picked.anchor.removeAttribute('target');
               picked.anchor.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
               var r = picked.anchor.getBoundingClientRect();
-              return ['found', picked.method, r.left + r.width / 2, r.top + r.height / 2].join('|');
+              var href = picked.anchor.href || '';
+              return ['found', picked.method, href, r.left + r.width / 2, r.top + r.height / 2].join('|');
             })(${quoteJs(mid)}, ${quoteJs(titleHint.orEmpty())});
         """.trimIndent()
     }
@@ -1055,6 +1174,62 @@ class SamsungWebViewManager(
         delay(Random.nextLong(400, 900))
     }
 
+    private fun interceptSmartstore(startUrl: String): WebResourceResponse? {
+        val cookieManager = CookieManager.getInstance()
+        var currentUrl = startUrl
+        var redirectsLeft = 5
+        while (redirectsLeft-- > 0) {
+            val conn = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
+                instanceFollowRedirects = false
+                connectTimeout = 15_000
+                readTimeout = 30_000
+                setRequestProperty("User-Agent", CHROME_138_UA)
+                setRequestProperty("sec-ch-ua",
+                    "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"")
+                setRequestProperty("sec-ch-ua-mobile", "?1")
+                setRequestProperty("sec-ch-ua-platform", "\"Android\"")
+                setRequestProperty("Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
+                setRequestProperty("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                setRequestProperty("Accept-Encoding", "gzip, deflate, br")
+                setRequestProperty("Upgrade-Insecure-Requests", "1")
+                cookieManager.getCookie(currentUrl)?.takeIf { it.isNotBlank() }
+                    ?.let { setRequestProperty("Cookie", it) }
+            }
+            val status = conn.responseCode
+            conn.headerFields["Set-Cookie"]?.forEach { cookie ->
+                cookieManager.setCookie(currentUrl, cookie)
+            }
+            cookieManager.flush()
+            if (status in 301..308) {
+                val location = conn.getHeaderField("Location") ?: return null
+                currentUrl = if (location.startsWith("http")) location
+                             else URL(URL(currentUrl), location).toString()
+                conn.disconnect()
+                continue
+            }
+            val contentType = conn.contentType ?: "text/html; charset=UTF-8"
+            val mimeType = contentType.substringBefore(";").trim().ifBlank { "text/html" }
+            val charset = Regex("charset=([^;\\s]+)").find(contentType)
+                ?.groupValues?.get(1)?.trim() ?: "UTF-8"
+            val responseHeaders = buildMap<String, String> {
+                conn.headerFields.forEach { (name, values) ->
+                    if (name != null && values.isNotEmpty()) put(name, values.last())
+                }
+            }
+            val raw: InputStream = (if (status >= 400) conn.errorStream else conn.inputStream) ?: return null
+            val stream: InputStream = if (conn.contentEncoding?.lowercase() == "gzip")
+                java.util.zip.GZIPInputStream(raw) else raw
+            return WebResourceResponse(
+                mimeType, charset, status,
+                conn.responseMessage?.takeIf { it.isNotBlank() } ?: "OK",
+                responseHeaders, stream,
+            )
+        }
+        android.util.Log.i("SamsungTrafficBot", "smartstore 리다이렉트 한도 초과: $startUrl")
+        return null
+    }
+
     private fun quoteJs(value: String): String {
         return "\"" + value
             .replace("\\", "\\\\")
@@ -1072,7 +1247,7 @@ class SamsungWebViewManager(
 
     fun setBrowserMode(isChrome: Boolean) {
         chromeMode = isChrome
-        webView.settings.userAgentString = if (isChrome) CHROME_137_UA else SAMSUNG_BROWSER_UA
+        webView.settings.userAgentString = if (isChrome) CHROME_138_UA else SAMSUNG_BROWSER_UA
     }
 
     private var chromeMode = false
@@ -1081,9 +1256,11 @@ class SamsungWebViewManager(
         return buildMap {
             put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
             if (chromeMode) {
-                put("sec-ch-ua", "\"Chromium\";v=\"137\", \"Google Chrome\";v=\"137\", \"Not-A.Brand\";v=\"99\"")
+                put("sec-ch-ua", "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"")
+                put("X-Requested-With", "")
             } else {
                 put("sec-ch-ua", "\"Chromium\";v=\"136\", \"Samsung Internet\";v=\"29\", \"Not.A/Brand\";v=\"99\"")
+                put("X-Requested-With", SAMSUNG_PACKAGE)
             }
             put("sec-ch-ua-mobile", "?1")
             put("sec-ch-ua-platform", "\"Android\"")
@@ -1101,10 +1278,13 @@ class SamsungWebViewManager(
             "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 " +
                 "(KHTML, like Gecko) SamsungBrowser/29.0 Chrome/136.0.0.0 Mobile Safari/537.36"
 
-        // G전략 전용 UA
-        const val CHROME_137_UA =
+        // G전략 전용 UA (실제 기기 WebView Chrome/138 버전에 맞춤)
+        const val CHROME_138_UA =
             "Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"
+                "(KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+
+        @Deprecated("Chrome/137 UA — 실제 WebView 버전(138)과 불일치로 폐기")
+        const val CHROME_137_UA = CHROME_138_UA
 
         // navigator.webdriver 및 자동화 지문 제거
         const val NAVIGATOR_SPOOF_JS = """

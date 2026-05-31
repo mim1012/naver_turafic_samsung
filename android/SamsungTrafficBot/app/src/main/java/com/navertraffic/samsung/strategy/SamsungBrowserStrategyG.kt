@@ -38,7 +38,7 @@ class SamsungBrowserStrategyG(
         }
 
         webViewManager?.setBrowserMode(isChrome = true)
-        log("UA: Chrome 137 모드 적용")
+        log("UA: Chrome 138 모드 적용")
 
         val firstPhrase = SecondKeywordStore.buildGIntegratedFiveWordQuery(
             mainKeyword = task.keyword,
@@ -126,11 +126,12 @@ class SamsungBrowserStrategyG(
 
         log("상세 페이지 진입 대기")
         delay(Random.nextLong(4_500, 9_000))
+        logDetailDiagnostics("MID 클릭 후 상세 후보", task, log)
         detectProtection(log)?.let {
             webViewManager?.setBrowserMode(isChrome = false)
             return it
         }
-        when (val detailStatus = browserSession.productDetailStatus(task.mid)) {
+        when (val detailStatus = confirmDetailStatus(task, log)) {
             ProductDetailStatus.DETAIL -> log("상세페이지 DOM 확인: ${task.mid}")
             ProductDetailStatus.RATE_LIMITED -> {
                 log("429/요청 제한 감지: 작업 실패")
@@ -145,12 +146,13 @@ class SamsungBrowserStrategyG(
                 )
             }
             ProductDetailStatus.NOT_DETAIL, ProductDetailStatus.UNKNOWN -> {
-                log("상세페이지 DOM 미확인: $detailStatus")
+                val diagnostics = pageDiagnosticsSummary(task)
+                log("상세페이지 DOM 미확인 최종: $detailStatus $diagnostics")
                 webViewManager?.setBrowserMode(isChrome = false)
                 return StrategyAResult(
                     success = false,
                     lastUrl = browserSession.currentUrl(),
-                    message = "detail_dom_not_confirmed:${detailStatus.name.lowercase()}",
+                    message = "detail_dom_not_confirmed:${detailStatus.name.lowercase()} $diagnostics",
                     failureReason = "detail_dom_not_confirmed",
                     queryPhrase = secondPhrase,
                     detailStatus = detailStatus.name.lowercase(),
@@ -196,6 +198,41 @@ class SamsungBrowserStrategyG(
             log("2차 검색창 전체삭제/재입력 Enter 제출 완료")
         }
         return submitted
+    }
+
+    private suspend fun confirmDetailStatus(
+        task: StrategyGTask,
+        log: (String) -> Unit,
+    ): ProductDetailStatus {
+        var lastStatus = browserSession.productDetailStatus(task.mid, task.productTitle ?: task.keywordName)
+        if (lastStatus == ProductDetailStatus.DETAIL || lastStatus == ProductDetailStatus.RATE_LIMITED) {
+            return lastStatus
+        }
+        repeat(2) { attempt ->
+            log("상세페이지 DOM 재확인 ${attempt + 1}/2: $lastStatus")
+            delay(1_500)
+            lastStatus = browserSession.productDetailStatus(task.mid, task.productTitle ?: task.keywordName)
+            if (lastStatus == ProductDetailStatus.DETAIL || lastStatus == ProductDetailStatus.RATE_LIMITED) {
+                return lastStatus
+            }
+        }
+        return lastStatus
+    }
+
+    private suspend fun logDetailDiagnostics(
+        label: String,
+        task: StrategyGTask,
+        log: (String) -> Unit,
+    ) {
+        log("$label ${pageDiagnosticsSummary(task)}")
+    }
+
+    private suspend fun pageDiagnosticsSummary(task: StrategyGTask): String {
+        val diagnostics = browserSession.pageDiagnostics(task.productTitle ?: task.keywordName)
+        return "url=${diagnostics.url.orEmpty().compactForDiagnostics(120)} " +
+            "title=${diagnostics.title.ifBlank { "-" }} " +
+            "markers=${diagnostics.htmlMarkers.ifBlank { "none" }} " +
+            "text=${diagnostics.visibleTextSample.ifBlank { "-" }}"
     }
 
     private fun pickSecondPhrase(

@@ -1,6 +1,6 @@
 # Current APK Strategy Variants
 
-기준 APK: `0.1.40`, `versionCode=41`
+기준 APK: `0.1.41`, `versionCode=42`
 
 배포 경로:
 
@@ -8,7 +8,7 @@
 https://www.sellermate.ai.kr/android/app-release/latest
 ```
 
-현재 latest endpoint는 GitHub Release `android-0.1.40`의 APK를 반환한다.
+현재 latest endpoint는 GitHub Release `android-0.1.41`의 APK를 반환한다.
 
 ## Summary
 
@@ -42,7 +42,7 @@ strategyGroup 없음/LEGACY/UNASSIGNED -> 기본 G
 
 동작 흐름:
 
-1. WebView를 Chrome 137 모드 UA로 설정한다.
+1. WebView를 Chrome 138 모드 UA로 설정한다.
 2. 1차 검색어를 5단어 통합 검색어로 만든다.
 3. 1차 검색은 검색 URL을 직접 로드한다.
 4. 1차 결과에서 탐색 스크롤을 수행한다.
@@ -58,7 +58,7 @@ strategyGroup 없음/LEGACY/UNASSIGNED -> 기본 G
 - 기본 production 전략이다.
 - 2차 검색어가 반복 실패하면 실패 phrase를 기억한다.
 - 2차 검색도 G 5단어 조합을 유지하며, 상품명 풀네임 검색으로 전환하지 않는다.
-- 상세 페이지 DOM 확인 실패나 429는 실패로 보고한다.
+- 상세 페이지 DOM 확인은 URL, 가격, 구매/장바구니, 스토어, 상품명 토큰 신호를 함께 보고, 불확실하면 재확인 후 실패로 보고한다.
 
 ## Strategy A
 

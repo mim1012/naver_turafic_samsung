@@ -38,11 +38,11 @@ class ExternalSamsungBrowserSession(
         return lastUrl
     }
 
-    override suspend fun productDetailStatus(mid: String): ProductDetailStatus {
+    override suspend fun productDetailStatus(mid: String, titleHint: String?): ProductDetailStatus {
         val text = visibleText()
         return when {
             looksRateLimited(text) -> ProductDetailStatus.RATE_LIMITED
-            looksLikeProductDetail(text) -> ProductDetailStatus.DETAIL
+            looksLikeProductDetail(text, titleHint) -> ProductDetailStatus.DETAIL
             text.isNotBlank() -> ProductDetailStatus.NOT_DETAIL
             else -> ProductDetailStatus.UNKNOWN
         }
@@ -96,9 +96,18 @@ class ExternalSamsungBrowserSession(
             text.contains("접속이 지연")
     }
 
-    private fun looksLikeProductDetail(text: String): Boolean {
+    private fun looksLikeProductDetail(text: String, titleHint: String?): Boolean {
         if (text.isBlank()) return false
         val commerceSignals = listOf("구매하기", "바로구매", "장바구니", "찜하기", "톡톡", "리뷰")
-        return commerceSignals.count { text.contains(it) } >= 2
+        val titleTokens = titleHint.orEmpty()
+            .replace(Regex("[\\[\\](){},]"), " ")
+            .split(Regex("\\s+"))
+            .filter { it.length >= 2 && it.any(Char::isLetter) }
+        val titleMatched = titleTokens.isNotEmpty() &&
+            titleTokens.count { text.contains(it, ignoreCase = true) } >= minOf(2, titleTokens.size)
+        val hasPrice = Regex("[0-9][0-9,]{2,}\\s*원").containsMatchIn(text)
+        val hasStore = text.contains("스토어") || text.contains("판매자") || text.contains("네이버페이")
+        return commerceSignals.count { text.contains(it) } >= 2 ||
+            (commerceSignals.any { text.contains(it) } && hasPrice && (titleMatched || hasStore))
     }
 }

@@ -7,6 +7,13 @@ enum class ProductDetailStatus {
     UNKNOWN,
 }
 
+data class PageDiagnostics(
+    val url: String? = null,
+    val title: String = "",
+    val visibleTextSample: String = "",
+    val htmlMarkers: String = "",
+)
+
 interface BrowserSession {
     val supportsPageInspection: Boolean
 
@@ -18,7 +25,15 @@ interface BrowserSession {
 
     suspend fun clickMidLink(mid: String, titleHint: String? = null): Boolean = false
 
-    suspend fun productDetailStatus(mid: String): ProductDetailStatus = ProductDetailStatus.UNKNOWN
+    suspend fun productDetailStatus(mid: String, titleHint: String? = null): ProductDetailStatus =
+        ProductDetailStatus.UNKNOWN
+
+    suspend fun pageDiagnostics(titleHint: String? = null): PageDiagnostics {
+        return PageDiagnostics(
+            url = currentUrl(),
+            visibleTextSample = visibleText().compactForDiagnostics(),
+        )
+    }
 
     suspend fun swipeDetail(durationMs: Long = 2_000) = Unit
 
@@ -37,4 +52,9 @@ interface BrowserSession {
     suspend fun scrollBy(dy: Int) = Unit
 
     suspend fun fillCaptchaAndSubmit(answer: String): Boolean = false
+}
+
+internal fun String.compactForDiagnostics(maxLen: Int = 220): String {
+    val compact = replace(Regex("\\s+"), " ").trim()
+    return if (compact.length <= maxLen) compact else compact.take(maxLen) + "..."
 }

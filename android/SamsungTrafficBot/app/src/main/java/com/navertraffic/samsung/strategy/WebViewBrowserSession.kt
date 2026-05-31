@@ -21,8 +21,12 @@ class WebViewBrowserSession(
         return webViewManager.clickMidLink(mid, titleHint)
     }
 
-    override suspend fun productDetailStatus(mid: String): ProductDetailStatus {
-        return webViewManager.productDetailStatus(mid)
+    override suspend fun productDetailStatus(mid: String, titleHint: String?): ProductDetailStatus {
+        return webViewManager.productDetailStatus(mid, titleHint)
+    }
+
+    override suspend fun pageDiagnostics(titleHint: String?): PageDiagnostics {
+        return webViewManager.pageDiagnostics(titleHint)
     }
 
     override suspend fun swipeDetail(durationMs: Long) {
