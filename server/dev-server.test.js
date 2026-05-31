@@ -626,6 +626,52 @@ test("supabase RPC report suppresses duplicate reports after the first RPC call"
   assert.equal(upstream.requests.some((item) => item.method === "PATCH" && item.url.startsWith("/sellermate_slot_naver")), false);
 });
 
+test("supabase RPC report records G MID failures for G and A blacklist keys", async () => {
+  const upstream = await startSupabaseRest({
+    rpcClaim: {
+      task_id: 388,
+      lease_id: "lease-388",
+      slot_id: 270,
+      idempotency_key: "idem-388",
+      keyword: "이어폰",
+      keyword_name: "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료",
+      link_url: "https://smartstore.naver.com/sunsaem/products/83539482665",
+      mid: "83539482665",
+    },
+    rpcReport: { ok: true },
+  });
+  const state = createState({
+    supabaseRestUrl: upstream.baseUrl,
+    supabaseAnonKey: "test-key",
+    supabaseTaskRpcEnabled: true,
+  });
+  const baseUrl = await start(state);
+
+  const lease = await post(baseUrl, "/android/tasks/lease", {
+    deviceName: "z1-1",
+    role: "soldier",
+    strategy: "G",
+    appVersion: "0.1.0",
+  });
+  const report = await post(baseUrl, "/android/tasks/report", {
+    taskLeaseId: lease.taskLeaseId,
+    deviceName: "z1-1",
+    result: "failed",
+    message: "MID product not found after exploration: 83539482665",
+    failureReason: "mid_product_not_found_after_exploration",
+    queryPhrase: "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료",
+    midFound: false,
+  });
+
+  assert.equal(report.ok, true);
+  const keywordRequests = upstream.requests.filter((item) => item.method === "POST" && item.url === "/rpc/record_android_keyword_failure");
+  assert.equal(keywordRequests.length, 2);
+  assert.deepEqual(keywordRequests.map((item) => item.body.p_strategy).sort(), ["A", "G"]);
+  assert.equal(keywordRequests[0].body.p_slot_id, 270);
+  assert.equal(keywordRequests[0].body.p_failure_reason, "mid_product_not_found_after_exploration");
+  assert.equal(keywordRequests[0].body.p_query_phrase, "프리미엄 블루투스 이어팟 차이팟 무선이어폰 충전케이스무료");
+});
+
 test("maps supabase traffic queue into strategy G without strategy query filter", async () => {
   const upstream = await startSupabaseRest({
     trafficRows: [
@@ -804,6 +850,9 @@ async function startSupabaseRest({ trafficRows = [], slotRows = [], rpcClaim = n
     }
     if (req.method === "POST" && req.url === "/rpc/report_android_naver_task") {
       return send(res, rpcReport);
+    }
+    if (req.method === "POST" && req.url === "/rpc/record_android_keyword_failure") {
+      return send(res, { ok: true });
     }
     if (req.method === "GET" && req.url.startsWith("/sellermate_traffic_navershopping")) {
       return send(res, trafficRows);

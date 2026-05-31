@@ -13,6 +13,10 @@ data class StrategyAResult(
     val signals: List<ProtectionSignal> = emptyList(),
     val lastUrl: String? = null,
     val message: String? = null,
+    val failureReason: String? = null,
+    val queryPhrase: String? = null,
+    val detailStatus: String? = null,
+    val midFound: Boolean? = null,
 )
 
 fun StrategyAResult.isRecoverableTaskFailure(): Boolean {
@@ -145,6 +149,13 @@ class SamsungBrowserStrategyA(
                     success = false,
                     lastUrl = browserSession.currentUrl(),
                     message = "MID product not found after $reason: $mid",
+                    failureReason = if (reason == "timeout") {
+                        "mid_product_not_found_after_timeout"
+                    } else {
+                        "mid_product_not_found_after_exploration"
+                    },
+                    queryPhrase = task.secondKeyword,
+                    midFound = false,
                 )
             }
             log("추적 리다이렉트 대기 중 → 상품 상세")
@@ -169,7 +180,12 @@ class SamsungBrowserStrategyA(
         browserSession.loadAndWait(NAVER_HOME_URL, 15_000)
         delay(Random.nextLong(2_000, 4_000))
 
-        return StrategyAResult(success = true, lastUrl = finalUrl)
+        return StrategyAResult(
+            success = true,
+            lastUrl = finalUrl,
+            queryPhrase = task.secondKeyword,
+            midFound = true,
+        )
     }
 
     private fun buildFirstSearchUrl(query: String): String {

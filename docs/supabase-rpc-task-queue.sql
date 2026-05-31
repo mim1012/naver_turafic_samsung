@@ -9,6 +9,7 @@
 alter table if exists public.sellermate_traffic_navershopping
   add column if not exists claim_state text not null default 'queued',
   add column if not exists strategy text not null default 'A',
+  add column if not exists strategy_group text,
   add column if not exists claimed_by text,
   add column if not exists lease_id uuid,
   add column if not exists claimed_at timestamptz,
@@ -47,10 +48,14 @@ create table if not exists public.android_task_claims (
   success boolean,
   link_url text,
   source text,
+  browser_layer text,
   idempotency_key text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.android_task_claims
+  add column if not exists browser_layer text;
 
 create unique index if not exists ux_android_task_claims_lease
   on public.android_task_claims (lease_id);
@@ -86,6 +91,14 @@ begin
     from public.sellermate_traffic_navershopping q
     where q.claim_state = 'queued'
       and q.attempt_count < q.max_attempts
+      and not exists (
+        select 1
+        from public.android_keyword_blacklist b
+        where b.slot_id = q.slot_id
+          and b.strategy = coalesce(nullif(q.strategy_group, ''), nullif(q.strategy, ''), p_strategy, 'G')
+          and b.query_phrase = q.keyword_name
+          and b.cooldown_until > now()
+      )
     order by q.id
     for update skip locked
     limit 1
@@ -149,7 +162,8 @@ create or replace function public.report_android_naver_task(
   p_success boolean,
   p_link_url text,
   p_source text,
-  p_idempotency_key text default null
+  p_idempotency_key text default null,
+  p_browser_layer text default null
 ) returns jsonb
 language plpgsql
 security definer
@@ -228,6 +242,7 @@ begin
     success,
     link_url,
     source,
+    browser_layer,
     idempotency_key
   ) values (
     p_task_id,
@@ -242,6 +257,7 @@ begin
     p_success,
     p_link_url,
     p_source,
+    p_browser_layer,
     p_idempotency_key
   );
 

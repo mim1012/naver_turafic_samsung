@@ -219,6 +219,7 @@ class SupabaseApiClient(
         val idempotencyKey = "$taskId:$leaseId:${report.deviceName}"
         val body = """{"p_task_id":${jsonStr(taskId)},"p_lease_id":${jsonStr(leaseId)},"p_device_name":${jsonStr(report.deviceName)},"p_success":$success,"p_link_url":${jsonStr(linkUrl)},"p_source":"android_direct_supabase_dev","p_idempotency_key":${jsonStr(idempotencyKey)}}"""
         transport.request("POST", "${base()}/rpc/report_android_naver_task", body, minimalHeaders)
+        recordKeywordFailureIfNeeded(report, claim, taskId, leaseId, linkUrl, idempotencyKey)
     }
 
     private suspend fun reportTaskViaRawRest(report: StrategyTaskReport) {
@@ -258,6 +259,50 @@ class SupabaseApiClient(
             )
         }
         Unit
+    }
+
+    private suspend fun recordKeywordFailureIfNeeded(
+        report: StrategyTaskReport,
+        claim: DirectTaskClaim?,
+        taskId: String,
+        leaseId: String,
+        linkUrl: String?,
+        idempotencyKey: String,
+    ) {
+        if (report.result == StrategyTaskResult.SUCCESS) return
+        val failureReason = report.failureReason ?: inferFailureReason(report.message) ?: return
+        if (!failureReason.isKeywordBlacklistCandidate()) return
+        val queryPhrase = report.queryPhrase?.trim()?.takeIf { it.isNotBlank() } ?: return
+        val slotId = claim?.slotId ?: return
+        keywordFailureStrategies(report.strategyGroup).forEach { strategy ->
+            val strategyKey = "$idempotencyKey:keyword_failure:$strategy"
+            val body = """{"p_task_id":${jsonStr(taskId)},"p_lease_id":${jsonStr(leaseId)},"p_device_name":${jsonStr(report.deviceName)},"p_slot_id":$slotId,"p_strategy":${jsonStr(strategy)},"p_failure_reason":${jsonStr(failureReason)},"p_query_phrase":${jsonStr(queryPhrase)},"p_message":${jsonStr(report.message)},"p_link_url":${jsonStr(linkUrl)},"p_final_url":${jsonStr(report.finalUrl)},"p_mid_found":${report.midFound ?: "null"},"p_detail_status":${jsonStr(report.detailStatus)},"p_idempotency_key":${jsonStr(strategyKey)}}"""
+            runCatching {
+                transport.request("POST", "${base()}/rpc/record_android_keyword_failure", body, minimalHeaders)
+            }
+        }
+    }
+
+    private fun keywordFailureStrategies(strategyGroup: String?): List<String> {
+        val strategy = strategyGroup?.trim()?.uppercase()?.takeIf { it.isNotBlank() } ?: "G"
+        return if (strategy == "G") listOf("G", "A") else listOf(strategy)
+    }
+
+    private fun inferFailureReason(message: String?): String? {
+        val text = message?.trim().orEmpty()
+        return when {
+            text.startsWith("MID product not found after exploration") -> "mid_product_not_found_after_exploration"
+            text.startsWith("MID product not found after timeout") -> "mid_product_not_found_after_timeout"
+            text == "rate_limited_429" -> "rate_limited_429"
+            text.startsWith("detail_dom_not_confirmed") -> "detail_dom_not_confirmed"
+            text.isBlank() -> null
+            else -> text.substringBefore(':').take(80)
+        }
+    }
+
+    private fun String.isKeywordBlacklistCandidate(): Boolean {
+        return this == "mid_product_not_found_after_exploration" ||
+            this == "mid_product_not_found_after_timeout"
     }
 
     private fun parseRpcRow(raw: String): String? {

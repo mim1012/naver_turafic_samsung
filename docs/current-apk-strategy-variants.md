@@ -1,6 +1,6 @@
 # Current APK Strategy Variants
 
-기준 APK: `0.1.36`, `versionCode=37`
+기준 APK: `0.1.39`, `versionCode=40`
 
 배포 경로:
 
@@ -8,7 +8,7 @@
 https://www.sellermate.ai.kr/android/app-release/latest
 ```
 
-현재 latest endpoint는 GitHub Release `android-0.1.36`의 APK를 반환한다.
+현재 latest endpoint는 GitHub Release `android-0.1.39`의 APK를 반환한다.
 
 ## Summary
 

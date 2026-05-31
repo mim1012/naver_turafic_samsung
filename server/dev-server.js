@@ -346,7 +346,15 @@ async function reportTaskToSupabase(state, body) {
     ).catch(() => ({ ok: false }));
   }
 
-  if (lease) lease.status = "reported";
+  await recordSupabaseKeywordFailureIfNeeded(state, body, lease, body.strategy || lease?.strategy);
+
+  if (lease) {
+    lease.status = "reported";
+    lease.result = result;
+    lease.message = body.message || null;
+    lease.browserLayer = body.browserLayer || body.browser_layer || null;
+  }
+  await recordSupabaseKeywordFailureIfNeeded(state, body, lease, body.strategy || lease?.strategy);
   return { ok: true };
 }
 
@@ -419,12 +427,68 @@ async function reportTaskToSupabaseRpc(state, body) {
     },
     true,
   );
+  await recordSupabaseKeywordFailureIfNeeded(state, body, lease, strategy);
   if (lease) {
     lease.status = "reported";
     lease.result = result;
     lease.message = body.message || null;
+    lease.browserLayer = body.browserLayer || body.browser_layer || null;
   }
   return { ok: true };
+}
+
+async function recordSupabaseKeywordFailureIfNeeded(state, body, lease, strategy) {
+  const result = String(body.result || "");
+  if (result === "success") return;
+  const failureReason = String(body.failureReason || inferKeywordFailureReason(body.message) || "");
+  if (!isKeywordBlacklistCandidate(failureReason)) return;
+  const queryPhrase = String(body.queryPhrase || lease?.product?.keywordName || lease?.product?.secondKeyword || "").trim();
+  if (!queryPhrase) return;
+  const slotId = lease?.supabaseSlotId || lease?.zeroSlotId || body.slotId || null;
+  if (!slotId) return;
+  const baseIdempotencyKey = body.idempotencyKey || lease?.supabaseIdempotencyKey || lease?.id || "";
+  for (const strategyName of keywordFailureStrategies(strategy || lease?.strategy)) {
+    await supabaseRequestJson(
+      state,
+      "POST",
+      "/rpc/record_android_keyword_failure",
+      {
+        p_task_id: lease?.supabaseTaskId || lease?.zeroTrafficId || body.taskId || null,
+        p_lease_id: lease?.supabaseLeaseId || body.leaseId || lease?.id || null,
+        p_device_name: String(body.deviceName || lease?.deviceName || ""),
+        p_slot_id: slotId,
+        p_strategy: strategyName,
+        p_failure_reason: failureReason,
+        p_query_phrase: queryPhrase,
+        p_message: body.message || null,
+        p_link_url: body.linkUrl || lease?.product?.linkUrl || null,
+        p_final_url: body.finalUrl || null,
+        p_mid_found: typeof body.midFound === "boolean" ? body.midFound : null,
+        p_detail_status: body.detailStatus || null,
+        p_idempotency_key: `${baseIdempotencyKey}:keyword_failure:${strategyName}`,
+      },
+      true,
+    ).catch(() => ({ ok: false }));
+  }
+}
+
+function inferKeywordFailureReason(message) {
+  const text = String(message || "").trim();
+  if (text.startsWith("MID product not found after exploration")) return "mid_product_not_found_after_exploration";
+  if (text.startsWith("MID product not found after timeout")) return "mid_product_not_found_after_timeout";
+  if (text === "rate_limited_429") return "rate_limited_429";
+  if (text.startsWith("detail_dom_not_confirmed")) return "detail_dom_not_confirmed";
+  return "";
+}
+
+function isKeywordBlacklistCandidate(failureReason) {
+  return failureReason === "mid_product_not_found_after_exploration" ||
+    failureReason === "mid_product_not_found_after_timeout";
+}
+
+function keywordFailureStrategies(strategy) {
+  const normalized = normalizeStrategy(strategy);
+  return normalized === "G" ? ["G", "A"] : [normalized];
 }
 
 async function leaseTaskFromZero(state, body) {
@@ -483,7 +547,12 @@ async function reportTaskToZero(state, body) {
       metadata: { source },
     });
   }
-  if (lease) lease.status = "reported";
+  if (lease) {
+    lease.status = "reported";
+    lease.result = result;
+    lease.message = body.message || null;
+    lease.browserLayer = body.browserLayer || body.browser_layer || null;
+  }
   return { ok: true };
 }
 
@@ -1346,6 +1415,7 @@ function publicTaskLeaseInfo(lease) {
     status: lease.status,
     leasedAt: lease.leasedAt || null,
     result: lease.result || null,
+    browserLayer: lease.browserLayer || null,
     productTitle: lease.product?.productTitle || null,
     mid: lease.product?.mid || null,
   };

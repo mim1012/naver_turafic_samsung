@@ -132,6 +132,66 @@ class SupabaseApiClientTest {
         assertEquals(1, reportCalls.size)
     }
 
+    @Test
+    fun failedMidReportRecordsKeywordFailureCandidate() = runBlocking {
+        val transport = RecordingTransport(
+            "POST https://example.supabase.co/rpc/claim_android_naver_task" to """
+                {
+                  "task_id": "traffic_10",
+                  "lease_id": "lease_10",
+                  "traffic_id": 10,
+                  "slot_id": 20,
+                  "keyword": "first keyword",
+                  "keyword_name": "second keyword",
+                  "link_url": "https://smartstore.naver.com/store/products/123",
+                  "mid": "123"
+                }
+            """.trimIndent(),
+            "POST https://example.supabase.co/rpc/report_android_naver_task" to "{}",
+            "POST https://example.supabase.co/rpc/record_android_keyword_failure" to "{}",
+        )
+        val client = SupabaseApiClient(
+            baseUrl = "https://example.supabase.co",
+            anonKey = "anon",
+            allowRawRestFallback = false,
+            transport = transport,
+        )
+        val lease = client.leaseTask("z1-1", DeviceIdentity.Role.SOLDIER, "G", "0.1.20")
+
+        client.reportTask(
+            StrategyTaskReport(
+                taskLeaseId = lease?.taskLeaseId,
+                deviceName = "z1-1",
+                result = StrategyTaskResult.FAILED,
+                message = "MID product not found after exploration: 123",
+                strategyGroup = "G",
+                failureReason = "mid_product_not_found_after_exploration",
+                queryPhrase = "second keyword",
+                finalUrl = "https://m.search.naver.com/search.naver",
+                midFound = false,
+            ),
+        )
+
+        val signatures = transport.calls.map { it.signature }
+        assertEquals(
+            listOf(
+                "POST https://example.supabase.co/rpc/claim_android_naver_task",
+                "POST https://example.supabase.co/rpc/report_android_naver_task",
+                "POST https://example.supabase.co/rpc/record_android_keyword_failure",
+                "POST https://example.supabase.co/rpc/record_android_keyword_failure",
+            ),
+            signatures,
+        )
+        val keywordBodies = transport.calls.takeLast(2).map { it.body.orEmpty() }
+        val keywordBody = keywordBodies.first()
+        assertTrue(keywordBody.contains(""""p_slot_id":20"""))
+        assertTrue(keywordBody.contains(""""p_failure_reason":"mid_product_not_found_after_exploration""""))
+        assertTrue(keywordBody.contains(""""p_query_phrase":"second keyword""""))
+        assertTrue(keywordBody.contains(""""p_mid_found":false"""))
+        assertTrue(keywordBodies.any { it.contains(""""p_strategy":"G"""") })
+        assertTrue(keywordBodies.any { it.contains(""""p_strategy":"A"""") })
+    }
+
     private class RecordingTransport(
         vararg responses: Pair<String, String>,
     ) : HttpJsonTransport {

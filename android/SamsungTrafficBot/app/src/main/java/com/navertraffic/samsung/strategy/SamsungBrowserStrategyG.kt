@@ -118,6 +118,9 @@ class SamsungBrowserStrategyG(
                 success = false,
                 lastUrl = browserSession.currentUrl(),
                 message = "MID product not found after $reason: ${task.mid}",
+                failureReason = "mid_product_not_found_after_$reason",
+                queryPhrase = secondPhrase,
+                midFound = false,
             )
         }
 
@@ -136,6 +139,9 @@ class SamsungBrowserStrategyG(
                     success = false,
                     lastUrl = browserSession.currentUrl(),
                     message = "rate_limited_429",
+                    failureReason = "rate_limited_429",
+                    queryPhrase = secondPhrase,
+                    midFound = true,
                 )
             }
             ProductDetailStatus.NOT_DETAIL, ProductDetailStatus.UNKNOWN -> {
@@ -145,6 +151,10 @@ class SamsungBrowserStrategyG(
                     success = false,
                     lastUrl = browserSession.currentUrl(),
                     message = "detail_dom_not_confirmed:${detailStatus.name.lowercase()}",
+                    failureReason = "detail_dom_not_confirmed",
+                    queryPhrase = secondPhrase,
+                    detailStatus = detailStatus.name.lowercase(),
+                    midFound = true,
                 )
             }
         }
@@ -163,7 +173,13 @@ class SamsungBrowserStrategyG(
         log("상세 페이지 표시 유지: 다음 작업 전까지 현재 화면 유지")
 
         webViewManager?.setBrowserMode(isChrome = false)
-        return StrategyAResult(success = true, lastUrl = finalUrl)
+        return StrategyAResult(
+            success = true,
+            lastUrl = finalUrl,
+            queryPhrase = secondPhrase,
+            detailStatus = ProductDetailStatus.DETAIL.name.lowercase(),
+            midFound = true,
+        )
     }
 
     private suspend fun submitSecondSearchViaSearchBox(
@@ -241,6 +257,7 @@ class SamsungBrowserStrategyG(
             success = false,
             lastUrl = browserSession.currentUrl(),
             message = "rate_limited_429",
+            failureReason = "rate_limited_429",
         )
     }
 
@@ -270,6 +287,7 @@ class SamsungBrowserStrategyG(
             signals = signals.distinct(),
             lastUrl = browserSession.currentUrl(),
             message = "protection signal detected",
+            failureReason = "protection_signal_detected",
         )
     }
 

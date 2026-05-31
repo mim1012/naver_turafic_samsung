@@ -60,6 +60,12 @@ data class StrategyTaskReport(
     val keywordMode: String? = null,
     val searchExecution: String? = null,
     val midMatchMode: String? = null,
+    val browserLayer: String? = null,
+    val failureReason: String? = null,
+    val queryPhrase: String? = null,
+    val finalUrl: String? = null,
+    val midFound: Boolean? = null,
+    val detailStatus: String? = null,
 )
 
 interface StrategyTaskLeaseClient {

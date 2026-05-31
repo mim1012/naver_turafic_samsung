@@ -430,6 +430,7 @@ class MainActivity : AppCompatActivity() {
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val externalBrowser = getBoolExtra(EXTRA_EXTERNAL_BROWSER)
+        val browserLayer = browserLayerName(dryRun, externalBrowser)
         val variant = when (intent.getStringExtra(EXTRA_STRATEGY_VARIANT)?.uppercase()) {
             "B" -> StrategyVariant.B
             "C" -> StrategyVariant.C
@@ -609,6 +610,9 @@ class MainActivity : AppCompatActivity() {
                                 deviceName = identity.rawName,
                                 result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
                                 message = if (result.success) null else result.message,
+                                strategyResult = result,
+                                queryPhrase = secondKeywordNow,
+                                browserLayer = browserLayer,
                             ),
                         )
                     }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -659,6 +663,7 @@ class MainActivity : AppCompatActivity() {
             autoStartEnabled = true,
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
+        val browserLayer = browserLayerName(dryRun, externalBrowser = false)
         val continuousServerMode = !dryRun && serverUrl.isNotBlank()
 
         // 기본 전략(G): Chrome 137 UA 적용
@@ -814,6 +819,7 @@ class MainActivity : AppCompatActivity() {
                                         deviceName = identity.rawName,
                                         result = StrategyTaskResult.FAILED,
                                         message = "invalid_strategy_${assignedVariant.name.lowercase()}_task_payload",
+                                        browserLayer = browserLayer,
                                     ),
                                 )
                             }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -872,6 +878,9 @@ class MainActivity : AppCompatActivity() {
                                     deviceName = identity.rawName,
                                     result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
                                     message = if (result.success) null else result.message,
+                                    strategyResult = result,
+                                    queryPhrase = strategyTask.secondKeyword,
+                                    browserLayer = browserLayer,
                                 ),
                             )
                         }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -898,6 +907,7 @@ class MainActivity : AppCompatActivity() {
                                     deviceName = identity.rawName,
                                     result = StrategyTaskResult.FAILED,
                                     message = "unsupported_strategy_group:$unsupportedStrategyGroup",
+                                    browserLayer = browserLayer,
                                 ),
                             )
                         }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -914,6 +924,7 @@ class MainActivity : AppCompatActivity() {
                                     deviceName = identity.rawName,
                                     result = StrategyTaskResult.FAILED,
                                     message = "invalid_g_task_payload",
+                                    browserLayer = browserLayer,
                                 ),
                             )
                         }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -977,6 +988,8 @@ class MainActivity : AppCompatActivity() {
                                 deviceName = identity.rawName,
                                 result = if (result.success) StrategyTaskResult.SUCCESS else StrategyTaskResult.FAILED,
                                 message = if (result.success) null else result.message,
+                                strategyResult = result,
+                                browserLayer = browserLayer,
                             ),
                         )
                     }.onFailure { appendLog("상품 task report 실패: ${it.message}") }
@@ -1526,11 +1539,20 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun browserLayerName(dryRun: Boolean, externalBrowser: Boolean): String = when {
+        dryRun -> "DRY_RUN"
+        externalBrowser -> "SAMSUNG_INTERNET"
+        else -> "WEBVIEW"
+    }
+
     private fun buildStrategyTaskReport(
         taskLease: StrategyTaskLease?,
         deviceName: String,
         result: StrategyTaskResult,
         message: String?,
+        strategyResult: StrategyAResult? = null,
+        queryPhrase: String? = null,
+        browserLayer: String = browserLayerName(dryRun = false, externalBrowser = false),
     ): StrategyTaskReport {
         val config = taskLease?.strategyConfig
         return StrategyTaskReport(
@@ -1545,7 +1567,26 @@ class MainActivity : AppCompatActivity() {
             keywordMode = config?.keywordMode,
             searchExecution = config?.searchExecution,
             midMatchMode = config?.midMatchMode,
+            browserLayer = browserLayer,
+            failureReason = strategyResult?.failureReason ?: inferFailureReason(message),
+            queryPhrase = strategyResult?.queryPhrase ?: queryPhrase,
+            finalUrl = strategyResult?.lastUrl,
+            midFound = strategyResult?.midFound,
+            detailStatus = strategyResult?.detailStatus,
         )
+    }
+
+    private fun inferFailureReason(message: String?): String? {
+        val text = message?.trim().orEmpty()
+        return when {
+            text.startsWith("MID product not found after exploration") -> "mid_product_not_found_after_exploration"
+            text.startsWith("MID product not found after timeout") -> "mid_product_not_found_after_timeout"
+            text == "rate_limited_429" -> "rate_limited_429"
+            text.startsWith("detail_dom_not_confirmed") -> "detail_dom_not_confirmed"
+            text == "protection signal detected" -> "protection_signal_detected"
+            text.isBlank() -> null
+            else -> text.substringBefore(':').take(80)
+        }
     }
 
     private fun applyNaverStrategyRuntimeConfig(taskLease: StrategyTaskLease) {

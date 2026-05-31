@@ -353,6 +353,12 @@ object AndroidServerApiJson {
             "keywordMode" to report.keywordMode,
             "searchExecution" to report.searchExecution,
             "midMatchMode" to report.midMatchMode,
+            "browserLayer" to report.browserLayer,
+            "failureReason" to report.failureReason,
+            "queryPhrase" to report.queryPhrase,
+            "finalUrl" to report.finalUrl,
+            "midFound" to report.midFound,
+            "detailStatus" to report.detailStatus,
         )
     }
 

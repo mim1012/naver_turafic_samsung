@@ -11,6 +11,12 @@ Vercel functions   -> Supabase with server-only credentials
 `server/dev-server.js` stays as a local contract server. It is not the production
 backend when the deployed shape is Vercel + Supabase.
 
+Vercel function memory is only a best-effort realtime cache for admin snapshots.
+It is not durable shared state: cold start, deployment restart, scale-out, and
+multi-instance routing can lose or split recent heartbeat, command, and lease
+views. Do not write per-heartbeat, per-command, or per-recent-lease status to
+Supabase to compensate for that limitation.
+
 ## Vercel Environment Variables
 
 Set these on the existing Vercel project:
@@ -67,6 +73,94 @@ naver_strategy_products   task queue when not using existing Zero tables
 android_task_leases       task lease/report audit
 app_releases              APK update metadata
 ```
+
+Production durable writes are limited to task claim/report results, reusable
+`device_cookies`, account lease/report rows when those routes are enabled, app
+release metadata, and the existing product tables:
+`sellermate_traffic_navershopping`, `sellermate_slot_naver`, and
+`slot_rank_naverapp_history`. `android_task_leases` is optional append-only
+audit with retention, not a hot realtime lease table.
+
+`device_group` is coarse group-control state for compatibility and fallback
+flows. It is not a command event log, heartbeat log, or recent-lease store.
+
+## Runtime Snapshot Ownership
+
+`/admin/api/snapshot` should read current device/group/lease display state from
+the Vercel/bridge memory snapshot. Treat that snapshot as a best-effort
+realtime cache only:
+
+```text
+heartbeat status       -> memory only, no per-heartbeat Supabase write
+recent command status  -> memory only, no per-command Supabase write
+active task leases     -> memory only for display/correlation
+recent lease list      -> bounded memory ring, no per-recent-lease Supabase write
+```
+
+Durable correctness belongs to Supabase RPCs and product/account/cookie/release
+tables, not to the realtime snapshot. If the dashboard needs faster perceived
+updates, prefer SSE/WebSocket or diff responses before increasing polling. Do
+not use Supabase as a high-frequency status store.
+
+## Task Queue RPC Contract
+
+Production task claim/report should call Supabase RPC functions through Vercel
+server-only credentials. See `docs/supabase-rpc-task-queue.sql` for the SQL
+contract.
+
+```text
+claim_android_naver_task(
+  p_device_name text,
+  p_strategy text,
+  p_claim_ttl_seconds integer default 60
+)
+
+returns task_id, lease_id, traffic_id, slot_id, keyword, keyword_name,
+        link_url, mid, claimed_at, expires_at
+```
+
+The claim function must atomically transition one queued task to `claimed` using
+a transaction-safe pattern such as `SELECT ... FOR UPDATE SKIP LOCKED`. It must
+set `claim_expires_at`, increment `attempt_count`, and refuse tasks over the
+attempt limit. Durable states are:
+
+```text
+queued     ready to claim
+claimed    assigned and not past claim_expires_at
+completed  final success/failure accepted
+expired    attempt limit reached or explicitly expired
+```
+
+```text
+report_android_naver_task(
+  p_task_id text,
+  p_lease_id text,
+  p_device_name text,
+  p_success boolean,
+  p_link_url text,
+  p_source text,
+  p_idempotency_key text default null
+)
+```
+
+The report function must be idempotent. A duplicate report with the same
+idempotency key, or the same unique task/device/lease receipt, returns the
+already accepted result and does not increment `sellermate_slot_naver` counters
+or insert `slot_rank_naverapp_history` again. The RPC should update
+`success_count` or `fail_count` atomically and treat the history insert as
+best-effort evidence, not the authoritative counter.
+
+If the existing traffic queue can be altered, add narrow claim columns:
+`claim_state`, `claimed_by`, `lease_id`, `claimed_at`, `claim_expires_at`,
+`completed_at`, `attempt_count`, and `max_attempts`. If it cannot be altered,
+use a narrow `android_task_claims` table with unique constraints on
+`lease_id`, completed `(task_id, device_name)`, and non-null `idempotency_key`.
+This table is durable queue control state, not heartbeat or dashboard state.
+
+Run a scheduled `requeue_expired_android_naver_tasks` job/RPC so `claimed` rows
+past `claim_expires_at` return to `queued` or move to `expired` after the
+attempt limit. This requeue path prevents Android crash, network loss, or worker
+death from silently losing work.
 
 Account selection order should be:
 
@@ -204,3 +298,20 @@ adb shell am start -n com.navertraffic.samsung/.ui.MainActivity `
 
 The same URL can also be entered once in the APK's server URL field. The app stores it
 with the bot name.
+
+Direct Android-to-Supabase mode is for local development or staged fallback only.
+Production devices should use `serverUrl` so the APK never receives Supabase
+service-role credentials and task claim/report semantics stay behind the Vercel
+RPC boundary.
+
+## Retention Policy
+
+`slot_rank_naverapp_history` and future append-only rank, log, or device event
+tables need a retention policy before production rollout. Keep a hot operational
+window such as 7-30 days, partition high-volume history by time, archive older
+rows or detached partitions to cheaper storage/summary tables, verify the
+archive, then delete or detach old data. See
+`docs/supabase-retention-policy.sql`.
+
+Do not add new append-only history/log/device event tables without specifying
+retention, partition, archive, and delete behavior in the same change.

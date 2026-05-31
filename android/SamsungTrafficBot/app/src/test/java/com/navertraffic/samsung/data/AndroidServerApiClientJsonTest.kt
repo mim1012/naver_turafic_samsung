@@ -3,6 +3,7 @@ package com.navertraffic.samsung.data
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AndroidServerApiClientJsonTest {
@@ -356,6 +357,12 @@ class AndroidServerApiClientJsonTest {
                 keywordMode = "full_name",
                 searchExecution = "url_load",
                 midMatchMode = "mid",
+                browserLayer = "WEBVIEW",
+                failureReason = "mid_product_not_found_after_exploration",
+                queryPhrase = "나이키 운동화",
+                finalUrl = "https://m.search.naver.com/search.naver",
+                midFound = false,
+                detailStatus = "not_detail",
             ),
         )
 
@@ -367,5 +374,11 @@ class AndroidServerApiClientJsonTest {
         assertEquals("full_name", body.getString("keywordMode"))
         assertEquals("url_load", body.getString("searchExecution"))
         assertEquals("mid", body.getString("midMatchMode"))
+        assertEquals("WEBVIEW", body.getString("browserLayer"))
+        assertEquals("mid_product_not_found_after_exploration", body.getString("failureReason"))
+        assertEquals("나이키 운동화", body.getString("queryPhrase"))
+        assertEquals("https://m.search.naver.com/search.naver", body.getString("finalUrl"))
+        assertTrue(body.text.contains("\"midFound\":false"))
+        assertEquals("not_detail", body.getString("detailStatus"))
     }
 }

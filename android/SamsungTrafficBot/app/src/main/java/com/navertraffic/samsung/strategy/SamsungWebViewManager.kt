@@ -581,11 +581,11 @@ class SamsungWebViewManager(
         return raw
     }
 
-    suspend fun clickMidLink(mid: String, maxCarouselPages: Int = 5): Boolean {
+    suspend fun clickMidLink(mid: String, titleHint: String? = null, maxCarouselPages: Int = 5): Boolean {
         if (mid.isBlank()) return false
 
         repeat(maxCarouselPages) { pageIdx ->
-            val result = evaluateText(buildMidScanJs(mid))
+            val result = evaluateText(buildMidScanJs(mid, titleHint))
             if (result.startsWith("found|")) {
                 val parts = result.split("|")
                 val method = parts.getOrNull(1) ?: "unknown"
@@ -607,27 +607,75 @@ class SamsungWebViewManager(
         return false
     }
 
-    private fun buildMidScanJs(mid: String): String {
+    private fun buildMidScanJs(mid: String, titleHint: String?): String {
         return """
-            (function(mid) {
+            (function(mid, titleHint) {
+              function decodeUrl(value) {
+                var current = value || '';
+                for (var i = 0; i < 2; i++) {
+                  try {
+                    var next = decodeURIComponent(current);
+                    if (next === current) break;
+                    current = next;
+                  } catch (e) {
+                    break;
+                  }
+                }
+                return current;
+              }
+              function normalizeText(value) {
+                return (value || '')
+                  .replace(/<[^>]*>/g, ' ')
+                  .replace(/[\[\](){},]/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .toLowerCase();
+              }
+              var normalizedHint = normalizeText(titleHint);
               function isAdAnchor(anchor) {
                 var inv = anchor.getAttribute('data-shp-inventory') ||
                   (anchor.closest('[data-shp-inventory]') && anchor.closest('[data-shp-inventory]').getAttribute('data-shp-inventory')) || '';
                 return /lst\*(A|P|D)/.test(inv);
               }
+              function anchorText(anchor) {
+                var imgAlt = Array.prototype.slice.call(anchor.querySelectorAll('img'))
+                  .map(function(img) { return img.getAttribute('alt') || ''; })
+                  .join(' ');
+                var labelledBy = (anchor.getAttribute('aria-labelledby') || '').split(/\s+/)
+                  .map(function(id) { return document.getElementById(id); })
+                  .filter(Boolean)
+                  .map(function(el) { return el.textContent || ''; })
+                  .join(' ');
+                return normalizeText([
+                  anchor.textContent || '',
+                  anchor.getAttribute('title') || '',
+                  anchor.getAttribute('aria-label') || '',
+                  imgAlt,
+                  labelledBy,
+                  anchor.closest('li, section, div') ? anchor.closest('li, section, div').textContent || '' : ''
+                ].join(' '));
+              }
+              function titleMatches(anchor) {
+                if (!normalizedHint || normalizedHint.length < 8) return false;
+                var text = anchorText(anchor);
+                if (!text) return false;
+                return text.indexOf(normalizedHint) >= 0 || normalizedHint.indexOf(text) >= 0;
+              }
               function score(anchor) {
                 if (isAdAnchor(anchor)) return null;
                 var href = anchor.href || anchor.getAttribute('href') || '';
+                var decodedHref = decodeUrl(href);
                 var contentId = anchor.getAttribute('data-shp-contents-id') || '';
                 var labelledBy = anchor.getAttribute('aria-labelledby') || '';
                 var dataset = JSON.stringify(anchor.dataset || {});
-                if (href.indexOf(mid) >= 0 && (href.indexOf('/p/crd/rd') >= 0 || href.indexOf('cr.shopping') >= 0 || href.indexOf('cr2.shopping') >= 0 || href.indexOf('cr3.shopping') >= 0 || href.indexOf('/bridge/searchGate') >= 0 || href.indexOf('searchGate') >= 0)) return [0, 'tracked-search-gate'];
-                if (href.indexOf('nv_mid=' + mid) >= 0) return [1, 'nv_mid'];
-                if (href.indexOf('searchGate') >= 0 && href.indexOf(mid) >= 0) return [2, 'searchGate'];
+                if (decodedHref.indexOf(mid) >= 0 && (decodedHref.indexOf('/p/crd/rd') >= 0 || decodedHref.indexOf('cr.shopping') >= 0 || decodedHref.indexOf('cr2.shopping') >= 0 || decodedHref.indexOf('cr3.shopping') >= 0 || decodedHref.indexOf('/bridge/searchGate') >= 0 || decodedHref.indexOf('searchGate') >= 0)) return [0, 'tracked-search-gate'];
+                if (decodedHref.indexOf('nv_mid=' + mid) >= 0) return [1, 'nv_mid'];
+                if (decodedHref.indexOf('searchGate') >= 0 && decodedHref.indexOf(mid) >= 0) return [2, 'searchGate'];
                 if (contentId === mid) return [3, 'data-shp-contents-id'];
                 if (labelledBy.indexOf('nstore_productId_' + mid) >= 0) return [4, 'aria-product-id'];
                 if (dataset.indexOf(mid) >= 0) return [5, 'data-attr-mid'];
-                if (href.indexOf('/products/' + mid) >= 0 || href.indexOf('smartstore.naver.com/main/products/' + mid) >= 0 || href.indexOf('m.smartstore.naver.com/main/products/' + mid) >= 0) return [6, 'direct-product'];
+                if (decodedHref.indexOf('/products/' + mid) >= 0 || decodedHref.indexOf('smartstore.naver.com/main/products/' + mid) >= 0 || decodedHref.indexOf('m.smartstore.naver.com/main/products/' + mid) >= 0) return [6, 'direct-product'];
+                if (titleMatches(anchor) && (decodedHref.indexOf('searchGate') >= 0 || decodedHref.indexOf('cr.shopping') >= 0 || decodedHref.indexOf('search.shopping.naver.com') >= 0 || decodedHref.indexOf('smartstore.naver.com') >= 0 || decodedHref.indexOf('brand.naver.com') >= 0)) return [20, 'title-exact-fallback'];
                 return null;
               }
               var ranked = Array.prototype.slice.call(document.querySelectorAll('a')).map(function(anchor, index) {
@@ -640,7 +688,7 @@ class SamsungWebViewManager(
               picked.anchor.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
               var r = picked.anchor.getBoundingClientRect();
               return ['found', picked.method, r.left + r.width / 2, r.top + r.height / 2].join('|');
-            })(${quoteJs(mid)});
+            })(${quoteJs(mid)}, ${quoteJs(titleHint.orEmpty())});
         """.trimIndent()
     }
 

@@ -18,7 +18,7 @@ class WebViewBrowserSession(
     }
 
     override suspend fun clickMidLink(mid: String, titleHint: String?): Boolean {
-        return webViewManager.clickMidLink(mid)
+        return webViewManager.clickMidLink(mid, titleHint)
     }
 
     override suspend fun productDetailStatus(mid: String): ProductDetailStatus {

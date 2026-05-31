@@ -11,6 +11,7 @@ import java.net.URLEncoder
 import java.net.URL
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
+import java.util.zip.ZipInputStream
 
 class ChromeUpdateManager(
     private val context: Context,
@@ -94,20 +95,19 @@ class ChromeUpdateManager(
         deviceName: String,
     ): UpdateResult {
         log("Chrome APK 다운로드 중: ${release.versionName}")
-        val apkFile = File(context.cacheDir, "chrome-${release.versionName}.apk")
-        if (!download(release.apkUrl, apkFile)) {
-            log("Chrome APK 다운로드 실패")
+        val packageFile = downloadChromePackage(release) ?: run {
+            log("Chrome 패키지 다운로드 실패")
             return UpdateResult(
                 updateRequired = true,
                 installed = false,
                 success = false,
-                message = "chrome apk download failed",
+                message = "chrome package download failed",
                 currentVersion = currentVersion,
                 release = release,
             )
         }
 
-        val downloaded = downloadedPackageInfo(apkFile) ?: return UpdateResult(
+        val downloaded = downloadedPackageInfo(packageFile) ?: return UpdateResult(
             updateRequired = true,
             installed = false,
             success = false,
@@ -115,11 +115,11 @@ class ChromeUpdateManager(
             currentVersion = currentVersion,
             release = release,
         ).also {
-            apkFile.delete()
+            packageFile.delete()
             log("Chrome APK 검증 실패: 패키지 정보를 읽을 수 없음")
         }
         if (downloaded.packageName != release.packageName || downloaded.packageName != CHROME_PACKAGE) {
-            apkFile.delete()
+            packageFile.delete()
             log("Chrome APK 검증 실패: package=${downloaded.packageName}")
             return UpdateResult(
                 updateRequired = true,
@@ -132,7 +132,7 @@ class ChromeUpdateManager(
         }
         val downloadedMajor = parseMajor(downloaded.versionName.orEmpty())
         if (downloadedMajor < BuildConfig.MIN_CHROME_MAJOR) {
-            apkFile.delete()
+            packageFile.delete()
             log("Chrome APK 검증 실패: version=${downloaded.versionName}")
             return UpdateResult(
                 updateRequired = true,
@@ -147,9 +147,9 @@ class ChromeUpdateManager(
 
         val expectedSha256 = release.sha256?.trim()?.lowercase()?.takeIf { it.isNotBlank() }
         if (expectedSha256 != null) {
-            val actualSha256 = sha256(apkFile)
+            val actualSha256 = sha256(packageFile)
             if (!expectedSha256.equals(actualSha256, ignoreCase = true)) {
-                apkFile.delete()
+                packageFile.delete()
                 log("Chrome APK sha256 불일치: expected=$expectedSha256 actual=$actualSha256")
                 return UpdateResult(
                     updateRequired = true,
@@ -164,7 +164,7 @@ class ChromeUpdateManager(
         }
 
         log("Chrome 설치 중: ${release.versionName}")
-        val installResult = rootInstall(apkFile)
+        val installResult = rootInstall(packageFile)
         if (!installResult.success) {
             log("Chrome 설치 실패: ${installResult.message}")
             return UpdateResult(
@@ -188,6 +188,51 @@ class ChromeUpdateManager(
             release = release,
         )
     }
+
+    private fun downloadChromePackage(release: ChromeRelease): File? {
+        val rawFile = File(
+            context.cacheDir,
+            if (release.apkUrl.substringBefore('?').endsWith(".zip", ignoreCase = true)) {
+                "chrome-${release.versionName}.zip"
+            } else {
+                "chrome-${release.versionName}.apk"
+            },
+        )
+        if (!download(release.apkUrl, rawFile)) return null
+        if (!rawFile.name.endsWith(".zip", ignoreCase = true)) return rawFile
+
+        log("Chrome ZIP 패키지 감지: 내부 APK 추출 중")
+        val extractedApk = extractSingleApk(rawFile)
+        rawFile.delete()
+        return extractedApk
+    }
+
+    private fun extractSingleApk(zipFile: File): File? =
+        runCatching {
+            val dest = File(context.cacheDir, "chrome-extracted.apk")
+            var apkCount = 0
+            ZipInputStream(zipFile.inputStream().buffered()).use { zip ->
+                while (true) {
+                    val entry = zip.nextEntry ?: break
+                    val entryName = entry.name.substringAfterLast('/')
+                    if (!entry.isDirectory && entryName.endsWith(".apk", ignoreCase = true)) {
+                        apkCount += 1
+                        if (apkCount == 1) {
+                            dest.outputStream().use { out -> zip.copyTo(out) }
+                        }
+                    }
+                    zip.closeEntry()
+                }
+            }
+            if (apkCount == 1 && dest.exists() && dest.length() > 0L) {
+                log("Chrome ZIP 내부 APK 추출 완료")
+                dest
+            } else {
+                dest.delete()
+                log("Chrome ZIP 검증 실패: 내부 APK 개수=$apkCount")
+                null
+            }
+        }.getOrNull()
 
     private fun currentWebViewProvider(): ProviderInfo? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
