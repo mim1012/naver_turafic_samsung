@@ -12,14 +12,12 @@ import android.webkit.CookieManager
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import java.io.InputStream
+import androidx.annotation.RequiresApi
 import java.net.HttpURLConnection
 import java.net.URL
-import androidx.annotation.RequiresApi
 import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.random.Random
@@ -28,6 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+
+sealed class PacketDetailResult {
+    data class Success(val finalUrl: String, val elapsedMs: Long) : PacketDetailResult()
+    data class NotDetail(val finalUrl: String, val elapsedMs: Long, val httpCode: Int = 200) : PacketDetailResult()
+    data class Error(val httpCode: Int, val elapsedMs: Long, val message: String = "") : PacketDetailResult()
+}
 
 class SamsungWebViewManager(
     private var webView: WebView,
@@ -60,22 +64,6 @@ class SamsungWebViewManager(
         }
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-                request ?: return null
-                val host = request.url.host ?: return null
-                if (!host.endsWith("smartstore.naver.com")) return null
-                android.util.Log.i("SamsungTrafficBot", "smartstore shouldIntercept: mainFrame=${request.isForMainFrame} url=${request.url.toString().take(80)}")
-                if (!request.isForMainFrame) return null
-                return try {
-                    val resp = interceptSmartstore(request.url.toString())
-                    android.util.Log.i("SamsungTrafficBot", "smartstore 인터셉트 완료: resp=${resp != null}")
-                    resp
-                } catch (e: Exception) {
-                    android.util.Log.i("SamsungTrafficBot", "smartstore 인터셉트 오류: ${e.message}")
-                    null
-                }
-            }
-
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val url = request?.url?.toString() ?: return false
                 if (!url.startsWith("http://") && !url.startsWith("https://")) return true
@@ -392,18 +380,24 @@ class SamsungWebViewManager(
               add('store', body.indexOf('스토어') >= 0 || body.indexOf('판매자') >= 0 || body.indexOf('네이버페이') >= 0);
               add('title_token', tokenHit);
               return [
+                location.href || '',
+                doc.readyState || '',
+                String(body.length || 0),
                 title.replace(/\s+/g, ' ').trim(),
                 markers.join(',') || 'none',
                 body.replace(/\s+/g, ' ').trim().slice(0, 220)
               ].join('\n__DIAG__\n');
             })(${quoteJs(titleHint.orEmpty())});
         """.trimIndent()
-        val parts = evaluateText(js).split("\n__DIAG__\n", limit = 3)
+        val parts = evaluateText(js).split("\n__DIAG__\n", limit = 6)
         return PageDiagnostics(
             url = currentUrl(),
-            title = parts.getOrNull(0).orEmpty().compactForDiagnostics(120),
-            htmlMarkers = parts.getOrNull(1).orEmpty().ifBlank { "none" },
-            visibleTextSample = parts.getOrNull(2).orEmpty().compactForDiagnostics(),
+            jsUrl = parts.getOrNull(0).orEmpty(),
+            readyState = parts.getOrNull(1).orEmpty(),
+            bodyLength = parts.getOrNull(2)?.toIntOrNull() ?: 0,
+            title = parts.getOrNull(3).orEmpty().compactForDiagnostics(120),
+            htmlMarkers = parts.getOrNull(4).orEmpty().ifBlank { "none" },
+            visibleTextSample = parts.getOrNull(5).orEmpty().compactForDiagnostics(),
         )
     }
 
@@ -699,11 +693,10 @@ class SamsungWebViewManager(
                 val cssY = parts.getOrNull(4)?.toFloatOrNull()
                 log("MID($mid) 상품 발견: $method (캐러셀 ${pageIdx + 1}페이지)")
                 if (!href.isNullOrBlank()) {
-                    // Plain loadUrl (no additionalHeaders) so Chromium calls shouldInterceptRequest
-                    // for the smartstore redirect target, letting interceptSmartstore() override sec-ch-ua.
+                    val referer = withContext(Dispatchers.Main) { webView.url }
                     withContext(Dispatchers.Main) {
                         pageLoad = CompletableDeferred()
-                        webView.loadUrl(href)
+                        webView.loadUrl(href, samsungHeaders(referer))
                     }
                     delay(1_000)
                 } else if (cssX != null && cssY != null) {
@@ -1174,62 +1167,6 @@ class SamsungWebViewManager(
         delay(Random.nextLong(400, 900))
     }
 
-    private fun interceptSmartstore(startUrl: String): WebResourceResponse? {
-        val cookieManager = CookieManager.getInstance()
-        var currentUrl = startUrl
-        var redirectsLeft = 5
-        while (redirectsLeft-- > 0) {
-            val conn = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
-                instanceFollowRedirects = false
-                connectTimeout = 15_000
-                readTimeout = 30_000
-                setRequestProperty("User-Agent", CHROME_138_UA)
-                setRequestProperty("sec-ch-ua",
-                    "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"")
-                setRequestProperty("sec-ch-ua-mobile", "?1")
-                setRequestProperty("sec-ch-ua-platform", "\"Android\"")
-                setRequestProperty("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
-                setRequestProperty("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
-                setRequestProperty("Accept-Encoding", "gzip, deflate, br")
-                setRequestProperty("Upgrade-Insecure-Requests", "1")
-                cookieManager.getCookie(currentUrl)?.takeIf { it.isNotBlank() }
-                    ?.let { setRequestProperty("Cookie", it) }
-            }
-            val status = conn.responseCode
-            conn.headerFields["Set-Cookie"]?.forEach { cookie ->
-                cookieManager.setCookie(currentUrl, cookie)
-            }
-            cookieManager.flush()
-            if (status in 301..308) {
-                val location = conn.getHeaderField("Location") ?: return null
-                currentUrl = if (location.startsWith("http")) location
-                             else URL(URL(currentUrl), location).toString()
-                conn.disconnect()
-                continue
-            }
-            val contentType = conn.contentType ?: "text/html; charset=UTF-8"
-            val mimeType = contentType.substringBefore(";").trim().ifBlank { "text/html" }
-            val charset = Regex("charset=([^;\\s]+)").find(contentType)
-                ?.groupValues?.get(1)?.trim() ?: "UTF-8"
-            val responseHeaders = buildMap<String, String> {
-                conn.headerFields.forEach { (name, values) ->
-                    if (name != null && values.isNotEmpty()) put(name, values.last())
-                }
-            }
-            val raw: InputStream = (if (status >= 400) conn.errorStream else conn.inputStream) ?: return null
-            val stream: InputStream = if (conn.contentEncoding?.lowercase() == "gzip")
-                java.util.zip.GZIPInputStream(raw) else raw
-            return WebResourceResponse(
-                mimeType, charset, status,
-                conn.responseMessage?.takeIf { it.isNotBlank() } ?: "OK",
-                responseHeaders, stream,
-            )
-        }
-        android.util.Log.i("SamsungTrafficBot", "smartstore 리다이렉트 한도 초과: $startUrl")
-        return null
-    }
-
     private fun quoteJs(value: String): String {
         return "\"" + value
             .replace("\\", "\\\\")
@@ -1244,6 +1181,87 @@ class SamsungWebViewManager(
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace("\"", "&quot;")
+
+    suspend fun findMidLinkHref(mid: String, titleHint: String? = null): String? {
+        val result = evaluateText(buildMidScanJs(mid, titleHint))
+        if (!result.startsWith("found|")) return null
+        val parts = result.split("|")
+        val method = parts.getOrNull(1) ?: "unknown"
+        val href = parts.getOrNull(2)?.takeIf { it.startsWith("http") } ?: return null
+        log("MID($mid) href 발견: $method")
+        return href
+    }
+
+    suspend fun fetchDetailPageByPacket(
+        startUrl: String,
+        mid: String,
+        referer: String? = null,
+    ): PacketDetailResult {
+        val cookies = extractNaverCookies()
+        val startMs = System.currentTimeMillis()
+        return withContext(Dispatchers.IO) {
+            try {
+                var currentUrl = startUrl
+                var redirectCount = 0
+                var finalUrl = startUrl
+                var finalCode = -1
+                var htmlSnippet = ""
+
+                while (redirectCount < 6) {
+                    val conn = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
+                        instanceFollowRedirects = false
+                        requestMethod = "GET"
+                        connectTimeout = 5_000
+                        readTimeout = 8_000
+                        setRequestProperty("User-Agent", CHROME_138_UA)
+                        setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        setRequestProperty("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                        setRequestProperty("sec-ch-ua", "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"")
+                        setRequestProperty("sec-ch-ua-mobile", "?1")
+                        setRequestProperty("sec-ch-ua-platform", "\"Android\"")
+                        if (referer != null) setRequestProperty("Referer", referer)
+                        if (cookies.isNotBlank()) setRequestProperty("Cookie", cookies)
+                    }
+                    val code = conn.responseCode
+                    finalCode = code
+                    finalUrl = currentUrl
+                    when {
+                        code in 300..399 -> {
+                            val rawLocation = conn.getHeaderField("Location") ?: break
+                            currentUrl = if (rawLocation.startsWith("http")) rawLocation
+                                         else URL(URL(currentUrl), rawLocation).toString()
+                            redirectCount++
+                            conn.disconnect()
+                        }
+                        code == 200 -> {
+                            htmlSnippet = conn.inputStream.bufferedReader().use { it.readText().take(8192) }
+                            conn.disconnect()
+                            break
+                        }
+                        else -> {
+                            conn.disconnect()
+                            return@withContext PacketDetailResult.Error(
+                                code, System.currentTimeMillis() - startMs, "HTTP $code"
+                            )
+                        }
+                    }
+                }
+
+                val elapsed = System.currentTimeMillis() - startMs
+                val isSmartstore = finalUrl.contains("smartstore.naver.com") || finalUrl.contains("brand.naver.com")
+                val midInUrl = finalUrl.contains("/products/$mid") || finalUrl.contains("nv_mid=$mid")
+                val midInHtml = mid.isNotBlank() && htmlSnippet.contains(mid)
+
+                if (isSmartstore && (midInUrl || midInHtml)) {
+                    PacketDetailResult.Success(finalUrl, elapsed)
+                } else {
+                    PacketDetailResult.NotDetail(finalUrl, elapsed, finalCode)
+                }
+            } catch (e: Exception) {
+                PacketDetailResult.Error(-1, System.currentTimeMillis() - startMs, e.message ?: "exception")
+            }
+        }
+    }
 
     fun setBrowserMode(isChrome: Boolean) {
         chromeMode = isChrome

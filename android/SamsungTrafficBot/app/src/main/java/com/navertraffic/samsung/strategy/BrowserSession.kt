@@ -9,6 +9,9 @@ enum class ProductDetailStatus {
 
 data class PageDiagnostics(
     val url: String? = null,
+    val jsUrl: String? = null,
+    val readyState: String = "",
+    val bodyLength: Int = 0,
     val title: String = "",
     val visibleTextSample: String = "",
     val htmlMarkers: String = "",

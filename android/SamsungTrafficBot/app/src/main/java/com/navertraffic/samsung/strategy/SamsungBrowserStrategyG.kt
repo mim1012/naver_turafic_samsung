@@ -15,6 +15,8 @@ class SamsungBrowserStrategyG(
     private val explorationScrollCount: Int = 4,
     private val explorationScrollPixels: Int = 500,
     private val midExplorationTimeoutMs: Long = 30_000,
+    private val detailConfirmationTimeoutMs: Long = 25_000,
+    private val detailConfirmationPollMs: Long = 1_000,
     private val deviceName: String = "",
     private val captchaChallengeClient: CaptchaChallengeClient? = null,
     private val screenshotCapture: ScreenshotCapture? = null,
@@ -89,23 +91,27 @@ class SamsungBrowserStrategyG(
             delay(Random.nextLong(350, 700))
         }
 
-        // 탐색 스크롤하며 MID 탐색
+        // 탐색 스크롤하며 MID 탐색 (패킷 방식: DOM에서 href만 추출, WebView 네비게이션 없음)
         log("2차 MID 탐색: ${task.mid}")
+        val wm = webViewManager
+        var midHref: String? = null
+
         val midExplorationResult = withTimeoutOrNull(midExplorationTimeoutMs) {
-            var clicked = false
             repeat(explorationScrollCount) {
-                if (!clicked) {
-                    clicked = browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)
+                if (midHref == null) {
+                    midHref = wm?.findMidLinkHref(task.mid, task.productTitle ?: task.keywordName)
+                        ?: if (browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)) "clicked" else null
                 }
-                if (!clicked) {
+                if (midHref == null) {
                     browserSession.scrollBy(explorationScrollPixels)
                     delay(Random.nextLong(350, 700))
                 }
             }
-            if (!clicked) {
-                clicked = browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)
+            if (midHref == null) {
+                midHref = wm?.findMidLinkHref(task.mid, task.productTitle ?: task.keywordName)
+                    ?: if (browserSession.clickMidLink(task.mid, task.productTitle ?: task.keywordName)) "clicked" else null
             }
-            clicked
+            midHref != null
         }
         val clicked = midExplorationResult == true
 
@@ -124,40 +130,78 @@ class SamsungBrowserStrategyG(
             )
         }
 
-        log("상세 페이지 진입 대기")
-        delay(Random.nextLong(4_500, 9_000))
-        logDetailDiagnostics("MID 클릭 후 상세 후보", task, log)
-        detectProtection(log)?.let {
-            webViewManager?.setBrowserMode(isChrome = false)
-            return it
-        }
-        when (val detailStatus = confirmDetailStatus(task, log)) {
-            ProductDetailStatus.DETAIL -> log("상세페이지 DOM 확인: ${task.mid}")
-            ProductDetailStatus.RATE_LIMITED -> {
-                log("429/요청 제한 감지: 작업 실패")
-                webViewManager?.setBrowserMode(isChrome = false)
-                return StrategyAResult(
-                    success = false,
-                    lastUrl = browserSession.currentUrl(),
-                    message = "rate_limited_429",
-                    failureReason = "rate_limited_429",
-                    queryPhrase = secondPhrase,
-                    midFound = true,
-                )
+        val href = midHref
+        if (wm != null && href != null && href != "clicked") {
+            val referer = browserSession.currentUrl()
+            log("패킷 상세페이지 진입: ${task.mid}")
+            val packetResult = wm.fetchDetailPageByPacket(href, task.mid, referer)
+            when (packetResult) {
+                is PacketDetailResult.Success ->
+                    log("패킷 상세페이지 확인: ${task.mid} (${packetResult.elapsedMs}ms)")
+                is PacketDetailResult.NotDetail -> {
+                    log("패킷 상세페이지 미확인: code=${packetResult.httpCode} url=${packetResult.finalUrl} (${packetResult.elapsedMs}ms)")
+                    rememberSecondPhraseMiss(task.mid, secondPhrase, log)
+                    wm.setBrowserMode(isChrome = false)
+                    return StrategyAResult(
+                        success = false,
+                        lastUrl = packetResult.finalUrl,
+                        message = "packet_detail_not_confirmed",
+                        failureReason = "packet_detail_not_confirmed",
+                        queryPhrase = secondPhrase,
+                        midFound = true,
+                    )
+                }
+                is PacketDetailResult.Error -> {
+                    log("패킷 상세페이지 오류: code=${packetResult.httpCode} ${packetResult.message} (${packetResult.elapsedMs}ms)")
+                    rememberSecondPhraseMiss(task.mid, secondPhrase, log)
+                    wm.setBrowserMode(isChrome = false)
+                    return StrategyAResult(
+                        success = false,
+                        lastUrl = browserSession.currentUrl(),
+                        message = "packet_detail_error:${packetResult.message}",
+                        failureReason = "packet_detail_error",
+                        queryPhrase = secondPhrase,
+                        midFound = true,
+                    )
+                }
             }
-            ProductDetailStatus.NOT_DETAIL, ProductDetailStatus.UNKNOWN -> {
-                val diagnostics = pageDiagnosticsSummary(task)
-                log("상세페이지 DOM 미확인 최종: $detailStatus $diagnostics")
+        } else {
+            // WebView 폴백: webViewManager 없거나 탭 방식으로 이미 클릭된 경우
+            log("상세 페이지 진입 대기")
+            delay(Random.nextLong(4_500, 9_000))
+            logDetailDiagnostics("MID 클릭 후 상세 후보", task, log)
+            detectProtection(log)?.let {
                 webViewManager?.setBrowserMode(isChrome = false)
-                return StrategyAResult(
-                    success = false,
-                    lastUrl = browserSession.currentUrl(),
-                    message = "detail_dom_not_confirmed:${detailStatus.name.lowercase()} $diagnostics",
-                    failureReason = "detail_dom_not_confirmed",
-                    queryPhrase = secondPhrase,
-                    detailStatus = detailStatus.name.lowercase(),
-                    midFound = true,
-                )
+                return it
+            }
+            when (val confirmation = confirmDetailStatus(task, log)) {
+                is DetailConfirmation.Confirmed -> log("상세페이지 DOM 확인: ${task.mid}")
+                is DetailConfirmation.RateLimited -> {
+                    log("429/요청 제한 감지: 작업 실패")
+                    webViewManager?.setBrowserMode(isChrome = false)
+                    return StrategyAResult(
+                        success = false,
+                        lastUrl = browserSession.currentUrl(),
+                        message = "rate_limited_429",
+                        failureReason = "rate_limited_429",
+                        queryPhrase = secondPhrase,
+                        midFound = true,
+                    )
+                }
+                is DetailConfirmation.NotConfirmed -> {
+                    val diagnostics = pageDiagnosticsSummary(confirmation.diagnostics)
+                    log("상세페이지 DOM 미확인 최종: ${confirmation.status} ${confirmation.failureReason} $diagnostics")
+                    webViewManager?.setBrowserMode(isChrome = false)
+                    return StrategyAResult(
+                        success = false,
+                        lastUrl = browserSession.currentUrl(),
+                        message = "${confirmation.failureReason}:${confirmation.status.name.lowercase()} $diagnostics",
+                        failureReason = confirmation.failureReason,
+                        queryPhrase = secondPhrase,
+                        detailStatus = confirmation.status.name.lowercase(),
+                        midFound = true,
+                    )
+                }
             }
         }
 
@@ -203,20 +247,30 @@ class SamsungBrowserStrategyG(
     private suspend fun confirmDetailStatus(
         task: StrategyGTask,
         log: (String) -> Unit,
-    ): ProductDetailStatus {
-        var lastStatus = browserSession.productDetailStatus(task.mid, task.productTitle ?: task.keywordName)
-        if (lastStatus == ProductDetailStatus.DETAIL || lastStatus == ProductDetailStatus.RATE_LIMITED) {
-            return lastStatus
-        }
-        repeat(2) { attempt ->
-            log("상세페이지 DOM 재확인 ${attempt + 1}/2: $lastStatus")
-            delay(1_500)
-            lastStatus = browserSession.productDetailStatus(task.mid, task.productTitle ?: task.keywordName)
-            if (lastStatus == ProductDetailStatus.DETAIL || lastStatus == ProductDetailStatus.RATE_LIMITED) {
-                return lastStatus
+    ): DetailConfirmation {
+        val titleHint = task.productTitle ?: task.keywordName
+        val deadline = System.currentTimeMillis() + detailConfirmationTimeoutMs
+        var attempt = 1
+
+        while (true) {
+            val lastStatus = browserSession.productDetailStatus(task.mid, titleHint)
+            if (lastStatus == ProductDetailStatus.DETAIL) return DetailConfirmation.Confirmed
+            if (lastStatus == ProductDetailStatus.RATE_LIMITED) return DetailConfirmation.RateLimited
+
+            val lastDiagnostics = browserSession.pageDiagnostics(titleHint)
+            val failureReason = classifyDetailFailure(lastDiagnostics)
+            val now = System.currentTimeMillis()
+            if (now >= deadline || !shouldKeepWaitingForDetail(failureReason)) {
+                return DetailConfirmation.NotConfirmed(lastStatus, failureReason, lastDiagnostics)
             }
+
+            log(
+                "상세페이지 DOM 대기 ${attempt}: $lastStatus $failureReason " +
+                    pageDiagnosticsSummary(lastDiagnostics),
+            )
+            attempt += 1
+            delay(detailConfirmationPollMs.coerceAtMost((deadline - now).coerceAtLeast(0)))
         }
-        return lastStatus
     }
 
     private suspend fun logDetailDiagnostics(
@@ -229,10 +283,67 @@ class SamsungBrowserStrategyG(
 
     private suspend fun pageDiagnosticsSummary(task: StrategyGTask): String {
         val diagnostics = browserSession.pageDiagnostics(task.productTitle ?: task.keywordName)
+        return pageDiagnosticsSummary(diagnostics)
+    }
+
+    private fun pageDiagnosticsSummary(diagnostics: PageDiagnostics): String {
         return "url=${diagnostics.url.orEmpty().compactForDiagnostics(120)} " +
+            "jsUrl=${diagnostics.jsUrl.orEmpty().compactForDiagnostics(120)} " +
+            "ready=${diagnostics.readyState.ifBlank { "-" }} " +
+            "body=${diagnostics.bodyLength} " +
             "title=${diagnostics.title.ifBlank { "-" }} " +
             "markers=${diagnostics.htmlMarkers.ifBlank { "none" }} " +
             "text=${diagnostics.visibleTextSample.ifBlank { "-" }}"
+    }
+
+    private fun classifyDetailFailure(diagnostics: PageDiagnostics): String {
+        val url = "${diagnostics.url.orEmpty()} ${diagnostics.jsUrl.orEmpty()}".lowercase()
+        val title = diagnostics.title.lowercase()
+        val text = diagnostics.visibleTextSample.lowercase()
+        val markers = diagnostics.htmlMarkers.lowercase()
+
+        return when {
+            url.contains("cr.shopping.naver.com") ||
+                url.contains("cr2.shopping.naver.com") ||
+                url.contains("cr3.shopping.naver.com") -> "bridge_stuck"
+            title.contains("[에러페이지]") ||
+                text.contains("현재 서비스 접속이 불가") -> "smartstore_error_page"
+            title.contains("웹페이지를 사용할 수 없음") ||
+                text.contains("웹페이지를 사용할 수 없음") ||
+                text.contains("err_name_not_resolved") ||
+                text.contains("err_") -> "webview_load_error"
+            looksLikeProductUrl(url) &&
+                (title.contains("네이버 검색") || text.startsWith("본문 바로가기 naver 이전페이지")) -> {
+                    "dom_navigation_race"
+                }
+            markers.isNotBlank() && markers != "none" -> "weak_detail_signal"
+            diagnostics.bodyLength == 0 || text.isBlank() || text == "-" -> "empty_or_unknown"
+            else -> "detail_dom_not_confirmed"
+        }
+    }
+
+    private fun shouldKeepWaitingForDetail(failureReason: String): Boolean {
+        return failureReason == "bridge_stuck" ||
+            failureReason == "dom_navigation_race" ||
+            failureReason == "empty_or_unknown" ||
+            failureReason == "weak_detail_signal"
+    }
+
+    private fun looksLikeProductUrl(url: String): Boolean {
+        return url.contains("/products/") ||
+            url.contains("smartstore.naver.com") ||
+            url.contains("brand.naver.com") ||
+            url.contains("shopping.naver.com")
+    }
+
+    private sealed class DetailConfirmation {
+        object Confirmed : DetailConfirmation()
+        object RateLimited : DetailConfirmation()
+        data class NotConfirmed(
+            val status: ProductDetailStatus,
+            val failureReason: String,
+            val diagnostics: PageDiagnostics,
+        ) : DetailConfirmation()
     }
 
     private fun pickSecondPhrase(

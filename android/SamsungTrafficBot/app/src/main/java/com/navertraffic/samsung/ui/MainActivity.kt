@@ -655,6 +655,7 @@ class MainActivity : AppCompatActivity() {
         val serverUrl = resolveServerUrl(config)
         val apiKey = resolveApiKey(config)
         val loopCount = getIntExtra(EXTRA_LOOP_COUNT, config.loopCount).coerceIn(1, 1_000)
+        val useLocalTask = getBoolExtra(EXTRA_LOCAL_TASK)
 
         config.save(
             deviceName = deviceName,
@@ -664,7 +665,7 @@ class MainActivity : AppCompatActivity() {
         )
         val dryRun = getBoolExtra(EXTRA_DRY_RUN)
         val browserLayer = browserLayerName(dryRun, externalBrowser = false)
-        val continuousServerMode = !dryRun && serverUrl.isNotBlank()
+        val continuousServerMode = !dryRun && serverUrl.isNotBlank() && !useLocalTask
 
         // 기본 전략(G): Chrome 137 UA 적용
         if (!dryRun) {
@@ -782,16 +783,21 @@ class MainActivity : AppCompatActivity() {
 
                     // 반복마다 트래픽 큐에서 새 작업 가져오기
                     var taskLeaseError: Throwable? = null
-                    val taskLease = runCatching {
-                        serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
-                    }.onFailure {
-                        taskLeaseError = it
-                        if (it is StrategyTaskLeaseBlockedException) {
-                            appendLog("그룹 상태 ${it.groupState}: 작업 lease 차단 (${it.reason})")
-                        } else {
-                            appendLog("상품 task lease 실패: ${it.message}")
-                        }
-                    }.getOrNull()
+                    val taskLease = if (useLocalTask) {
+                        appendLog("디버그 옵션: 로컬 G 작업 사용")
+                        null
+                    } else {
+                        runCatching {
+                            serverClient.taskLeaseClient.leaseTask(identity.rawName, identity.role, "G", APP_VERSION)
+                        }.onFailure {
+                            taskLeaseError = it
+                            if (it is StrategyTaskLeaseBlockedException) {
+                                appendLog("그룹 상태 ${it.groupState}: 작업 lease 차단 (${it.reason})")
+                            } else {
+                                appendLog("상품 task lease 실패: ${it.message}")
+                            }
+                        }.getOrNull()
+                    }
                     val blockedLease = taskLeaseError as? StrategyTaskLeaseBlockedException
                     if (blockedLease != null) {
                         reportRuntimeState(
@@ -931,7 +937,7 @@ class MainActivity : AppCompatActivity() {
                         taskIndex++
                         continue
                     }
-                    val task = taskLease?.taskG ?: fallbackTask.takeIf { dryRun && it.mid.isNotBlank() }
+                    val task = taskLease?.taskG ?: fallbackTask.takeIf { (dryRun || useLocalTask) && it.mid.isNotBlank() }
 
                     if (task == null) {
                         appendLog("트래픽 큐 비어있음 — 30초 후 재시도")
@@ -1744,6 +1750,7 @@ class MainActivity : AppCompatActivity() {
         private const val EXTRA_LOOP_COUNT = "loopCount"
         private const val EXTRA_DRY_RUN = "dryRun"
         private const val EXTRA_EXTERNAL_BROWSER = "externalBrowser"
+        private const val EXTRA_LOCAL_TASK = "localTask"
         private const val EXTRA_KEYWORD = "keyword"
         private const val EXTRA_SECOND_KEYWORD = "secondKeyword"
         private const val EXTRA_KEYWORD_NAME = "keywordName"

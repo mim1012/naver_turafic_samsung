@@ -6,10 +6,10 @@ This document records the Android bot APK versions that were relevant during the
 ## Current production release
 
 - Current production endpoint: `https://www.sellermate.ai.kr/android/app-release/latest`
-- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.41/naver-traffic-samsung-0.1.41-v42-release.apk`
+- Current APK: `https://github.com/mim1012/naver_turafic_samsung/releases/download/android-0.1.42/naver-traffic-samsung-0.1.42-v43-release.apk`
 - Current package: `com.navertraffic.samsung`
-- Current version: `versionName=0.1.41`, `versionCode=42`
-- Current APK SHA256: `9ec7e0dfca48e50b8f5b665fde2a1fd7ef6f443ae5d9cdebe27a388760dc8f17`
+- Current version: `versionName=0.1.42`, `versionCode=43`
+- Current APK SHA256: `6b004f449f7282b40014ae852491daf64aeaafd5fb10daf8929a41b75b9fefa5`
 
 ## Version history
 
@@ -33,7 +33,8 @@ This document records the Android bot APK versions that were relevant during the
 | 0.1.38 | 39 | Previous production | Adds browser-layer reporting so G/A/B failures can be split by WEBVIEW, SAMSUNG_INTERNET, or DRY_RUN in Supabase statistics. |
 | 0.1.39 | 40 | Previous production | Lets WebView MID scanning fall back to exact product-title matches for Naver price-comparison cards, while keeping final detail-page MID verification. |
 | 0.1.40 | 41 | Previous production | Keeps Android G second searches on five-word combinations only, removing product full-name fallback from G blacklist data. |
-| 0.1.41 | 42 | Current production | Hardens Android G detail-page confirmation with price, buy/cart, store, and product-title signals, retries uncertain detail DOM checks, and logs page diagnostics on failures. |
+| 0.1.41 | 42 | Previous production | Hardens Android G detail-page confirmation with price, buy/cart, store, and product-title signals, retries uncertain detail DOM checks, and logs page diagnostics on failures. |
+| 0.1.42 | 43 | Current production | Waits up to 25 seconds for Android G searchGate/detail-page navigation to settle and splits detail failures into bridge, SmartStore error, WebView load, navigation race, weak signal, and empty-DOM causes. |
 
 ## 0.1.24 / v25 changes
 
